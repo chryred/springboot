@@ -1,0 +1,133 @@
+.form-control {
+	height: 30px;
+	font-size: 12px;
+}
+
+select {
+	border: 1px solid #dcdcdc;
+	font-size: 1em;
+	height: 25px;
+	padding: 2px;
+	margin: 1px 0;
+}
+
+input.calendar {
+	/* border-color: #ACACAC #D9D9D9 #D9D9D9 #ACACAC;*/
+	border: 1px solid #dcdcdc;
+	padding: 2px 0 0 5px;
+	font-size: 1em;
+	height: 21px;
+	margin: 1px 0;
+	width: 75px;
+}
+
+input.inputbox {
+	/* border-color: #ACACAC #D9D9D9 #D9D9D9 #ACACAC;*/
+	border: 1px solid #dcdcdc;
+	height: 25px;	
+}
+
+#treeDemo {
+	overflow-y : inherit;
+	border-right: 1px solid #ddd;
+}
+
+.panel-body .content-container {
+	display: none;
+	padding: 10px 30px;
+}
+
+.dropdown .dropdown-menu .dropdown-item {
+	display: block;
+}
+
+.table_list, .table_view{table-layout:fixed; border-collapse:collapse; border-spacing:0; width:100%;border:1px solid #dcdcdc;}
+.table_list thead tr th{background:#F5F5F5; color:darkblue;font-weight:bold;padding:5px;text-align:center;vertical-align:middle}
+.table_list thead tr td{color:darkblue;font-weight:normal;padding:5px;text-align:left;vertical-align:middle}
+.table_list tbody tr td{border-bottom:1px solid #dcdcdc; border-left:1px solid #dcdcdc; padding:5px 5px; text-align:center;}
+
+.ui-datepicker{z-index: 99 !important}
+
+.content-wrapper#title-url {
+	text-decoration: underline;
+	font-size: 12px;
+}
+
+.panel-body .content-container {
+	height: 100%;
+}
+
+#detailDiv {
+	float:left;
+	padding:0px;
+	margin:0px;
+	width:300px;
+	z-index:2;
+}
+
+.panel-body .btn#save-detail {
+	float: left;
+	margin: 10px 0px;
+}
+
+.nav.nav-tabs {
+	margin-bottom: 5px;
+}
+
+#getter .dataTable thead tr th {
+	font-weight: bold;
+	cursor: default;
+}
+#getter .dataTable thead tr th:first-child {
+	width: 30%;
+}
+#getter .dataTable thead tr th:nth-child(2) {
+	width: 20%
+}
+#getter .dataTable thead tr th:nth-child(3) {
+	width: 20%;
+}
+#getter .dataTable thead tr th:nth-child(4) {
+	width: 20%;
+}
+#getter .dataTable thead tr th:nth-child(5) {
+	width: 10%;
+}
+
+#getter .searchTable thead th {
+	padding: 8px;
+	height: 25px;
+	pointer: default;
+}
+
+#getter .searchTable thead th:first-child {
+	line-height: 25px;
+}
+
+#getter .searchTable thead th:nth-child(2) {
+	text-align: left;
+}
+
+#getter .searchTable thead th:nth-child(2) input {
+	width: 100%;
+	margin-right: 5px;
+}
+
+#getter .dataTable tbody tr td:first-child {
+	padding: 4px 4px 4px 10px;
+}
+
+.pagination {
+	margin-top: 0px;
+	text-align: left;
+	padding: 0px;
+}
+.pagination.center {
+	text-align:center;
+	width: 100%;
+}
+
+.btn-wrapper button {
+	float: right;
+	margin: 10px 0px 5px 0px;
+}

@@ -1,0 +1,31 @@
+.ui-jqgrid .ui-jqgrid-htable th {
+	height: 2.5em;
+	vertical-align: middle;
+	font-size:12px;
+}
+.ui-jqgrid tr.jqgrow td {
+	height: 2.5em;
+	vertical-align: middle;
+	font-size:12px;
+}
+.ui-jqgrid .ui-pg-input {
+	height: 15px;
+}
+
+.ui-widget-content {
+	border: 1px solid #ddd; 		
+}
+
+.table-wrapper {
+	padding: 0px;
+}
+
+div.btn-box {
+	white-space: nowrap;
+	width: 100%;
+}
+div.btn-box > div {
+	display: inline-block;
+	vertical-align: middle;
+	width: 50%;
+}

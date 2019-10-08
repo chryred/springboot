@@ -1,0 +1,146 @@
+label, input, textarea, input[type="radio"], input[type="checkbox"],
+	.input-prefix, .input-suffix {
+	line-height: normal
+}
+
+[type="text"], [type="password"], [type="certNum"], [type="search"], [type="email"], [type="url"], [type="textarea"]
+	[type="tel"], textarea, input[type="radio"], input[type="checkbox"], input[type="user"],
+	.input-prefix, .input-suffix {
+	border: 1px solid #c4c4c4;
+	border-radius: 2px;
+	background-color: #fff;
+	color: #565a5c
+}
+
+.signup-or-separator {
+	background: none;
+	height: 34px;
+	position: relative;
+	text-align: center
+}
+
+.signup-or-separator .text {
+	background-color: #FFF;
+	display: inline-block;
+	margin: 0;
+	padding: 8px
+}
+
+.signup-or-separator hr {
+	margin: -16px auto 10px auto;
+	width: 90%
+}
+
+.decorative-input {
+	background-image:
+		url(/images/text-field-icons.png);
+	background-repeat: no-repeat;
+	background-position: right 11px;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	display: block;
+	font-size: 14px;
+	height: 40px;
+	padding: 10px;
+	width: 100% !important
+}
+
+.decorative-input[type=user] {
+	background-position: right 10px
+}
+
+.decorative-input[type=password], .decorative-input.otp-input,
+	.decorative-input.recaptcha_response_field {
+	background-position: right -77px
+}
+
+.decorative-input[type=certNum] {
+	background-position: right -77px
+}
+
+.decorative-input[type=textarea] {
+	background-position: right -120px
+}
+
+/* Button */
+label.btn {cursor:pointer;}
+a.btn, label.btn {display:inline-block; border-radius:2px; padding:0 19px;line-height:32px; color:white;}
+a.btnsmall, label.btnsmall {display:inline-block; border-radius:2px; padding:0 13px; font-size:12px; line-height:24px; color:white;}
+a.btnmiddle {display:inline-block; border-radius:2px; padding:0 18px;font-size:13px; line-height:45px;}
+a.btnbig {display:inline-block; border-radius:2px; padding:0 26px; font-size:13px; line-height:58px;}
+.b_blue {background:#2c71ba; border:1px solid #2c71ba;}
+.b_blue:hover {background:#4086d1; border:1px solid #4086d1;}
+.b_dblu {background:#80899b; border:1px solid #80899b; color:white !important;}
+.b_dblu:hover {background:#9ca4b6; border:1px solid #9ca4b6;}
+.b_gray {background:#fbfbfb; border:1px solid #e2e2e2; color:#58677d !important;}
+.b_gray:hover {background:white; border:1px solid #abb1ba;}
+.b_whte {background:white; border:1px solid #abb1ba; color:#58677d !important;}
+.b_whte:hover {background:#f7f7f7;}
+.b_whtegra {background: url("../images/contents/bg_btnwhtegra.gif") left top repeat-x; border:1px solid #abb1ba; line-height:22px !important; color:#58677d !important;}
+.b_whtegra:hover {background:#f7f7f7;}
+.b_login {
+	background:#2c71ba; 
+	border:1px solid #2c71ba;
+	vertical-align:middle;
+	text-align:center;
+	background-repeat: no-repeat;
+	background-position: right 11px;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	display: block;
+	font-size: 14px;
+	height: 40px;
+	padding: 10px;
+	width: 100% !important;
+}
+.b_close {
+	background:#555555; 
+	border:1px solid #2c71ba;
+	vertical-align:middle;
+	text-align:center;
+	background-repeat: no-repeat;
+	background-position: right 11px;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	display: block;
+	font-size: 14px;
+	height: 40px;
+	padding: 10px;
+	width: 100% !important;
+}
+.b_join {display:inline-block; background:#80899b; border-radius:2px; width:100px;font-size:13px; line-height:25px; text-align:center; color:white;}
+
+.b_none {display:none;}
+.b_block {display:block;}
+
+a.selected {
+  background-color:#1F75CC;
+  color:white;
+  z-index:100;
+}
+
+.messagepop {
+  background-color:#FFFFFF;
+  border:1px solid #999999;
+  cursor:default;
+  display:none;
+  margin-top: 15px;
+  position:absolute;
+  text-align:left;
+  width:394px;
+  z-index:50;
+  padding: 25px 25px 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 3px;
+  padding-left: 15px;
+  text-indent: -15px;
+}
+
+.messagepop p, .messagepop.div {
+  border-bottom: 1px solid #EFEFEF;
+  margin: 8px 0;
+  padding-bottom: 8px;
+}
