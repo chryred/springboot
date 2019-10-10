@@ -48,7 +48,6 @@ public class LoginContoller {
         if (type != null) {
         	mav.addObject("type", type);
         }
-        loginService.searchUser();
         
         return mav;
     }
