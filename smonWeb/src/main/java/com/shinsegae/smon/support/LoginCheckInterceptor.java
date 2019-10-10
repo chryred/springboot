@@ -35,8 +35,6 @@ public class LoginCheckInterceptor extends HandlerInterceptorAdapter {
 			
 			details = session.getAttribute(session.getId());
 			
-			NLogger.debug("details: ", details);
-			
 			if (details instanceof UserVO) {
 				String varMgrId = ((UserVO) details).getMgrId();
 	
@@ -64,16 +62,19 @@ public class LoginCheckInterceptor extends HandlerInterceptorAdapter {
 				if (varConfirmCertNum == null) {
 					result = false;
 				} else {
-					if (!varConfirmCertNum.equals("Y")) {
+					if (!"Y".equals(varConfirmCertNum)) {
 						result = false;
 					}
 				}
-				if (!result) session.invalidate();
+				if (!result) {
+					session.invalidate();
+					response.sendRedirect("/index.do");
+				}
 			}
 			
-			return super.preHandle(request, response, handler);
+			return result;
 		} else {
-			return false;
+			return super.preHandle(request, response, handler);
 		}
 	}
 	
