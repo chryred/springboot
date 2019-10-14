@@ -716,6 +716,7 @@ function fnFindPassword(){
 						<div id="" class="b_block" style="background-color:#EAEAEA;">
 							<a class="btn b_close b_none" id="btnFindPwdClose"><span>닫기</span></a>
 						</div>
+						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 						<hr></hr>
 						<div class="text-left">
 						    <b>※  비밀번호 찾기</b><br>
