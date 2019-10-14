@@ -35,7 +35,7 @@ public class AdmController {
 	
 	@Autowired
 	LogService logService;
-	/*******************************
+	/*********************************/
 	 * 운영정보 배치 리스트(표)
 	 * @param 
 	 * @return ModelAndView
