@@ -107,21 +107,75 @@ public interface UserMapper {
 	 *******************************/
 	public List<UserVO> getMgrLoginHis(HashMap<String, Object> paramMap);
 	
+	/**
+	 *  비밀번호 이력 확인
+	 * @param userVO
+	 * @return
+	 * @throws Exception
+	 */
 	public int checkUserPasswordHist(UserVO userVO) throws Exception;
 	
+	/**
+	 * 비밀번호 이력 삭제
+	 * @param userVO
+	 * @return
+	 * @throws Exception
+	 */
 	public int deleteUserPasswordHist(UserVO userVO) throws Exception;
 	
+	/**
+	 * 비밀번호 이력 저장
+	 * @param userVO
+	 * @return
+	 * @throws Exception
+	 */
 	public int insertUserPasswordHist(UserVO userVO) throws Exception;
 	
+	/**
+	 * 비밀번호 수정
+	 * @param userVO
+	 * @return
+	 * @throws Exception
+	 */
 	public int updateUserPassword(UserVO userVO) throws Exception;
 	
+	/**
+	 * 초기화를 위한 사용자 정보 조회
+	 * @param userVO
+	 * @return
+	 * @throws Exception
+	 */
 	public HashMap<String, Object> selectUserPasswordInitInfo(UserVO userVO) throws Exception;
 	
+	/**
+	 * 임시 비밀번호 수정
+	 * @param params
+	 * @return
+	 * @throws Exception
+	 */
 	public int updateUserPasswordInitInfo(HashMap<String, Object> params) throws Exception;
 	
+	/**
+	 * 기존 비밀번호 체크
+	 * @param userVO
+	 * @return
+	 * @throws Exception
+	 */
 	public String checkUserPassword(UserVO userVO) throws Exception;
 
+	/**
+	 * 중복로그인 체크
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
 	public HashMap<String, Object> selectCurrentUserStat(HashMap<String, Object> paramMap) throws Exception;
 	
+	/**
+	 * 비밀번호 변경 OTP 체크
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
 	public HashMap<String, Object> checkPwdOtpInfo(HashMap<String, Object> paramMap) throws Exception;
 }
