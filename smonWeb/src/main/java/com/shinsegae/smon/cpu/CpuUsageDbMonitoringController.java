@@ -1,12 +1,15 @@
 package com.shinsegae.smon.cpu;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.shinsegae.smon.util.CastingJson;
 
@@ -48,6 +51,15 @@ public class CpuUsageDbMonitoringController {
 		    
 		    return data;
 		}
+		
+		@RequestMapping(value="/sslInfo")
+	    public ModelAndView sslInfoManagement(Locale locale, Model model) {
+
+	        ModelAndView view = new ModelAndView("mtr/detail/ssl/sslInfoManagement");
+	        
+	        return view;
+	    }
+		
 		
 		@RequestMapping("/sslInfoDataTables")
 		public @ResponseBody String sslInfoDataTables() {
