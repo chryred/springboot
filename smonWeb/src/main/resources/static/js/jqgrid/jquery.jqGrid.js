@@ -12,6 +12,8 @@
 //jsHint options
 /*jshint evil:true, eqeqeq:false, eqnull:true, devel:true */
 /*global jQuery */
+var token = $("meta[name='_csrf']").attr("content");
+var header = $("meta[name='_csrf_header']").attr("content");
 
 (function ($) {
 "use strict";
@@ -2010,6 +2012,9 @@ $.fn.jqGrid = function( pin ) {
 						type:ts.p.mtype,
 						dataType: dt ,
 						data: $.isFunction(ts.p.serializeGridData)? ts.p.serializeGridData.call(ts,ts.p.postData) : ts.p.postData,
+						headers: {
+							'Access-Control-Allow-Origin': '*'
+						},		
 						success:function(data,st, xhr) {
 							if ($.isFunction(ts.p.beforeProcessing)) {
 								if (ts.p.beforeProcessing.call(ts, data, st, xhr) === false) {
@@ -2033,6 +2038,7 @@ $.fn.jqGrid = function( pin ) {
 							xhr=null;
 						},
 						beforeSend: function(xhr, settings ){
+							xhr.setRequestHeader(header, token); 
 							var gotoreq = true;
 							if($.isFunction(ts.p.loadBeforeSend)) {
 								gotoreq = ts.p.loadBeforeSend.call(ts,xhr, settings); 
@@ -4328,6 +4334,12 @@ $.jgrid.extend({
 							$.ajax($.extend({
 								url: surl,
 								dataType: "html",
+								headers: {
+									'Access-Control-Allow-Origin': '*'
+								},	
+								beforeSend: function (xhr, settings) { 
+									xhr.setRequestHeader(header, token); 
+								},
 								success: function(res) {
 									if(soptions.buildSelect !== undefined) {
 										var d = soptions.buildSelect(res);
@@ -6165,6 +6177,12 @@ $.extend($.jgrid,{
 						dataType: "html",
 						data: $.isFunction(postData) ? postData.call($t, rowid, vl, String(options.name)) : postData,
 						context: {elem:elem, options:options, vl:vl},
+						headers: {
+							'Access-Control-Allow-Origin': '*'
+						},	
+						beforeSend: function (xhr, settings) { 
+							xhr.setRequestHeader(header, token); 
+						},
 						success: function(data){
 							var ovm = [], elem = this.elem, vl = this.vl,
 							options = $.extend({},this.options),
@@ -7911,6 +7929,12 @@ $.jgrid.extend({
 						url: rp_ge[$t.p.id].url || $($t).jqGrid('getGridParam','editurl'),
 						type: rp_ge[$t.p.id].mtype,
 						data: $.isFunction(rp_ge[$t.p.id].serializeEditData) ? rp_ge[$t.p.id].serializeEditData.call($t,postdata) :  postdata,
+						headers: {
+							'Access-Control-Allow-Origin': '*'
+						},	
+						beforeSend: function (xhr, settings) { 
+							xhr.setRequestHeader(header, token); 
+						},
 						complete:function(data,status){
 							var key;
 							postdata[idname] = $t.p.idPrefix + postdata[idname];
@@ -8794,6 +8818,12 @@ $.jgrid.extend({
 							url: rp_ge[$t.p.id].url || $($t).jqGrid('getGridParam','editurl'),
 							type: rp_ge[$t.p.id].mtype,
 							data: $.isFunction(rp_ge[$t.p.id].serializeDelData) ? rp_ge[$t.p.id].serializeDelData.call($t,postd) : postd,
+							headers: {
+								'Access-Control-Allow-Origin': '*'
+							},	
+							beforeSend: function (xhr, settings) { 
+								xhr.setRequestHeader(header, token); 
+							},
 							complete:function(data,status){
 								var i;
 								if(data.status >= 300 && data.status !== 304) {
@@ -9569,6 +9599,12 @@ $.jgrid.extend({
 					data: $.isFunction($t.p.serializeRowData) ? $t.p.serializeRowData.call($t, tmp3) : tmp3,
 					type: o.mtype,
 					async : false, //?!?
+					headers: {
+						'Access-Control-Allow-Origin': '*'
+					},	
+					beforeSend: function (xhr, settings) { 
+						xhr.setRequestHeader(header, token); 
+					},
 					complete: function(res,stat){
 						$("#lui_"+$.jgrid.jqID($t.p.id)).hide();
 						if (stat === "success"){
@@ -10123,6 +10159,12 @@ $.jgrid.extend({
 									url: $t.p.cellurl,
 									data :$.isFunction($t.p.serializeCellData) ? $t.p.serializeCellData.call($t, postdata) : postdata,
 									type: "POST",
+									headers: {
+										'Access-Control-Allow-Origin': '*'
+									},	
+									beforeSend: function (xhr, settings) { 
+										xhr.setRequestHeader(header, token); 
+									},
 									complete: function (result, stat) {
 										$("#lui_"+$t.p.id).hide();
 										$t.grid.hDiv.loading = false;
@@ -10565,6 +10607,12 @@ addSubGrid : function( pos, sind ) {
 						url: ts.p.subGridUrl,
 						dataType:ts.p.subgridtype,
 						data: $.isFunction(ts.p.serializeSubGridData)? ts.p.serializeSubGridData.call(ts, dp) : dp,
+						headers: {
+							'Access-Control-Allow-Origin': '*'
+						},	
+						beforeSend: function (xhr, settings) { 
+							xhr.setRequestHeader(header, token); 
+						},
 						complete: function(sxml) {
 							if(ts.p.subgridtype === "xml") {
 								subGridXml(sxml.responseXML, sid);
@@ -12005,6 +12053,12 @@ $.jgrid.extend({
                             type:o.mtype,
                             data: o.impData,
                             dataType:"xml",
+							headers: {
+								'Access-Control-Allow-Origin': '*'
+							},	
+							beforeSend: function (xhr, settings) { 
+								xhr.setRequestHeader(header, token); 
+							},
                             complete: function(xml,stat) {
                                 if(stat === 'success') {
                                     xmlConvert(xml.responseXML,o);
@@ -12038,6 +12092,12 @@ $.jgrid.extend({
                             type:o.mtype,
                             data: o.impData,
                             dataType:"json",
+							headers: {
+								'Access-Control-Allow-Origin': '*'
+							},	
+							beforeSend: function (xhr, settings) { 
+								xhr.setRequestHeader(header, token); 
+							},
                             complete: function(json) {
                                 try {
                                     jsonConvert(json.responseText,o );
@@ -13222,6 +13282,12 @@ $.jgrid.extend({
 				$.ajax($.extend({
 					url : data,
 					dataType: 'json',
+					headers: {
+						'Access-Control-Allow-Origin': '*'
+					},	
+					beforeSend: function (xhr, settings) { 
+						xhr.setRequestHeader(header, token); 
+					},
 					success : function(response) {
 						pivot($.jgrid.getAccessor(response, ajaxOpt && ajaxOpt.reader ? ajaxOpt.reader: 'rows') );
 					}

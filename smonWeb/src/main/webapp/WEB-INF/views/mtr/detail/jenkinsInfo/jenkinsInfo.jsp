@@ -1,7 +1,14 @@
 <%@ page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="java.util.Date"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <jsp:include page="../../common/navigation.jsp" flush="false"/>
+
+
+<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+<!-- default header name is X-CSRF-TOKEN -->
+<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
 
 <script type="text/javascript">
 	var contextPath = '<%=request.getContextPath()%>';
@@ -10,18 +17,19 @@
 </script>
 
 <!-- lib -->
-<script src="<%=request.getContextPath() %>/js/jquery.blockUI.js"></script>
-<script src="<%=request.getContextPath() %>/js/jquery.qtip.min.js"></script>
-<script src="<%=request.getContextPath() %>/bootstrap/bower_components/toggle/bootstrap-toggle.min.js"></script>
-<script src="<%=request.getContextPath() %>/js/jqgrid/jquery.jqGrid.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath() %>/resources/js/common.js"></script>
+<script src="<%=request.getContextPath() %>/resources/js/jquery.blockUI.js"></script>
+<script src="<%=request.getContextPath() %>/resources/js/jquery.qtip.min.js"></script>
+<script src="<%=request.getContextPath() %>/resources/bootstrap/bower_components/toggle/bootstrap-toggle.min.js"></script>
+<script src="<%=request.getContextPath() %>/resources/js/jqgrid/jquery.jqGrid.js" type="text/javascript"></script>
 
 <!-- css -->
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/ztree/batch.css" />
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/ztree/zTreeStyle/zTreeStyle.css" />
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/jquery.qtip.min.css" />
-<script src="<%=request.getContextPath() %>/js/jqgrid/grid.locale-en.js" type="text/javascript"></script>
-<link rel="stylesheet" type="text/css" media="screen" href="<%=request.getContextPath() %>/css/ui.jqgrid.css" />
-<link rel="stylesheet" href="<%=request.getContextPath() %>/bootstrap/bower_components/toggle/bootstrap-toggle.min.css" />
+<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/ztree/batch.css" />
+<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/ztree/zTreeStyle/zTreeStyle.css" />
+<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/jquery.qtip.min.css" />
+<script src="<%=request.getContextPath() %>/resources/js/jqgrid/grid.locale-en.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<%=request.getContextPath() %>/resources/css/ui.jqgrid.css" />
+<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/bootstrap/bower_components/toggle/bootstrap-toggle.min.css" />
 
 <style type="text/css">
 	.form-control {
@@ -102,8 +110,8 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">
-            	<fmt:formatDate pattern="YYYY" var="thisYear" value="<%=new java.util.Date()%>" />
-            	<small>Jenkins ${thisYear}년 현황
+            	
+            	<small>Jenkins <fmt:formatDate value="<%=new java.util.Date()%>" pattern="YYYY"   />년 현황
             		<div id="select_box">
     					<label for="scrtyTypeCd">[PMD]</label>
             			<select id="scrtyTypeCd" class="select_box">
@@ -263,4 +271,4 @@
 <!-- /#page-wrapper -->
 
 
-<script src="<%=request.getContextPath() %>/js/app/jenkinsInfo/jenkinsInfoSearch.js"></script>
+<script src="<%=request.getContextPath() %>/resources/js/app/jenkinsInfo/jenkinsInfoSearch.js"></script>
