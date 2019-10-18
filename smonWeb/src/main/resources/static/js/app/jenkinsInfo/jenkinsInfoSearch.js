@@ -2,6 +2,9 @@
 var gScrtyTypeCd = "P";
 var tableRef;
 var CONTENTS_HEIGHT_MINUS_PIXEL = 290;
+var token = $("meta[name='_csrf']").attr("content");
+var header = $("meta[name='_csrf_header']").attr("content");
+
 
 $(document).ready(function() {
 	fn_event();
@@ -54,7 +57,6 @@ function fn_searchTotalInfo() {
 			scrtyTypeCd : gScrtyTypeCd
 	};
 	var formURL = contextPath + "/jekinsInfo/jenkinsTotalInfo.do";
-
 	$.ajax({
 		url : formURL,
 		type : "POST",
@@ -62,7 +64,11 @@ function fn_searchTotalInfo() {
 		dataType : "json", //text, json, html, xml, csv, script, jsonp
 		async : true,
 		timeout : 2 * 60 * 1000, //2 min,
-		beforeSend : function() {
+		headers: {
+			'Access-Control-Allow-Origin': '*'
+		},	
+		beforeSend: function (xhr, settings) { 
+			xhr.setRequestHeader(header, token); 
 			$.blockUI({ css: {color: '#fff'} });
 		},
 		complete : function() {

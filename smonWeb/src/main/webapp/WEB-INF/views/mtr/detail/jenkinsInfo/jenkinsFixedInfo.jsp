@@ -1,37 +1,41 @@
 <%@ page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:include page="../../common/navigation.jsp" flush="false"/>
 
+<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+<!-- default header name is X-CSRF-TOKEN -->
+<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
 
 <script type="text/javascript">
 	var contextPath = '<%=request.getContextPath()%>';
 </script>
 
 <!-- lib -->
-<script src="<%=request.getContextPath() %>/js/jquery.blockUI.js"></script>
-<script src="<%=request.getContextPath() %>/js/jquery.qtip.min.js"></script>
-<script src="<%=request.getContextPath() %>/bootstrap/bower_components/toggle/bootstrap-toggle.min.js"></script>
-<script src="<%=request.getContextPath() %>/js/jqgrid/jquery.jqGrid.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath() %>/resources/js/common.js"></script>
+<script src="<%=request.getContextPath() %>/resources/js/jquery.blockUI.js"></script>
+<script src="<%=request.getContextPath() %>/resources/js/jquery.qtip.min.js"></script>
+<script src="<%=request.getContextPath() %>/resources/bootstrap/bower_components/toggle/bootstrap-toggle.min.js"></script>
+<script src="<%=request.getContextPath() %>/resources/js/jqgrid/jquery.jqGrid.js" type="text/javascript"></script>
 
 <!-- css -->
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/ztree/batch.css" />
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/ztree/zTreeStyle/zTreeStyle.css" />
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/jquery.qtip.min.css" />
-<script src="<%=request.getContextPath() %>/js/jqgrid/grid.locale-en.js" type="text/javascript"></script>
-<link rel="stylesheet" type="text/css" media="screen" href="<%=request.getContextPath() %>/css/ui.jqgrid.css" />
-<link rel="stylesheet" href="<%=request.getContextPath() %>/bootstrap/bower_components/toggle/bootstrap-toggle.min.css" />
+<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/ztree/batch.css" />
+<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/ztree/zTreeStyle/zTreeStyle.css" />
+<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/css/jquery.qtip.min.css" />
+<script src="<%=request.getContextPath() %>/resources/js/jqgrid/grid.locale-en.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<%=request.getContextPath() %>/resources/css/ui.jqgrid.css" />
+<link rel="stylesheet" href="<%=request.getContextPath() %>/resources/bootstrap/bower_components/toggle/bootstrap-toggle.min.css" />
 <!-- Flot Charts JavaScript -->
-<script src="<%=request.getContextPath() %>/bootstrap/bower_components/flot/excanvas.min.js"></script>
-<script src="<%=request.getContextPath() %>/bootstrap/bower_components/flot/jquery.flot.js"></script>
-<script src="<%=request.getContextPath() %>/bootstrap/bower_components/flot/jquery.flot.pie.js"></script>
-<script src="<%=request.getContextPath() %>/bootstrap/bower_components/flot/jquery.flot.resize.js"></script>
-<script src="<%=request.getContextPath() %>/bootstrap/bower_components/flot/jquery.flot.time.js"></script>
-<script src="<%=request.getContextPath() %>/bootstrap/bower_components/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
+<script src="<%=request.getContextPath() %>/resources/bootstrap/bower_components/flot/excanvas.min.js"></script>
+<script src="<%=request.getContextPath() %>/resources/bootstrap/bower_components/flot/jquery.flot.js"></script>
+<script src="<%=request.getContextPath() %>/resources/bootstrap/bower_components/flot/jquery.flot.pie.js"></script>
+<script src="<%=request.getContextPath() %>/resources/bootstrap/bower_components/flot/jquery.flot.resize.js"></script>
+<script src="<%=request.getContextPath() %>/resources/bootstrap/bower_components/flot/jquery.flot.time.js"></script>
+<script src="<%=request.getContextPath() %>/resources/bootstrap/bower_components/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
 
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script> -->
-<script src="<%=request.getContextPath() %>/js/plugins/chartJs/chart.js"></script>
-<script src="<%=request.getContextPath() %>/js/plugins/chartJs/util.js"></script>
+<script src="<%=request.getContextPath() %>/resources/js/plugins/chartJs/chart.js"></script>
+<script src="<%=request.getContextPath() %>/resources/js/plugins/chartJs/util.js"></script>
 
-<script src="<%=request.getContextPath() %>/js/app/jenkinsInfo/jenkinsFixedInfoSearch.js"></script>
+<script src="<%=request.getContextPath() %>/resources/js/app/jenkinsInfo/jenkinsFixedInfoSearch.js"></script>
 <style type="text/css">
 </style>
 

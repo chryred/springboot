@@ -1,6 +1,8 @@
 var gTargetSystemCd = "TOTAL";
 var oChartLinePmd;
 var oChartLineFindBugs;
+var token = $("meta[name='_csrf']").attr("content");
+var header = $("meta[name='_csrf_header']").attr("content");
 
 $(document).ready(function() {
 	initialize();
@@ -75,6 +77,12 @@ function fn_lineChart(oChartId, scrtyTypeCd, targetId) {
         	scrtyTypeCd: scrtyTypeCd
            , jobNm : gTargetSystemCd
         },
+		headers: {
+			'Access-Control-Allow-Origin': '*'
+		},	
+		beforeSend: function (xhr, settings) { 
+			xhr.setRequestHeader(header, token); 
+		},
         success: function(list) {
         	var backgroundColors = [];
         	var backgroundBoarderColors = [];

@@ -4,6 +4,9 @@ var tableRef;
 var CONTENTS_HEIGHT_MINUS_PIXEL = 290;
 var gColNames;
 var gColModel;
+var token = $("meta[name='_csrf']").attr("content");
+var header = $("meta[name='_csrf_header']").attr("content");
+
 
 $(document).ready(function() {
 	fn_event();
@@ -68,8 +71,9 @@ function fn_searchJenkinsResigerSystem() {
 		data : postData,
 		dataType : "json",
 		async : true,
-		timeout : 2 * 60 * 1000, //2 min,
-		beforeSend : function() {
+		timeout : 2 * 60 * 1000,
+		beforeSend: function (xhr, settings) { 
+		    xhr.setRequestHeader(header, token);
 			$.blockUI({ css: {color: '#fff'} });
 		},
 		complete : function() {
@@ -134,7 +138,7 @@ function createColModel(systemList) {
 	            },
 	            formatter:function(val, ref, row) {
 	            	if(row.ADD_RANK == 1) {
-	            		return val + '&nbsp;<img src="' + contextPath +'/images/icon/new.gif">';
+	            		return val + '&nbsp;<img src="' + contextPath +'/resources/images/icon/new.gif">';
 	            	} else {
 	            		return val;
 	            	}
