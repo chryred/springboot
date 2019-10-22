@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.shinsegae.smon.privacy.PersonalInfoDestroyManageMapper">
+	<resultMap id="DES_TABLE_MAP" type="java.util.HashMap">
+		<result column="IF_YMD"           	property="IF_YMD"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="DB_NAME"           	property="DB_NAME"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="OWNER"     			property="OWNER"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="TABLE_NAME"     	property="TABLE_NAME"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="SQL"     			property="SQL"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="INFO"	     		property="INFO"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNT"    			property="CNT"				javaType="Integer" jdbcType="NUMERIC" /> 
+    </resultMap>
+ 
+    <select id="selectDestroyTableList2" resultMap="DES_TABLE_MAP" parameterType="HashMap">
+    	SELECT TA.*, COUNT(*) OVER(PARTITION BY TA.IF_YMD) AS TOTCNT, ROWNUM AS RNUM
+    			FROM 
+    			TCKCMP TA
+				WHERE 1=1
+				<if test="ifYmd == null">
+			   		AND TA.IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
+			   	</if>
+				<if test="dbName != '' and dbName != null">
+			   		AND TA.DB_NAME = #{dbName}
+			   	</if>
+				<if test="owner != '' and owner != null">
+					AND TA.OWNER = #{owner}
+				</if>
+				<if test="tablename != '' and tablename != null">
+					AND TA.TABLE_NAME = #{tableName}
+				</if>
+				AND ROWNUM BETWEEN #{start} AND #{end}
+			 	ORDER BY 1, 2, 3
+    </select>
+    <select id="selectDestroyTableList3" resultMap="DES_TABLE_MAP" parameterType="HashMap">
+    	SELECT * FROM 
+    			TCKCMP TA
+				WHERE 1=1
+    </select>
+    <resultMap id="DES_COL_MAP" type="java.util.HashMap">
+		<result column="IF_YMD"           	property="IF_YMD"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="DB_NAME"           	property="DB_NAME"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="OWNER"     			property="OWNER"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="TABLE_NAME"     	property="TABLE_NAME"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="SQL"     			property="SQL"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="INFO"	     		property="INFO"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNT"    			property="CNT"				javaType="Integer"  jdbcType="NUMERIC" /> 
+    </resultMap>
+    <select id="selectDestroyColList" resultMap="DES_COL_MAP" parameterType="HashMap">
+    	SELECT TA.*,
+		FROM TCKCMP TA
+		WHERE 1=1
+			--AND TA.IF_YMD = #{ifYmd}
+		    AND TA.DB_NAME = #{dbName}
+		    AND TA.OWNER = #{owner}
+    </select>
+    <select id="selectComboifYmd" resultType="HashMap">
+    	SELECT
+			DISTINCT IF_YMD
+		FROM
+			TCKCMP
+    </select>
+    <select id="selectComboDBName" resultType="HashMap">
+    	SELECT
+			DISTINCT DB_NAME
+		FROM
+			TCKCMP
+		WHERE
+			IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
+			<![CDATA[	
+			AND CNT > 0
+			]]> 
+    </select>
+
+    <select id="selectComboOwner" parameterType="HashMap" resultType="HashMap">
+    	SELECT
+			DISTINCT OWNER
+		FROM
+			TCKCMP
+		WHERE
+			1=1
+			<if test="dbName != '' and dbName != null">
+			AND DB_NAME = #{dbName}
+			</if>
+			AND IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
+			<![CDATA[	
+			AND CNT > 0
+			]]>
+    </select>
+    <select id="selectComboTableName" parameterType="HashMap" resultType="HashMap">
+    	SELECT
+			DISTINCT TABLE_NAME
+		FROM
+			TCKCMP
+		WHERE
+			1=1
+			<if test="owner != '' and owner != null">
+			AND OWNER = #{owner}
+			</if>
+			AND IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
+			<![CDATA[	
+			AND CNT > 0
+			]]>
+    </select>
+    
+</mapper> 
