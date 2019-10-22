@@ -112,6 +112,12 @@
 			<classifier>jdk15</classifier>
 		</dependency>
 		
+		<dependency>
+		    <groupId>com.jfinal</groupId>
+		    <artifactId>cos</artifactId>
+		    <version>2019.8</version>
+		</dependency>
+		
 		<!-- local Repository -->
 		<dependency>
 			<groupId>com.oracle</groupId>
@@ -134,8 +140,7 @@
     		<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/blossom-push-1.0.0.jar</systemPath>
 		</dependency>
-		
-		
+
 	</dependencies>
 
 	<build>
