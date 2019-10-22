@@ -141,7 +141,6 @@
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/blossom-push-1.0.0.jar</systemPath>
 		</dependency>
 		
-		
 	</dependencies>
 
 	<build>
