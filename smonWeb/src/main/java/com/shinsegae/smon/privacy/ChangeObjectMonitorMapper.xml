@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.shinsegae.smon.privacy.ChangeObjectMonitorMapper">
+    
+    <resultMap id="TCKDCO_Map" type="java.util.HashMap">
+        <result column="EVENT_YMD"      	property="EVENT_YMD"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="DB_NAME"        	property="DB_NAME"			javaType="string"  jdbcType="VARCHAR" />
+        <result column="DB_SID"        		property="DB_SID"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="OWNER"				property="OWNER"        	javaType="string"  jdbcType="VARCHAR" />
+        <result column="OBJECT_NAME"		property="OBJECT_NAME"      javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="COMMENTS"			property="COMMENTS"         javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="OBJECT_TYPE"        property="OBJECT_TYPE"      javaType="string"  jdbcType="VARCHAR" />
+        <result column="CREATED_DATE"       property="CREATED_DATE"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="LAST_DDL_DATE"		property="LAST_DDL_DATE"    javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STATUS"        		property="STATUS"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CONFIRM_GUBN"       property="CONFIRM_GUBN"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CONFIRM_YN"			property="CONFIRM_YN"       javaType="string"  jdbcType="VARCHAR" />
+        <result column="CONFIRM_DATE"		property="CONFIRM_DATE"     javaType="string"  jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <select id="selectList" parameterType="HashMap" resultMap="TCKDCO_Map">
+    	SELECT AUTH.ROLE_CODE
+		     , SYS.GROUP_CODE
+		     , SYS.SYSTEM_CODE
+		     , DCO.EVENT_YMD
+		     , SYS.SYSTEM_NAME AS DB_NAME
+		     , DCO.DB_NAME AS DB_SID
+		     , DCO.OWNER
+		     , DCO.OBJECT_NAME
+		     , TBL.COMMENTS
+		     , DCO.OBJECT_TYPE
+		     , DCO.CREATED_YMD || DCO.CREATED_TIME   AS CREATED_DATE
+		     , DCO.LAST_DDL_YMD || DCO.LAST_DDL_TIME AS LAST_DDL_DATE
+		     , DCO.STATUS
+		     , DCO.CONFIRM_GUBN
+		     , DCO.CONFIRM_YN
+		     , DCO.CONFIRM_DATE
+		     , DCO.CONFIRM_EMPNO
+		FROM TCKDCO DCO, TCKSYS SYS, TCKTBL TBL, (
+		    SELECT C.GROUP_CODE,
+		           C.SYSTEM_CODE,
+		           C.DB_SID,
+		           A.EMPNO,
+		           A.ROLE_CODE
+		      FROM TCKRMU A,
+		           TCKRMS B,
+		           TCKSYS C
+		     WHERE A.ROLE_CODE = B.ROLE_CODE
+		       AND B.GROUP_CODE = C.GROUP_CODE
+		       AND B.SYSTEM_CODE = C.SYSTEM_CODE
+		      <if test="empNo != '' and empNo != null">
+		       AND A.EMPNO = #{empNo}
+		      </if>
+		) AUTH
+		WHERE 1=1
+		    AND DCO.DB_NAME = SYS.DB_SID
+		    AND SYS.GROUP_CODE = AUTH.GROUP_CODE
+		    AND SYS.SYSTEM_CODE = AUTH.SYSTEM_CODE
+		    AND DCO.DB_NAME = TBL.DB_SID
+		    AND DCO.OWNER = TBL.OWNER
+		    AND DCO.OBJECT_NAME = TBL.OBJECT_NAME
+		    AND (DCO.CONFIRM_YN = 'N' OR DCO.CONFIRM_YN IS NULL)
+       	 <if test="dbName != '' and dbName != null">
+		 	AND DCO.DB_NAME = #{dbName}
+		 </if>
+       	 <if test="owner != '' and owner != null">
+		 	AND DCO.OWNER = #{owner}
+		 </if>
+       	 <if test="objectType != '' and objectType != null">
+		 	AND DCO.OBJECT_TYPE = #{objectType}
+		 </if>
+       	 <if test="objectName != '' and objectName != null">
+		 	AND DCO.OBJECT_NAME LIKE '%'|| #{objectName} || '%'
+		 </if>
+    </select>
+    
+    <resultMap id="COL_MAP" type="java.util.HashMap">
+        <result column="DB_SID"           	property="DB_SID"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="OWNER"     			property="OWNER"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="TABLE_NAME"     	property="TABLE_NAME"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="COLUMN_NAME"     	property="COLUMN_NAME"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="DATA_TYPE"     		property="DATA_TYPE"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="DATA_LENGTH"     	property="DATA_LENGTH"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="NULLABLE"    		property="NULLABLE"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="COMMENTS"    		property="COMMENTS"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CHANGE_GUBN"        property="CHANGE_GUBN"	    javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>
+    
+    
+    <select id="selectColList" resultMap="COL_MAP" parameterType="HashMap">
+    	SELECT A.*,
+    	       CASE 
+    	           WHEN B.DB_NAME IS NULL THEN 'A'
+    	           WHEN A.DATA_TYPE != B.DATA_TYPE THEN 'D'
+    	           WHEN A.DATA_LENGTH != B.DATA_LENGTH THEN 'L'
+    	           ELSE 'N'
+    	       END AS CHANGE_GUBN
+    	  FROM TCKCOL A,
+    	       (SELECT *
+    	          FROM TCKCCS A
+    	         WHERE DB_NAME = #{dbName}
+    	           AND OWNER = #{owner}
+    	           AND OBJECT_NAME = #{tableName}
+    	           AND EVENT_SEQ = (SELECT NVL(MAX(EVENT_SEQ), 1) -1
+    	                              FROM TCKCCS B
+    	                             WHERE B.DB_NAME = A.DB_NAME
+    	                               AND B.OWNER = A.OWNER
+    	                               AND B.OBJECT_NAME = A.OBJECT_NAME)) B
+    	 WHERE A.DB_SID = B.DB_NAME(+)
+    	   AND A.OWNER = B.OWNER(+)
+    	   AND A.TABLE_NAME = B.OBJECT_NAME(+)
+    	   AND A.COLUMN_NAME = B.COLUMN_NAME(+)
+    	   AND A.DB_SID = #{dbName}
+    	   AND A.OWNER = #{owner}
+    	   AND A.TABLE_NAME = #{tableName}
+        ORDER BY COLUMN_ID
+    </select>
+    
+    
+    <!-- <select id="selectColList" resultMap="COL_MAP" parameterType="HashMap">
+    	SELECT TA.*,
+    		TB.PERSONALINFO_YN
+		FROM TCKCOL TA,
+			TCKCOL_ADD TB
+		WHERE 1=1
+		    AND TA.DB_SID = TB.DB_SID(+)
+		    AND TA.OWNER = TB.OWNER(+)
+		    AND TA.TABLE_NAME = TB.TABLE_NAME(+)
+		    AND TA.COLUMN_NAME = TB.COLUMN_NAME(+)
+		    AND TA.DB_SID = #{dbName}
+		    AND TA.OWNER = #{owner}
+		    AND TA.TABLE_NAME = #{tableName}
+        ORDER BY TA.COLUMN_ID
+    </select> -->
+    
+    <update id="updateAuthedData" parameterType="HashMap">
+    	UPDATE TCKDCO
+    	   SET CONFIRM_DATE = SYSDATE
+    	     , CONFIRM_EMPNO = #{empNo}
+    	     , CONFIRM_YN = 'Y'
+    	 WHERE 1=1
+    	   AND EVENT_YMD = #{eventYmd}
+    	   AND DB_NAME = #{dbName}
+    	   AND OWNER = #{owner}
+    	   AND OBJECT_NAME = #{objectName}
+    	   AND OBJECT_TYPE = #{objectType}
+    </update>
+    
+</mapper> 

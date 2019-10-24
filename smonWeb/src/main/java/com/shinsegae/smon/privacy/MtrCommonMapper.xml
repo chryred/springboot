@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.shinsegae.smon.privacy.MtrCommonMapper">
+    
+    <resultMap id="commonComboMap" type="java.util.HashMap">
+        <result column="KEY"          property="KEY"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="NAME"         property="NAME"		javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>
+    
+     
+    <select id="selectTeamComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT GROUP_CODE AS KEY
+    		 , GROUP_NAME AS NAME
+    	  FROM TCKGRP
+    	 WHERE 1=1
+    	   AND LV = 2
+    </select>
+    
+    <select id="selectSystemComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT DB_SID AS KEY
+    		 , SYSTEM_NAME AS NAME
+    	  FROM TCKSYS
+    	 WHERE 1=1
+    	   AND GROUP_CODE = #{groupCode}
+    </select>
+    
+    <select id="selectOwnerComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT USERNAME AS KEY
+			 , USERNAME AS NAME
+		FROM
+			TCKDBU
+		WHERE
+			1=1
+			AND DB_SID = #{dbName}
+    </select>
+    
+    <select id="selectSaveTypeComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT ETC_NAME AS KEY
+    		 , ETC_NAME AS NAME
+    	  FROM TCKETC
+    	 WHERE 1=1
+    	   AND ETC_GUBN = '002'
+    </select>
+    
+    <select id="selectObjectTypeComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT ETC_NAME AS KEY
+    		 , ETC_NAME AS NAME
+    	  FROM TCKETC
+    	 WHERE 1=1
+    	   AND ETC_GUBN = '004'
+    </select>
+    
+    <select id="selectPersonalInfoTypeComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT ETC_NAME AS KEY
+    		 , ETC_NAME AS NAME
+    	  FROM TCKETC
+    	 WHERE 1=1
+    	   AND ETC_GUBN = '001'
+    </select>
+    
+    <select id="selectDataTypeComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT ETC_NAME AS KEY
+    		 , ETC_NAME AS NAME
+    	  FROM TCKETC
+    	 WHERE 1=1
+    	   AND ETC_GUBN = '005'
+    </select>
+    
+    <select id="selectActionTypeComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT ETC_NAME AS KEY
+    		 , ETC_NAME AS NAME
+    	  FROM TCKETC
+    	 WHERE 1=1
+    	   AND ETC_GUBN = '003'
+    </select>
+    
+    <select id="selectWorkComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT WORK_CODE AS KEY
+    		 , WORK_NAME AS NAME
+    	  FROM TCKWRK
+    	 WHERE 1=1
+      GROUP BY WORK_CODE, WORK_NAME
+    </select>
+    
+    <select id="selectEffectComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT		COM_CODE AS KEY
+    		  	,	COM_NAME AS NAME
+    	FROM		STUDY.T_INCIDENT_COM
+    	WHERE 		1=1
+    	AND			COM_GUBN = '002'	
+        GROUP BY 	COM_CODE, COM_NAME
+    </select>
+    
+    <select id="selectEffectRangeComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT 		COM_CODE AS KEY
+    		 	, 	COM_NAME AS NAME
+    	FROM 		STUDY.T_INCIDENT_COM
+    	WHERE 		1=1
+    	AND			COM_GUBN = '004'	
+        GROUP BY 	COM_CODE, COM_NAME
+    </select>
+    
+    <select id="selectTargetSystemComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT		COM_CODE AS KEY
+    		 	, 	COM_NAME AS NAME
+    	FROM 		STUDY.T_INCIDENT_COM
+        WHERE		1=1
+        AND			COM_GUBN = '001'	
+        GROUP BY 	COM_CODE, COM_NAME
+    </select>
+    
+    <select id="selectStatusComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT 		COM_CODE AS KEY
+    		 	, 	COM_NAME AS NAME
+    	FROM 		STUDY.T_INCIDENT_COM
+    	WHERE 		1=1
+    	AND			COM_GUBN = '005'	
+        GROUP BY	COM_CODE, COM_NAME
+    </select>
+    
+    <select id="selectDefectGradeComboList" resultMap="commonComboMap" parameterType="HashMap">
+    	SELECT 		COM_CODE AS KEY
+    		 	, 	COM_NAME AS NAME
+    	FROM 		STUDY.T_INCIDENT_COM
+    	WHERE 		1=1
+    	AND			COM_GUBN = '006'	
+        GROUP BY	COM_CODE, COM_NAME
+    </select>
+</mapper> 

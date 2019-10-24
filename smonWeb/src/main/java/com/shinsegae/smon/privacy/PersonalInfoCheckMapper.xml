@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.shinsegae.smon.privacy.PersonalInfoCheckMapper">
+
+	<select id="selectPersonalInfoList_bak" resultType="HashMap" parameterType="HashMap">
+		SELECT  SYSTEM_NAME AS DB_SID
+                <if test='group != "D"'>
+                    ,OWNER
+                    <if test='group != "O"'>
+                        ,TABLE_NAME
+                    </if>
+                </if>
+                ,
+                TOTAL_CNT,
+                ACCOUNT_SUM,
+                ADDRESS_SUM,
+                BIO_SUM,
+                CARD_SUM,
+                CUSTID_SUM,
+                DRIVER_SUM,
+                EMAIL_SUM,
+                PHONE_SUM,
+                SSN_SUM,
+                MEMO_SUM,
+                PASSPORT_SUM,
+                PASSWORD_SUM,
+                VEHICLENUMBER_SUM,
+                (TOTAL_CNT - ACCOUNT_SUM
+                       		    - ADDRESS_SUM
+                       		    - BIO_SUM
+        	                    - CARD_SUM
+        	                    - CUSTID_SUM
+        	                    - DRIVER_SUM
+        	                    - EMAIL_SUM
+        	                    - PHONE_SUM
+        	                    - SSN_SUM
+        	                    - MEMO_SUM
+        	                    - PASSPORT_SUM
+        	                    - PASSWORD_SUM
+        	                    - VEHICLENUMBER_SUM) AS ETC_SUM
+          FROM (SELECT A.DB_SID
+                       <if test='group != "D"'>
+                            ,A.OWNER
+                            <if test='group != "O"'>
+                                ,A.TABLE_NAME
+                            </if>
+                        </if>
+                       ,COUNT(*)                                             AS TOTAL_CNT,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^AC', 1, 0)) AS ACCOUNT_SUM,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^AD', 1, 0)) AS ADDRESS_SUM,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^BO', 1, 0)) AS BIO_SUM,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^CD', 1, 0)) AS CARD_SUM,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^CI', 1, 0))  AS CUSTID_SUM,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^DL', 1, 0)) AS DRIVER_SUM,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^EM', 1, 0)) AS EMAIL_SUM,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^PH', 1, 0)) AS PHONE_SUM,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^SN', 1, 0)) AS SSN_SUM,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^MO', 1, 0)) AS MEMO_SUM,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^PP', 1, 0)) AS PASSPORT_SUM,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^PW', 1, 0)) AS PASSWORD_SUM,
+                       SUM(DECODE(SUBSTR(A.COMMENTS, 0, 6), 'ENC^VN', 1, 0)) AS VEHICLENUMBER_SUM
+                  FROM TCKCOL     A,
+                       TCKCOL_ADD B
+                 WHERE A.DB_SID = B.DB_SID
+                   AND A.OWNER = B.OWNER
+                   	<if test="dbName != '' and dbName != null">
+        			   		AND A.DB_SID = #{dbName}
+        			</if>
+        			<if test="owner != '' and owner != null">
+        					AND A.OWNER = #{owner}
+        			</if>
+                   AND A.TABLE_NAME = B.TABLE_NAME
+                   AND A.COLUMN_NAME = B.COLUMN_NAME
+                   AND B.PERSONALINFO_YN = 'Y'
+                GROUP BY A.DB_SID
+                <if test='group != "D"'>
+                    , A.OWNER
+                    <if test='group != "O"'>
+                        , A.TABLE_NAME
+                    </if>
+                </if>
+                ) A,
+             TCKSYS B
+      WHERE A.DB_SID (+) = B.DB_SID
+      ORDER BY B.SYSTEM_CODE
+    </select>
+    
+    <select id="selectPersonalInfoList" resultType="HashMap" parameterType="HashMap">
+        SELECT DB_NAME,
+               TOT_OBJ_CNT,
+               TOT_COL_CNT,
+               NOT_CHECK_TAB_SUM,
+               NOT_CHECK_SUM,
+               PROGRESS_PERCENTAGE,
+               TOT_PERINFO_SUM,
+               ACCOUNT_SUM,
+               ADDRESS_SUM,
+               BIO_SUM,
+               CARD_SUM,
+               CUSTID_SUM,
+               DRIVER_SUM,
+               EMAIL_SUM,
+               PHONE_SUM,
+               SSN_SUM,
+               MEMO_SUM,
+               PASSPORT_SUM,
+               PASSWORD_SUM,
+               VEHICLENUMBER_SUM,
+               ETC_SUM
+          FROM TCKTDO
+         WHERE TOTAL_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+        ORDER BY PROGRESS_PERCENTAGE, TOT_OBJ_CNT
+    </select>
+    
+    
+    
+    <select id="selectComboDBName" resultType="HashMap">
+		SELECT DISTINCT DB_SID
+		FROM TCKDBU 
+    </select>
+
+    <select id="selectComboOwner" parameterType="HashMap" resultType="HashMap">
+    	SELECT DISTINCT USERNAME
+		FROM TCKDBU
+		WHERE 1=1
+		 AND DB_SID = #{dbName}
+    </select>
+    
+    <insert id="insertPersonalInfoException" parameterType="HashMap">
+    	INSERT INTO TCKPER_EX VALUES(
+    		#{dbName},
+    		#{owner},
+    		#{tableName},
+    		#{columnName},
+    		#{tableComment},
+    		#{columnComment},
+    		SYSDATE
+    	)
+    </insert>
+    
+    <select id="selectPersonalInfoProgressGraphList" resultType="HashMap" parameterType="HashMap">
+	    SELECT
+			A.CHECK_YMD,
+			A.CHECK_GUBN,
+			A.DB_NAME,
+			COUNT(A.CHECK_GUBN) AS CNT
+		FROM
+			TCKPER A
+		WHERE
+			NOT EXISTS(
+				SELECT 1
+				FROM TCKPER_EX B
+				WHERE A.DB_NAME = B.DB_NAME
+				AND A.OWNER = B.OWNER
+				AND A.TABLE_NAME = B.TABLE_NAME
+				AND A.COLUMN_NAME = B.COLUMN_NAME
+				AND A.CHECK_YMD = TO_CHAR(B.ENT_DATE, 'YYYYMMDD')
+			)
+		  		AND CHECK_YMD BETWEEN #{checkStartDate} AND #{checkEndDate}
+		  	GROUP BY A.CHECK_YMD, A.CHECK_GUBN, A.DB_NAME
+		  	ORDER BY
+		  		A.CHECK_YMD ASC
+    </select>
+    
+    <select id="selectPersonalInfoProgressGraphList2" resultType="HashMap" parameterType="HashMap">
+		SELECT
+			SUBSTR(CHECK_YMD, 0, 6) AS CHECK_YM,
+			DB_NAME                 AS DB_NAME,
+			CHECK_GUBN              AS CHECK_GUBN,
+			COUNT(1)                AS CNT
+		FROM (
+			SELECT
+				*
+			FROM
+				TCKPER
+			WHERE
+				SUBSTR(CHECK_YMD, 0, 6) BETWEEN  TO_CHAR(ADD_MONTHS(TO_DATE(#{checkEndDate}, 'YYYYMM'), -12), 'YYYYMM') AND #{checkEndDate}
+				AND (
+					(CHECK_YMD = TO_CHAR(LAST_DAY(TO_DATE(SUBSTR(CHECK_YMD, 0, 6), 'YYYYMM')), 'YYYYMMDD'))
+					OR
+					(CHECK_YMD = TO_CHAR(SYSDATE-1, 'YYYYMMDD')
+				)
+			)
+		)
+		GROUP BY
+			SUBSTR(CHECK_YMD, 0, 6), DB_NAME, CHECK_GUBN
+    </select>
+    
+    <select id="selectPersonalInfoDetailList" resultType="HashMap" parameterType="HashMap">
+		SELECT
+			*
+		FROM
+			TCKPER A
+		WHERE
+			NOT EXISTS(
+				SELECT 1
+				FROM TCKPER_EX B
+				WHERE A.DB_NAME = B.DB_NAME
+				AND A.OWNER = B.OWNER
+				AND A.TABLE_NAME = B.TABLE_NAME
+				AND A.COLUMN_NAME = B.COLUMN_NAME
+				AND A.CHECK_YMD = TO_CHAR(B.ENT_DATE, 'YYYYMMDD')
+			)
+    </select>
+	
+ </mapper>
+
+    

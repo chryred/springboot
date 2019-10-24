@@ -24,4 +24,6 @@ public class SmonWebApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SmonWebApplication.class, args);
 	}
+	
+	
 }
