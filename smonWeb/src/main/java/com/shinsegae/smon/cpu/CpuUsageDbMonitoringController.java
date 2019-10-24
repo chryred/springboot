@@ -51,29 +51,5 @@ public class CpuUsageDbMonitoringController {
 		    
 		    return data;
 		}
-		
-		@RequestMapping(value="/sslInfo")
-	    public ModelAndView sslInfoManagement(Locale locale, Model model) {
-
-	        ModelAndView view = new ModelAndView("mtr/detail/ssl/sslInfoManagement");
-	        
-	        return view;
-	    }
-		
-		
-		@RequestMapping("/sslInfoDataTables")
-		public @ResponseBody String sslInfoDataTables() {
-		    
-		    String data ="";
-		   
-		    try{
-		        data = json.setJsonData(cpuUsageDbMonitoringService.sslInfoDataTables());
-		    }catch(Exception e){
-		        e.printStackTrace();
-		        data = null;
-		    }
-		    
-		    return data;
-		}
 
 }
