@@ -13,7 +13,5 @@ public interface CpuUsageDbMonitoringMapper {
     List<HashMap<String, Object>> selectCpuUsageList(HashMap<String, String> map) throws Exception;
 
 	List<HashMap<String, Object>> selectStatusOfInterlocking()  throws Exception;
-
-	List<HashMap<String, Object>> sslInfoDataTables() throws Exception;
 	
 }
