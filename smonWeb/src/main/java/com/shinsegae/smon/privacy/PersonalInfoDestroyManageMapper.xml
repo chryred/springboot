@@ -14,13 +14,16 @@
     </resultMap>
  
     <select id="selectDestroyTableList2" resultMap="DES_TABLE_MAP" parameterType="HashMap">
-    	SELECT TA.*, COUNT(*) OVER(PARTITION BY TA.IF_YMD) AS TOTCNT, ROWNUM AS RNUM
+  	 	SELECT TA.*, COUNT(*) OVER(PARTITION BY TA.IF_YMD) AS TOTCNT, ROWNUM AS RNUM
     			FROM 
     			TCKCMP TA
 				WHERE 1=1
 				<if test="ifYmd == null">
 			   		AND TA.IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
 			   	</if>
+			   	<![CDATA[	
+			   		AND CNT > 0
+			   	]]> 
 				<if test="dbName != '' and dbName != null">
 			   		AND TA.DB_NAME = #{dbName}
 			   	</if>
