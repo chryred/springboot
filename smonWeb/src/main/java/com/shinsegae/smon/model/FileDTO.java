@@ -1,4 +1,4 @@
-package com.shinsegae.smon.util;
+package com.shinsegae.smon.model;
 
 import org.springframework.web.multipart.MultipartFile;
 
