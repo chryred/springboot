@@ -17,10 +17,10 @@ import org.springframework.stereotype.Controller;
 public class ScheduleService {
 
 	@Autowired
-	ScheduleDAO dao;
+	ScheduleMapper dao;
 
 	@Autowired
-	@Qualifier("sqlSessionTemplateSOSS")
+	@Qualifier("sqlTemplatePrimary")
 	private SqlSessionTemplate session;
 
 	public List<HashMap<String, Object>> searchComboData(HashMap<String, String> map) throws Exception {

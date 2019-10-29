@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinsegae.smon.issue.ScheduleMapper">
+
+    <select id="searchComboData" resultType="hashmap">
+        SELECT PROJECT_ID          AS ID,
+               PROJECT_NAME        AS NAME
+          FROM PJTMST
+         WHERE 'PROJECT'= #{comboID}
+           AND PROJECT_ID = '0003'
+        UNION ALL
+        SELECT ID,
+               NAME
+          FROM (
+                SELECT PROJECT_SUB_ID       AS ID,
+                       PROJECT_SUB_NAME     AS NAME
+                  FROM PJTDTL
+                 WHERE 'PROJECT_SUB' = #{comboID}
+                   AND PROJECT_ID = #{project}
+                ORDER BY PROJECT_SUB_ID DESC
+               )
+        UNION ALL
+        SELECT '%'                  AS ID,
+               'ALL'               AS NAME
+          FROM DUAL
+         WHERE #{comboID} IN ('SYSTEM', 'CATEGORY')
+        UNION ALL
+        SELECT DISTINCT
+               A.SYSTEM_ID           AS ID,
+               A.SYSTEM_NAME         AS NAME
+          FROM SYSTEMS    A,
+               PJTCHKLIST B
+         WHERE A.SYSTEM_ID = B.SYSTEM_ID
+           AND 'SYSTEM' = #{comboID}
+           AND A.TEAM = #{team}
+           AND B.PROJECT_SUB_ID = #{projectSub}
+           AND B.PROJECT_ID = #{project}
+        UNION ALL
+        SELECT DISTINCT
+               A.CATEGORY_ID   AS CODE,
+               A.CATEGORY_NAME AS NAME
+          FROM STUDY.SYSCAT A,
+               STUDY.PJTCHKLIST B,
+               STUDY.SYSTEMS C
+         WHERE A.SYSTEM_ID = B.SYSTEM_ID
+           AND A.SYSTEM_ID = C.SYSTEM_ID
+           AND C.TEAM = #{team}
+           AND A.CATEGORY_ID = B.CATEGORY_ID
+           AND 'CATEGORY' = #{comboID}
+           AND A.SYSTEM_ID = #{system}
+           AND B.PROJECT_SUB_ID = #{projectSub}
+           AND B.PROJECT_ID = #{project}
+    </select>
+     
+    <select id="searchProjectGridData" resultType="hashmap" parameterType="hashmap">
+        SELECT 'R' AS CRUD ,
+               B.PROJECT_NAME,
+               F.PROJECT_SUB_NAME,
+               D.SYSTEM_NAME,
+               E.CATEGORY_NAME,
+               REPLACE(C.SYSTEM_CHECK_NM, chr(13), '\\') AS SYSTEM_CHECK_NM,
+               CASE 
+                    WHEN PLAN_START_DATE IS NULL THEN  TO_CHAR(TO_DATE(DDAY, 'YYYYMMDD') - DUE_DDAY, 'YYYY-MM-DD')
+                    ELSE SUBSTR(PLAN_START_DATE, 0, 4) || '-' ||
+                         SUBSTR(PLAN_START_DATE, 5, 2) || '-' ||
+                         SUBSTR(PLAN_START_DATE, 7, 2)
+               END  AS PLAN_START_DATE,
+               CASE 
+                    WHEN PLAN_END_DATE IS NULL THEN  TO_CHAR(TO_DATE(DDAY, 'YYYYMMDD') - DUE_DDAY, 'YYYY-MM-DD')
+                    ELSE SUBSTR(PLAN_END_DATE, 0, 4) || '-' ||
+                         SUBSTR(PLAN_END_DATE, 5, 2) || '-' ||
+                         SUBSTR(PLAN_END_DATE, 7, 2)
+               END  AS PLAN_END_DATE,
+               CASE 
+                    WHEN A.START_DATE IS NULL THEN ''
+                    ELSE SUBSTR(A.START_DATE, 0, 4) || '-' ||
+                         SUBSTR(A.START_DATE, 5, 2) || '-' ||
+                         SUBSTR(A.START_DATE, 7, 2)
+               END  AS START_DATE,
+               CASE 
+                    WHEN A.COMPLETE_DATE IS NULL THEN ''
+                    ELSE SUBSTR(A.COMPLETE_DATE, 0, 4) || '-' ||
+                         SUBSTR(A.COMPLETE_DATE, 5, 2) || '-' ||
+                         SUBSTR(A.COMPLETE_DATE, 7, 2)
+               END  AS COMPLETE_DATE,
+               A.MEMO,
+               A.PROJECT_ID,
+               A.PROJECT_SUB_ID,
+               A.SYSTEM_CHECK_ID,
+               NVL(
+               (SELECT EMP_NAME
+                  FROM TCOUSR G
+                 WHERE C.EMPNO = G.EMPNO), C.EMPNO) AS EMP_NAME,
+               EXCEPT_YN               AS EXCEPT_YN
+          FROM PJTCHKLIST A,
+               PJTMST     B,
+               CHECKS     C,
+               SYSTEMS    D,
+               SYSCAT     E,
+               PJTDTL     F
+         WHERE A.PROJECT_ID = B.PROJECT_ID
+           AND A.SYSTEM_CHECK_ID = C.SYSTEM_CHECK_ID
+           AND A.SYSTEM_ID = D.SYSTEM_ID
+           AND A.SYSTEM_ID = E.SYSTEM_ID
+           AND A.CATEGORY_ID = E.CATEGORY_ID
+           AND A.PROJECT_ID = F.PROJECT_ID
+           AND A.PROJECT_SUB_ID = F.PROJECT_SUB_ID
+           AND A.PROJECT_ID = #{project}
+           AND A.PROJECT_SUB_ID = #{projectSub}
+           AND A.SYSTEM_ID LIKE #{system} || '%'
+           AND A.CATEGORY_ID LIKE #{category} || '%'
+           AND D.TEAM = #{team}
+        ORDER BY A.SYSTEM_ID, A.CATEGORY_ID, NVL(A.PLAN_START_DATE, TO_CHAR(SYSDATE, 'YYYYMMDD'))
+    </select>
+    
+    <select id="searchAllData" resultType="hashmap" parameterType="hashmap">
+    <![CDATA[
+        SELECT (SELECT TEAM_NAME
+                  FROM TEAMS 
+                 WHERE TEAM = TEAM_CODE) AS TEAM,
+               TOT_CNT,
+               PLAN_CNT,
+               CNT,
+               ROUND((PLAN_CNT / TOT_CNT) * 100, 1) || '%' AS PLAN_RATE,
+               ROUND((CNT / TOT_CNT) * 100, 1) || '%' AS RATE,
+               ROUND(CASE 
+                         WHEN ROUND((PLAN_CNT / TOT_CNT) * 100, 1) =0 THEN 0
+                         ELSE ROUND((CNT / TOT_CNT) * 100, 1) / ROUND((PLAN_CNT / TOT_CNT) * 100, 1) 
+                     END, 1) || '%' AS DALSUNG
+          FROM (
+                SELECT B.TEAM,
+                       COUNT(1) AS TOT_CNT,
+                       SUM(CASE 
+                               WHEN PLAN_END_DATE <= TO_CHAR(SYSDATE, 'YYYYMMDD') THEN 1
+                               ELSE 0
+                           END) AS PLAN_CNT,
+                       SUM(CASE 
+                               WHEN START_DATE IS NOT NULL AND COMPLETE_DATE IS NOT NULL THEN 1
+                               ELSE 0
+                           END) AS CNT 
+                  FROM PJTCHKLIST A,
+                       SYSTEMS    B
+                 WHERE A.PROJECT_ID = #{project}
+                   AND A.PROJECT_SUB_ID = #{projectSub}
+                   AND A.SYSTEM_ID = B.SYSTEM_ID
+                   AND A.EXCEPT_YN = 'F'
+                GROUP BY B.TEAM)
+    UNION ALL
+    SELECT (SELECT TEAM_NAME
+              FROM TEAMS 
+             WHERE 't000' = TEAM_CODE) AS TEAM,
+           TOT_CNT,
+           PLAN_CNT,
+           CNT,
+           ROUND((PLAN_CNT / TOT_CNT) * 100, 1) || '%' AS PLAN_RATE,
+           ROUND((CNT / TOT_CNT) * 100, 1) || '%' AS RATE,
+           ROUND(CASE 
+                     WHEN ROUND((PLAN_CNT / TOT_CNT) * 100, 1) =0 THEN 0
+                     ELSE ROUND((CNT / TOT_CNT) * 100, 1) / ROUND((PLAN_CNT / TOT_CNT) * 100, 1) 
+                 END, 1) || '%' AS DALSUNG
+      FROM (
+            SELECT COUNT(1) AS TOT_CNT,
+                   SUM(CASE 
+                           WHEN PLAN_END_DATE <= TO_CHAR(SYSDATE, 'YYYYMMDD') THEN 1
+                           ELSE 0
+                       END) AS PLAN_CNT,
+                   SUM(CASE 
+                           WHEN START_DATE IS NOT NULL AND COMPLETE_DATE IS NOT NULL THEN 1
+                           ELSE 0
+                       END) AS CNT 
+              FROM PJTCHKLIST A,
+                   SYSTEMS    B
+             WHERE A.PROJECT_ID = #{project}
+               AND A.PROJECT_SUB_ID = #{projectSub}
+               AND A.SYSTEM_ID = B.SYSTEM_ID
+               AND A.EXCEPT_YN = 'F')
+    ]]> 
+    </select>
+    
+    <update id="updateRow" parameterType="net.sf.json.JSONObject">
+    	UPDATE STUDY.PJTCHKLIST SET PLAN_START_DATE = REPLACE(#{PLAN_START_DATE}, '-', ''),
+                            PLAN_END_DATE = REPLACE(#{PLAN_END_DATE}, '-', ''),
+                            START_DATE = REPLACE(#{START_DATE}, '-', ''),
+                            COMPLETE_DATE = REPLACE(#{COMPLETE_DATE}, '-', ''),
+                            MEMO = #{MEMO, jdbcType = VARCHAR},
+                            EXCEPT_YN = #{EXCEPT_YN}
+         WHERE PROJECT_ID = #{PROJECT_ID}
+           AND PROJECT_SUB_ID = #{PROJECT_SUB_ID}
+           AND SYSTEM_CHECK_ID = #{SYSTEM_CHECK_ID} 
+    </update>
+    
+</mapper> 
