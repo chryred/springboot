@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.shinsegae.smon.schedule.config.SpringScheduleService;
 import com.shinsegae.smon.util.CastingJson;
 
 @Controller
@@ -69,7 +68,6 @@ public class ScheduleController {
         return data;
     }
 
-    
     @RequestMapping("/saveProjectData")
     public @ResponseBody String tranPgm(@RequestParam HashMap<String,String> map) {
         List list = new ArrayList();
