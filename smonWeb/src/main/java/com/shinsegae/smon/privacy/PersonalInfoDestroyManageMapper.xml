@@ -3,17 +3,19 @@
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
      
 <mapper namespace="com.shinsegae.smon.privacy.PersonalInfoDestroyManageMapper">
-	<resultMap id="DES_TABLE_MAP" type="java.util.HashMap">
-		<result column="IF_YMD"           	property="IF_YMD"			javaType="string"  jdbcType="VARCHAR" /> 
+	<resultMap id="DIC_TABLE_MAP" type="java.util.HashMap">
         <result column="DB_NAME"           	property="DB_NAME"			javaType="string"  jdbcType="VARCHAR" /> 
         <result column="OWNER"     			property="OWNER"			javaType="string"  jdbcType="VARCHAR" /> 
         <result column="TABLE_NAME"     	property="TABLE_NAME"		javaType="string"  jdbcType="VARCHAR" /> 
         <result column="SQL"     			property="SQL"				javaType="string"  jdbcType="VARCHAR" /> 
-        <result column="INFO"	     		property="INFO"				javaType="string"  jdbcType="VARCHAR" /> 
-        <result column="CNT"    			property="CNT"				javaType="Integer" jdbcType="NUMERIC" /> 
+        <result column="INFO"     			property="INFO"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="TOTCNT"    			property="TOTCNT"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="DSTRCTN_NMBR"    	property="DSTRCTN_NMBR"   	javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="DSTRCTN_CYCL"    	property="DSTRCTN_CYCL"	    javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="DSTRCTN_STNDRD"    	property="DSTRCTN_STNDRD"	javaType="string"  jdbcType="VARCHAR" /> 
     </resultMap>
- 
-    <select id="selectDestroyTableList" resultMap="DES_TABLE_MAP" parameterType="HashMap">
+    
+    <select id="selectDestroyTableList" resultMap="DIC_TABLE_MAP" parameterType="HashMap">
     	SELECT DB_NAME,
     		   OWNER,
     		   TABLE_NAME,
