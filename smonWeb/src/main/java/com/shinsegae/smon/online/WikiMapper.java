@@ -3,9 +3,9 @@ package com.shinsegae.smon.online;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Mapper;
 
-@Repository
+@Mapper
 public interface WikiMapper {
 
 	public List<HashMap<String, Object>> selectList(HashMap<String, Object> params);

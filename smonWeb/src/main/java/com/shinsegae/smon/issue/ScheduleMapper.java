@@ -3,10 +3,10 @@ package com.shinsegae.smon.issue;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.stereotype.Repository;
 
-@Repository
+@Mapper
 public interface ScheduleMapper {
 
 	public List<HashMap<String, Object>> searchComboData(SqlSessionTemplate session, HashMap<String, String> map) throws Exception;
