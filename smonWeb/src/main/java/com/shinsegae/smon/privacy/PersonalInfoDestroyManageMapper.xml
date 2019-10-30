@@ -13,7 +13,7 @@
         <result column="CNT"    			property="CNT"				javaType="Integer" jdbcType="NUMERIC" /> 
     </resultMap>
  
-    <select id="selectDestroyTableList" resultMap="DIC_TABLE_MAP" parameterType="HashMap">
+    <select id="selectDestroyTableList" resultMap="DES_TABLE_MAP" parameterType="HashMap">
     	SELECT DB_NAME,
     		   OWNER,
     		   TABLE_NAME,
