@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.shinsegae.smon.online.WikiMapper;
@@ -15,29 +17,29 @@ import com.shinsegae.smon.util.ConstantsInterface;
 public class WikiService {
 	
 	@Autowired
-	WikiMapper wikiDao;
+	@Qualifier("sqlSessionTemplatePrimary")
+	SqlSessionTemplate sqlSessionTemplatePrimary;
 	
 	public List<HashMap<String, Object>> selectList(HashMap<String, Object> params) {
-		return wikiDao.selectList(params);
+		return sqlSessionTemplatePrimary.getMapper(WikiMapper.class).selectList(params);
 	}
 
 	public HashMap<String, Object> selectWiki(HashMap<String, Object> params) {
-		return wikiDao.selectWiki(params);
+		return sqlSessionTemplatePrimary.getMapper(WikiMapper.class).selectWiki(params);
 	}
 	
 	public void save(HashMap<String, Object> params) {
 		if(String.valueOf(params.get("isNew")).equals("1")) {
-			wikiDao.addWiki(params);
+			sqlSessionTemplatePrimary.getMapper(WikiMapper.class).addWiki(params);
 		} else if(String.valueOf(params.get("isNew")).equals("0")){
-			wikiDao.editWiki(params);
+			sqlSessionTemplatePrimary.getMapper(WikiMapper.class).editWiki(params);
 		} else {
 			System.out.println("isNew is empty...");
 		}
 	}
 
 	public String selectWikiSeq() {
-		
-		return wikiDao.selectWikiSeq();
+		return sqlSessionTemplatePrimary.getMapper(WikiMapper.class).selectWikiSeq();
 	}
 	
 	public ArrayList<HashMap<String,String>> selectFileList(String seq){
@@ -61,9 +63,7 @@ public class WikiService {
 			}
 		}
 		
-		
 		return fileArrayList;
-		
 	}
 	
 //	public List<HashMap<String, Object>> selectSystemComboList(HashMap<String, Object> params) {
