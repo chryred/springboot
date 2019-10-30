@@ -11,32 +11,27 @@ import net.sf.json.JSONSerializer;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ScheduleService {
 
 	@Autowired
-	ScheduleMapper dao;
+	@Qualifier("sqlSessionTemplatePrimary")
+	SqlSessionTemplate sqlSessionTemplatePrimary;
 
-	@Autowired
-	@Qualifier("sqlTemplatePrimary")
-	private SqlSessionTemplate session;
-
+	//return sqlSessionTemplatePrimary.getMapper(AdmMapper.class).getCountlistUser(paramCondition);
+	
 	public List<HashMap<String, Object>> searchComboData(HashMap<String, String> map) throws Exception {
-
-		return dao.searchComboData(session, map);
+		return sqlSessionTemplatePrimary.getMapper(ScheduleMapper.class).searchComboData(map);
 	}
 
 	public List<HashMap<String, Object>> searchProjectGridData(HashMap<String, String> map) throws Exception {
-
-		return dao.searchProjectGridData(session, map);
+		return sqlSessionTemplatePrimary.getMapper(ScheduleMapper.class).searchProjectGridData(map);
 	}
 
 	public List<HashMap<String, Object>> searchAllData(HashMap<String, String> map) throws Exception {
-
-		return dao.searchAllData(session, map);
+		return sqlSessionTemplatePrimary.getMapper(ScheduleMapper.class).searchAllData(map);
 	}
 
 	public void updateGrid(String gridData) throws Exception {
@@ -55,8 +50,7 @@ public class ScheduleService {
 	}
 
 	public void updateGrid(HashMap<String, String> map) throws Exception {
-
-		dao.updateRow(session, map);
+		sqlSessionTemplatePrimary.getMapper(ScheduleMapper.class).updateRow(map);
 	}
 
 }
