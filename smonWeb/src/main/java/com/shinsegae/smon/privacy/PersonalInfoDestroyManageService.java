@@ -15,9 +15,9 @@ public class PersonalInfoDestroyManageService {
 	@Qualifier("sqlSessionTemplatePrimary")
     private SqlSessionTemplate sqlSessionTemplatePrimary;
 	
-	public List<HashMap<String, Object>> selectDestroyTableList2(HashMap<String, Object> params){
+	public List<HashMap<String, Object>> selectDestroyTableList(HashMap<String, Object> params){
 		System.out.println("PersonalInfoDestroyManageService - selectDestroyTableList2 : params - " + params);
-		return sqlSessionTemplatePrimary.getMapper(PersonalInfoDestroyManageMapper.class).selectDestroyTableList2(params);
+		return sqlSessionTemplatePrimary.getMapper(PersonalInfoDestroyManageMapper.class).selectDestroyTableList(params);
 	}
 
 	/*
