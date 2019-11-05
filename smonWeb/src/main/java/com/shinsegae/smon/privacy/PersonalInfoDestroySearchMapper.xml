@@ -13,7 +13,7 @@
         <result column="CNT"    			property="CNT"				javaType="Integer"  jdbcType="NUMERIC" /> 
     </resultMap>
  
-    <select id="selectDestoryTableList2" resultMap="DES_TABLE_MAP" parameterType="HashMap">
+  <select id="selectDestoryTableList2" resultMap="DES_TABLE_MAP" parameterType="HashMap">
     	SELECT TA.*, COUNT(*) OVER(PARTITION BY TA.IF_YMD) AS TOTCNT, ROWNUM AS RNUM
     			FROM 
     			TCKCMP TA

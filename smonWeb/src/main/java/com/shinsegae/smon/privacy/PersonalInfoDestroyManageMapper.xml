@@ -1,107 +1,126 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-    
+     
 <mapper namespace="com.shinsegae.smon.privacy.PersonalInfoDestroyManageMapper">
-	<resultMap id="DES_TABLE_MAP" type="java.util.HashMap">
-		<result column="IF_YMD"           	property="IF_YMD"			javaType="string"  jdbcType="VARCHAR" /> 
+	<resultMap id="DIC_TABLE_MAP" type="java.util.HashMap">
         <result column="DB_NAME"           	property="DB_NAME"			javaType="string"  jdbcType="VARCHAR" /> 
         <result column="OWNER"     			property="OWNER"			javaType="string"  jdbcType="VARCHAR" /> 
         <result column="TABLE_NAME"     	property="TABLE_NAME"		javaType="string"  jdbcType="VARCHAR" /> 
         <result column="SQL"     			property="SQL"				javaType="string"  jdbcType="VARCHAR" /> 
-        <result column="INFO"	     		property="INFO"				javaType="string"  jdbcType="VARCHAR" /> 
-        <result column="CNT"    			property="CNT"				javaType="Integer" jdbcType="NUMERIC" /> 
+        <result column="INFO"     			property="INFO"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="TOTCNT"    			property="TOTCNT"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="DSTRCTN_NMBR"    	property="DSTRCTN_NMBR"   	javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="DSTRCTN_CYCL"    	property="DSTRCTN_CYCL"	    javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="DSTRCTN_STNDRD"    	property="DSTRCTN_STNDRD"	javaType="string"  jdbcType="VARCHAR" /> 
     </resultMap>
- 
-    <select id="selectDestroyTableList2" resultMap="DES_TABLE_MAP" parameterType="HashMap">
-    	SELECT TA.*, COUNT(*) OVER(PARTITION BY TA.IF_YMD) AS TOTCNT, ROWNUM AS RNUM
-    			FROM 
-    			TCKCMP TA
-				WHERE 1=1
-				<if test="ifYmd == null">
-			   		AND TA.IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
-			   	</if>
+    
+    <select id="selectDestroyTableList" resultMap="DIC_TABLE_MAP" parameterType="HashMap">
+    	SELECT DB_NAME,
+    		   OWNER,
+    		   TABLE_NAME,
+    		   SQL,
+    		   INFO,
+    		   COUNT(*) OVER() AS TOTCNT,
+    		   DSTRCTN_NMBR ,
+    		   DSTRCTN_CYCL ,
+    		   DSTRCTN_NMBR || ' ' || (SELECT ETC_NAME
+						                 FROM TCKETC B
+						                WHERE ETC_GUBN = '008'
+						                  AND B.ETC_CODE = A.DSTRCTN_CYCL) AS DSTRCTN_STNDRD
+    	  FROM PRSNL_INFO_CHCK A
+         WHERE 1=1
 				<if test="dbName != '' and dbName != null">
-			   		AND TA.DB_NAME = #{dbName}
+			   		AND DB_NAME = #{dbName}
 			   	</if>
 				<if test="owner != '' and owner != null">
-					AND TA.OWNER = #{owner}
+					AND OWNER = #{owner}
 				</if>
-				<if test="tablename != '' and tablename != null">
-					AND TA.TABLE_NAME = #{tableName}
+				<if test="tableName != '' and tableName != null">
+					AND TABLE_NAME = #{tableName}   
 				</if>
-				AND ROWNUM BETWEEN #{start} AND #{end}
-			 	ORDER BY 1, 2, 3
+				ORDER BY DB_NAME, OWNER, TABLE_NAME
+				
     </select>
-    <select id="selectDestroyTableList3" resultMap="DES_TABLE_MAP" parameterType="HashMap">
-    	SELECT * FROM 
-    			TCKCMP TA
-				WHERE 1=1
-    </select>
-    <resultMap id="DES_COL_MAP" type="java.util.HashMap">
-		<result column="IF_YMD"           	property="IF_YMD"			javaType="string"  jdbcType="VARCHAR" /> 
-        <result column="DB_NAME"           	property="DB_NAME"			javaType="string"  jdbcType="VARCHAR" /> 
-        <result column="OWNER"     			property="OWNER"			javaType="string"  jdbcType="VARCHAR" /> 
-        <result column="TABLE_NAME"     	property="TABLE_NAME"		javaType="string"  jdbcType="VARCHAR" /> 
-        <result column="SQL"     			property="SQL"				javaType="string"  jdbcType="VARCHAR" /> 
-        <result column="INFO"	     		property="INFO"				javaType="string"  jdbcType="VARCHAR" /> 
-        <result column="CNT"    			property="CNT"				javaType="Integer"  jdbcType="NUMERIC" /> 
-    </resultMap>
-    <select id="selectDestroyColList" resultMap="DES_COL_MAP" parameterType="HashMap">
-    	SELECT TA.*,
-		FROM TCKCMP TA
-		WHERE 1=1
-			--AND TA.IF_YMD = #{ifYmd}
-		    AND TA.DB_NAME = #{dbName}
-		    AND TA.OWNER = #{owner}
-    </select>
-    <select id="selectComboifYmd" resultType="HashMap">
-    	SELECT
-			DISTINCT IF_YMD
-		FROM
-			TCKCMP
-    </select>
+    
     <select id="selectComboDBName" resultType="HashMap">
-    	SELECT
-			DISTINCT DB_NAME
+    	SELECT SYSTEM_NAME AS DB_KOR_NAME,
+			   DB_SID AS DB_NAME
 		FROM
-			TCKCMP
-		WHERE
-			IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
-			<![CDATA[	
-			AND CNT > 0
-			]]> 
+			TCKSYS
     </select>
 
     <select id="selectComboOwner" parameterType="HashMap" resultType="HashMap">
     	SELECT
-			DISTINCT OWNER
+			DISTINCT DBU.USERNAME AS OWNER
 		FROM
-			TCKCMP
+			TCKDBU DBU
 		WHERE
 			1=1
 			<if test="dbName != '' and dbName != null">
-			AND DB_NAME = #{dbName}
+				AND DBU.DB_SID = #{dbName}
 			</if>
-			AND IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
-			<![CDATA[	
-			AND CNT > 0
-			]]>
     </select>
-    <select id="selectComboTableName" parameterType="HashMap" resultType="HashMap">
+    
+    <select id="selectComboTbname" parameterType="HashMap" resultType="HashMap">
     	SELECT
-			DISTINCT TABLE_NAME
+			DISTINCT OBJECT_NAME AS TABLE_NAME
 		FROM
-			TCKCMP
+			TCKTBL
 		WHERE
 			1=1
-			<if test="owner != '' and owner != null">
-			AND OWNER = #{owner}
+			AND OBJECT_TYPE = 'TABLE'
+			<if test="dbName != '' and dbName != null">
+				AND DB_SID = (SELECT DB_SID FROM TCKSYS WHERE SYSTEM_NAME = #{dbName}) 
 			</if>
-			AND IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
-			<![CDATA[	
-			AND CNT > 0
-			]]>
+			<if test="owner != '' and owner != null">
+				AND OWNER = #{owner}
+			</if>
     </select>
+    
+    <insert id="insertRowAddedInfo" parameterType="HashMap">
+    	INSERT INTO PRSNL_INFO_CHCK VALUES(
+    		#{dbName},
+    		#{owner},
+    		#{tableName},
+    		#{sqlData},
+    		#{info}
+    	)
+    </insert>
+    
+    <update id="updateRowAddedInfo" parameterType="HashMap">
+    	MERGE INTO PRSNL_INFO_CHCK PIC
+    	USING DUAL
+    	ON (
+    		PIC.DB_NAME = #{dbName}
+    		AND PIC.OWNER = #{owner}
+    		AND PIC.TABLE_NAME = #{tableName}
+    	)
+    	WHEN MATCHED THEN
+    		UPDATE SET SQL = #{sqlData},
+    		           DSTRCTN_CYCL = #{stndrdCycle},
+    		           DSTRCTN_NMBR = #{stndrdNmbr},
+    				   INFO = #{info}
+    	WHEN NOT MATCHED THEN
+    		INSERT VALUES (
+    			#{dbName},
+    			#{owner},
+    			#{tableName},
+    			#{sqlData},
+    			#{info},
+    			#{stndrdCycle},
+    			#{stndrdNmbr}
+    		)
+    </update>
+    
+    <delete id="deleteRowAddedInfo" parameterType="HashMap">
+    	DELETE FROM  
+    		PRSNL_INFO_CHCK PIC
+    	WHERE 1=1
+    	AND PIC.DB_NAME = #{dbName}
+    	AND PIC.OWNER = #{owner}
+    	AND PIC.TABLE_NAME = #{tableName}
+    	AND PIC.SQL = #{sqlData}
+    </delete>
     
 </mapper> 

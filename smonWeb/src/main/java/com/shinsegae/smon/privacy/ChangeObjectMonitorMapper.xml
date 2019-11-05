@@ -50,9 +50,7 @@
 		     WHERE A.ROLE_CODE = B.ROLE_CODE
 		       AND B.GROUP_CODE = C.GROUP_CODE
 		       AND B.SYSTEM_CODE = C.SYSTEM_CODE
-		      <if test="empNo != '' and empNo != null">
 		       AND A.EMPNO = #{empNo}
-		      </if>
 		) AUTH
 		WHERE 1=1
 		    AND DCO.DB_NAME = SYS.DB_SID

@@ -37,8 +37,4 @@ public class CpuUsageDbMonitoringService {
 		return sqlSessionTemplatePrimary.getMapper(CpuUsageDbMonitoringMapper.class).selectStatusOfInterlocking();
 	}
 
-	public List<HashMap<String, Object>> sslInfoDataTables() throws Exception{
-		// TODO Auto-generated method stub
-		return sqlSessionTemplatePrimary.getMapper(CpuUsageDbMonitoringMapper.class).sslInfoDataTables();
-	}
 }
