@@ -17,6 +17,7 @@
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<project.lib.path>${project.basedir}/src/main/webapp/WEB-INF/lib</project.lib.path>
 	</properties>	
 	
 	<dependencies>
@@ -72,7 +73,6 @@
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-log4j2</artifactId>
 	    </dependency>
-		
 		<dependency>
 		    <groupId>javax.servlet</groupId>
 		    <artifactId>jstl</artifactId>
@@ -81,41 +81,40 @@
 		    <groupId>org.apache.tomcat.embed</groupId>
 		    <artifactId>tomcat-embed-jasper</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
-
 		<dependency>
 		    <groupId>org.aspectj</groupId>
 		    <artifactId>aspectjweaver</artifactId>
 		</dependency>
-		
 		<dependency>
 		    <groupId>org.apache.servicemix.bundles</groupId>
 		    <artifactId>org.apache.servicemix.bundles.jasypt-spring31</artifactId>
 		    <version>1.9.2_1</version>
 		</dependency>
-		
 		<dependency>
 		    <groupId>commons-fileupload</groupId>
 		    <artifactId>commons-fileupload</artifactId>
 		    <version>1.4</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>net.sf.json-lib</groupId>
 			<artifactId>json-lib</artifactId>
 			<version>2.4</version>
 			<classifier>jdk15</classifier>
 		</dependency>
-		
 		<dependency>
 		    <groupId>com.jfinal</groupId>
 		    <artifactId>cos</artifactId>
 		    <version>2019.8</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20190722</version>
 		</dependency>
 		
 		<!-- local Repository -->
@@ -140,12 +139,6 @@
     		<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/blossom-push-1.0.0.jar</systemPath>
 		</dependency>
-	
-		<dependency>
-		    <groupId>org.json</groupId>
-		    <artifactId>json</artifactId>
-		    <version>20190722</version>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -155,7 +148,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			
-			<plugin>
+			<!-- plugin>
 	            <groupId>org.apache.maven.plugins</groupId>
 	            <artifactId>maven-dependency-plugin</artifactId>
 	            <executions>
@@ -171,7 +164,7 @@
 	                    </configuration>
 	                </execution>
 	            </executions>
-	        </plugin>
+	        </plugin -->
 		</plugins>
 		
 		<resources>
