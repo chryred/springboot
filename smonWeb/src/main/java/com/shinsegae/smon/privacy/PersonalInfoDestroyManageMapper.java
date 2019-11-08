@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface PersonalInfoDestroyManageMapper {
 	
-	List<HashMap<String, Object>> selectDestroyTableList2(HashMap<String, Object> params);
+	List<HashMap<String, Object>> selectDestroyTableList(HashMap<String, Object> params);
 
 	/*
 	 * public List<HashMap<String, Object>> list2(HashMap<String, Object> params) {

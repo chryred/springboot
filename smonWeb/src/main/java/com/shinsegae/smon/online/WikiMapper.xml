@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinsegae.smon.online.WikiMapper">
+    
+    <resultMap id="wikiMap" type="java.util.HashMap">
+        <result column="SEQ"        		property="SEQ"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="WORK_CODE"        	property="WORK_CODE"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="WORK_NAME"        	property="WORK_NAME"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="TITLE"				property="TITLE"        	javaType="string"  jdbcType="VARCHAR" />
+        <result column="CONTENTS_H"			property="CONTENTS_H"       javaType="string"  jdbcType="CLOB" /> 
+        <result column="CONTENTS_S"			property="CONTENTS_S"       javaType="string"  jdbcType="CLOB" /> 
+        <result column="MOD_DATE"          	property="MOD_DATE"         javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>
+    
+    <select id="selectList" parameterType="HashMap" resultMap="wikiMap">
+    	SELECT A.SEQ
+    		, A.WORK_CODE
+    		, B.WORK_NAME
+    		, A.TITLE
+    		, A.MOD_DATE
+    	FROM TCKWKI A, TCKWRK B
+       WHERE 1=1
+         AND A.WORK_CODE = B.WORK_CODE
+	 <if test="workCode != '' and workCode != null">
+		 AND A.WORK_CODE = #{workCode}
+	 </if>
+     <if test="keywordTitle != '' and keywordTitle != null">
+	  	 AND A.TITLE LIKE '%'|| #{keywordTitle} || '%'
+	 </if>
+	 <if test="keywordContents != '' and keywordContents != null">
+	  	 AND A.CONTENTS_S LIKE '%'|| #{keywordContents} || '%'
+	 </if>
+	 ORDER BY A.SEQ
+         
+    </select>
+    
+    <select id="selectWiki" parameterType="HashMap" resultMap="wikiMap">
+    	SELECT A.SEQ
+    		, A.TITLE
+    		, A.WORK_CODE
+    		, B.WORK_NAME
+    		, A.CONTENTS_H
+    		, A.MOD_DATE
+    	FROM TCKWKI A, TCKWRK B
+       WHERE 1=1
+         AND A.WORK_CODE = B.WORK_CODE
+    	 AND A.SEQ = #{seq}
+    </select>
+    
+    <insert id="addWiki" parameterType="HashMap">
+    	INSERT INTO TCKWKI
+    	VALUES(
+    		#{seq},
+    		#{workCode},
+    		#{title},
+    		#{contentsH},
+    		#{contentsS},
+    		#{empno},
+    		sysdate,
+    		#{empno},
+    		sysdate
+    	)
+    </insert>
+    
+    <update id="editWiki" parameterType="HashMap">
+    	UPDATE TCKWKI
+    	SET TITLE = #{title}
+    	  , WORK_CODE = #{workCode}
+   		  , CONTENTS_H = #{contentsH}
+   		  , CONTENTS_S = #{contentsS}
+   		  , MOD_EMPNO = #{empno}
+   		  , MOD_DATE = sysdate
+    	WHERE
+    		SEQ = #{seq}
+    </update>
+    
+    <select id="selectWikiSeq" resultType="String">
+    	SELECT STUDY.TCKWKI_SEQ.nextval AS SEQ
+    	  FROM DUAL
+    </select>
+     
+</mapper> 

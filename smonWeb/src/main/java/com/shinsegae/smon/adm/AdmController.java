@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +43,7 @@ public class AdmController {
 	@RequestMapping("/listUser.do")
 	public ModelAndView listUser() {
 		DsBatchVO searchCondition = new DsBatchVO();
-		
+
 		ModelAndView mav = new ModelAndView();
 		
 		mav.setViewName("/adm/listUser");
@@ -248,12 +248,12 @@ public class AdmController {
 		List<DsBatchVO> rstList = null;
 		
 		ModelAndView mav = new ModelAndView();
-		
+		System.out.println("-------------------------------------------!!!!!!!!!!!!!!!!-----------------");
 		mav.setViewName("jsonView"); 
 
 		try {		 
 			int count = admservice.getCountlistgroup(paramCondition); 
-			
+			NLogger.getString("----------------------------"+count+"--------------------------");
 			PageVO pageVO = new PageVO(count, paramCondition.getCurPage(), paramCondition.getPageScale());
 			
 			int start = pageVO.getPageBegin(); // 시작번호
@@ -670,23 +670,23 @@ public class AdmController {
 	 
 	 
 	 
-//	 @RequestMapping("/logActionMap.do")
-//	 public ModelAndView logActionMap() {
-//		/**
-//		 *  user 권한 확인 필요
-//		 */
-//		ModelAndView mav = new ModelAndView();
-//		JSONArray jArray = new JSONArray();
-//		List list = logService.getLogURLDistinct();
-//		for (int i=0; i<list.size(); i++) {
-//			jArray.put(list.get(i));
-//		}
-//		
-//		mav.addObject("URLs", jArray);  
-//		mav.setViewName("/adm/logActionMap");
-//  
-//		return mav;
-//	 } 
+	 @RequestMapping("/logActionMap.do")
+	 public ModelAndView logActionMap() throws Exception {
+		/**
+		 *  user 권한 확인 필요
+		 */
+		ModelAndView mav = new ModelAndView();
+		JSONArray jArray = new JSONArray();
+		List list = logService.getLogURLDistinct();
+		for (int i=0; i<list.size(); i++) {
+			jArray.put(list.get(i));
+		}
+		
+		mav.addObject("URLs", jArray);  
+		mav.setViewName("/adm/logActionMap");
+  
+		return mav;
+	 } 
 	 
 	 @RequestMapping("/getURLInfo.do")
 	 public @ResponseBody ModelAndView getURLInfo(AccessLogActionMapVO accessLogActionMapVO) {

@@ -58,7 +58,7 @@ public class PersonalInfoDestroyManageController {
         params.put("start", start);
         params.put("end", end);
 		
-		List<HashMap<String, Object>> list = personalInfoDestroyManageService.selectDestroyTableList2(params);
+		List<HashMap<String, Object>> list = personalInfoDestroyManageService.selectDestroyTableList(params);
 		
 		int records = list.size() > 0 ? Integer.parseInt(String.valueOf(list.get(0).get("TOTCNT"))) : 0;
     	int total = records%rows == 0 ? records/rows : records/rows + 1;

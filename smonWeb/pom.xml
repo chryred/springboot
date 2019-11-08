@@ -140,7 +140,12 @@
     		<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/blossom-push-1.0.0.jar</systemPath>
 		</dependency>
-		
+	
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20190722</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -150,6 +155,18 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		
+		<resources>
+	        <resource>
+	            <directory>src/main/java</directory>
+	            <includes>                      
+	                <include>**/*.xml</include>
+	            </includes>
+	        </resource>
+	        <resource>
+	            <directory>src/main/resources</directory>
+	        </resource>
+		</resources>
 	</build>
 
 </project>

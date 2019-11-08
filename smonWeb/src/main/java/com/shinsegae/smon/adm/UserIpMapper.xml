@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.shinsegae.smon.adm.UserIpMapper">
+    
+    <resultMap id="rs_selectUserIp" type="com.shinsegae.smon.util.DataMap">
+        <result column="SEQ"        		property="seq"			javaType="string"  jdbcType="VARCHAR" />
+        <result column="IP"        			property="ip"			javaType="string"  jdbcType="VARCHAR" />
+        <result column="RECENT_USER"        property="recentUser"	javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="USE_YN"         	property="useYn"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="FORWHAT"			property="forWhat"      javaType="string"  jdbcType="VARCHAR" />
+        <result column="PASSWORD"          	property="password"     javaType="string"  jdbcType="VARCHAR" />
+        <result column="ENT_DATE"          	property="entDate"      javaType="string"  jdbcType="VARCHAR" />
+        <result column="MOD_DATE"          	property="modDate"      javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>
+    
+    <select id="selectUserIp" parameterType="com.shinsegae.smon.util.RequestMap" resultMap="rs_selectUserIp">
+    	SELECT ROWNUM AS SEQ
+    	    , IP
+    	    , RECENT_USER
+    		, USE_YN
+    		, FORWHAT
+    		, TO_CHAR(ENT_DATE, 'YYYY/MM/DD') AS ENT_DATE
+    		, TO_CHAR(MOD_DATE, 'YYYY/MM/DD') AS MOD_DATE
+    	FROM STUDY.DEPT_IP_MASTER
+       WHERE 1=1
+         AND USE_YN = 'Y'
+       <if test="userIp != null and userIp != ''">
+         AND IP = #{userIp}
+       </if>
+	 ORDER BY IP ASC
+    </select>
+    
+    <select id="selectAvailableIp" parameterType="com.shinsegae.smon.util.RequestMap" resultMap="rs_selectUserIp">
+       WITH IP_ADDRESS AS
+       (
+           SELECT '10.174.179.' || R_TBL.NUM AS IP
+             FROM (
+             	    SELECT ROWNUM AS NUM
+             	      FROM DUAL
+                   CONNECT BY LEVEL <![CDATA[<=]]> 254
+                  ) R_TBL
+           WHERE R_TBL.NUM BETWEEN 2 AND 254
+       )
+       SELECT IP_ADDRESS.IP
+         FROM STUDY.DEPT_IP_MASTER A, IP_ADDRESS
+        WHERE IP_ADDRESS.IP = A.IP(+)
+          AND (A.USE_YN = 'N' OR A.USE_YN IS NULL)
+       ORDER BY REGEXP_REPLACE(REPLACE('.'||IP_ADDRESS.IP, '.', '.00'), '([^.]{3}(\.|$))|.', '\1')
+    </select>
+    
+    <update id="insertNewIp" parameterType="com.shinsegae.smon.util.RequestMap">
+    	MERGE INTO STUDY.DEPT_IP_MASTER USING DUAL
+    	   ON (
+    	         IP = #{userIp}
+    	   )
+    	WHEN MATCHED THEN
+    	UPDATE
+    	   SET 
+    	       RECENT_USER = #{userName, jdbcType=VARCHAR}
+    	      ,FORWHAT     = #{reason, jdbcType=VARCHAR}
+    	      ,PASSWORD    = #{passwd, jdbcType=VARCHAR}
+    	      ,USE_YN      = 'Y'
+    	      ,ENT_DATE    = SYSDATE
+    	WHEN NOT MATCHED THEN
+    	INSERT
+    	     (
+    	       IP
+    	      ,RECENT_USER
+    	      ,USE_YN
+    	      ,FORWHAT
+    	      ,PASSWORD
+    	      ,ENT_DATE    	     
+    	     )
+    	VALUES
+    	(
+    		#{userIp}
+    	   ,#{userName, jdbcType=VARCHAR}
+    	   ,'Y'
+    	   ,#{reason, jdbcType=VARCHAR}
+    	   ,#{passwd, jdbcType=VARCHAR}
+    	   ,SYSDATE
+    	)
+    </update>
+    
+    <update id="updateIp" parameterType="com.shinsegae.smon.util.RequestMap">
+    	MERGE INTO STUDY.DEPT_IP_MASTER USING DUAL
+    	   ON (
+    	         IP = #{userIp}
+    	   )
+    	WHEN MATCHED THEN
+    	UPDATE
+    	   SET 
+    	       RECENT_USER = #{userName, jdbcType=VARCHAR}
+    	      ,FORWHAT     = #{reason, jdbcType=VARCHAR}
+    	      ,USE_YN      = 'Y'
+    	      ,MOD_DATE    = SYSDATE
+    	WHEN NOT MATCHED THEN
+    	INSERT
+    	     (
+    	       IP
+    	      ,RECENT_USER
+    	      ,USE_YN
+    	      ,FORWHAT
+    	      ,MOD_DATE    	     
+    	     )
+    	VALUES
+    	(
+    		#{userIp}
+    	   ,#{userName, jdbcType=VARCHAR}
+    	   ,'Y'
+    	   ,#{reason, jdbcType=VARCHAR}
+    	   ,SYSDATE
+    	)
+    </update>
+    
+    <update id="deleteIp" parameterType="com.shinsegae.smon.util.RequestMap">
+    	UPDATE STUDY.DEPT_IP_MASTER
+    	   SET RECENT_USER = ''
+    	      ,FORWHAT     = ''
+    	      ,PASSWORD    = '' 
+    	      ,USE_YN      = 'N'
+    	      ,MOD_DATE    = SYSDATE
+    	 WHERE IP = #{userIp}    	
+    </update>
+    
+    <select id="confirmPasswdYn" parameterType="com.shinsegae.smon.util.RequestMap" resultType="String">
+    	SELECT CASE WHEN COUNT(1) > 0 THEN 'Y'
+    	            ELSE 'N'
+    	       END AS PASS_YN
+    	  FROM STUDY.DEPT_IP_MASTER
+    	 WHERE IP       = #{userIp}
+    	   AND PASSWORD = #{passwd, jdbcType=VARCHAR}    
+    </select>
+    
+    <insert id="insertIpHistory" parameterType="com.shinsegae.smon.util.RequestMap">
+    	INSERT INTO STUDY.DEPT_IP_HIST
+    	       (
+    	       	 IP
+    	       	,SEQ
+    	       	,USER_NAME
+    	       	,ACT_CODE
+    	       	,ACT_NAME
+    	       	,MOD_ID
+    	       	,MOD_DATE
+    	       )
+        VALUES
+              (
+                #{userIp}
+               ,(SELECT NVL(MAX(SEQ),0)+1 FROM STUDY.DEPT_IP_HIST WHERE IP = #{userIp})
+               ,#{userName, jdbcType=VARCHAR}
+               ,#{acionCode}
+               ,STUDY.FN_GET_COMN_NM('L0001', #{acionCode})
+               ,#{userId}
+               ,SYSDATE
+              )
+    </insert>
+
+</mapper> 
