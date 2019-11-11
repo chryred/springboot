@@ -1,18 +1,19 @@
 <%@ page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:include page="../../common/navigation.jsp" flush="false"/>
 
+
 <script type="text/javascript">
 	var contextPath = '<%=request.getContextPath()%>';
 </script>
 
 <!-- lib -->
-<script src="<%=request.getContextPath() %>/bootstrap/bower_components/datepicker/bootstrap-datepicker.js"></script>
-<script src="<%=request.getContextPath() %>/js/jqgrid/grid.locale-en.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath() %>/js/jqgrid/jquery.jqGrid.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath() %>/resources/bootstrap/bower_components/datepicker/bootstrap-datepicker.js"></script>
+<script src="<%=request.getContextPath() %>/resources/js/jqgrid/grid.locale-en.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath() %>/resources/js/jqgrid/jquery.jqGrid.js" type="text/javascript"></script>
 <!-- css -->
-<link href="<%=request.getContextPath() %>/bootstrap/bower_components/datepicker/datepicker.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" media="screen" href="<%=request.getContextPath() %>/css/ui.jqgrid.css" />
-<link href="<%=request.getContextPath() %>/css/app/personalInfoCheck/personalInfoCheck.css" rel="stylesheet">
+<link href="<%=request.getContextPath() %>/resources/bootstrap/bower_components/datepicker/datepicker.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" media="screen" href="<%=request.getContextPath() %>/resources/css/ui.jqgrid.css" />
+<link href="<%=request.getContextPath() %>/resources/css/app/personalInfoCheck/personalInfoCheck.css" rel="stylesheet">
 
 <div id="page-wrapper">
     <div class="row">&nbsp;</div>
@@ -59,7 +60,7 @@
 </div>
 <!-- /#page-wrapper -->
 
-<script src="<%=request.getContextPath() %>/js/app/ssl/sslInfoCheck.js"></script>    
+<script src="<%=request.getContextPath() %>/resources/js/app/ssl/sslInfoCheck.js"></script>    
 
 
 
