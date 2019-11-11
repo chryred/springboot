@@ -122,6 +122,7 @@ public class JenkinsInfoController {
 		return strReturn;
 	}
 
+	
 	/**
 	 * @Method Name : Jenkins 연간현황 상세정보
 	 * @작성일 : 2018. 6. 8.
