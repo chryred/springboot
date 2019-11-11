@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinsegae.smon.security.code.JenkinsInfoMapper">
+	<select id="selectFixedCntByMonth" resultType="HashMap" parameterType="HashMap">
+    	SELECT TO_CHAR(A.MON, 'MM') MON
+    	       , NVL(SUM(FXD_WRN_CNT), 0) FXD_WRN_CNT
+        FROM (SELECT ADD_MONTHS(TRUNC(SYSDATE, 'YYYY'), LEVEL - 1) MON
+                  FROM DUAL
+              CONNECT BY LEVEL <![CDATA[ <= ]]>12) A
+              , STUDY.TCKBLD B
+      WHERE A.MON = TRUNC(B.BLD_DT(+), 'MM')
+         AND B.SCRTY_TYPE_CD(+) = #{scrtyTypeCd}
+	<if test="jobNm != null and !jobNm.equals('TOTAL')">
+         AND B.JOB_NM(+) = #{jobNm}
+	</if>
+         AND B.BLD_DT(+) <![CDATA[ >= ]]> TRUNC(SYSDATE, 'YYYY')
+      GROUP BY A.MON
+      ORDER BY A.MON
+    </select>
+
+    <select id="selectJenkinsTotalInfo" resultType="HashMap" parameterType="HashMap">
+    	SELECT SUM(TTL_WRN_CNT) AS TTL_WRN_CNT
+    	        , SUM(MAX_TTL_WRN_CNT) AS MAX_TTL_WRN_CNT
+    	        , SUM(FXD_WRN_CNT) AS FXD_WRN_CNT
+    	        , SUM(NEW_WRN_CNT) AS NEW_WRN_CNT
+       <!--    , ROUND(AVG(DECODE(TTL_WRN_CNT, 0, 1, FXD_WRN_CNT / (TTL_WRN_CNT + FXD_WRN_CNT) ) * 100), 1) AS TRTM_RATE -->
+    	        , ROUND(DECODE(SUM(TTL_WRN_CNT), 0, 1, SUM(FXD_WRN_CNT) / (SUM(TTL_WRN_CNT) + SUM(FXD_WRN_CNT)) * 100), 1) AS TRTM_RATE
+    	  FROM (SELECT JOB_NM
+    	                   , SUBSTR(MAX(TO_CHAR(BLD_DT, 'YYYYMMDDHH24MISS') || TTL_WRN_CNT), 15) AS TTL_WRN_CNT
+    	                   , MAX(TTL_WRN_CNT) AS MAX_TTL_WRN_CNT
+    	                   , SUM(FXD_WRN_CNT) AS FXD_WRN_CNT
+    	                   , SUM(NEW_WRN_CNT) AS NEW_WRN_CNT
+    	             FROM TCKBLD A
+    	            WHERE SCRTY_TYPE_CD = #{scrtyTypeCd}
+			<if test="jobNm != null and !jobNm.equals('TOTAL')">
+			           AND JOB_NM = #{jobNm}
+			</if>
+    	               AND BLD_DT >= TRUNC(SYSDATE, 'YYYY')
+    	            GROUP BY JOB_NM
+    	          ) A
+    </select>
+
+    <select id="selectJenkinsJobInfo" parameterType="HashMap" resultType="HashMap">
+    <![CDATA[
+    	SELECT  B.JOB_NM
+			     , TO_CHAR(MAX(B.BLD_DT), 'YYYY/MM/DD HH24:MI:SS') BLD_DT
+			     , SUM(B.FXD_WRN_CNT) FXD_WRN_CNT
+			     , SUBSTR(MAX(TO_CHAR(B.BLD_DT, 'YYYYMMDDHH24MISS') || B.HGH_PRTY_WRN_CNT), 15) HGH_PRTY_WRN_CNT
+			     , SUBSTR(MAX(TO_CHAR(B.BLD_DT, 'YYYYMMDDHH24MISS') || B.NRML_PRTY_WRN_CNT), 15) NRML_PRTY_WRN_CNT
+			     , SUBSTR(MAX(TO_CHAR(B.BLD_DT, 'YYYYMMDDHH24MISS') || B.LOW_PRTY_WRN_CNT), 15) LOW_PRTY_WRN_CNT
+			     , SUM(B.NEW_WRN_CNT) NEW_WRN_CNT
+			     , SUBSTR(MAX(TO_CHAR(B.BLD_DT, 'YYYYMMDDHH24MISS') || B.TTL_WRN_CNT), 15) + SUM(B.FXD_WRN_CNT) TTL_WRN_CNT
+			     , SUBSTR(MAX(TO_CHAR(B.BLD_DT, 'YYYYMMDDHH24MISS') || B.TTL_WRN_CNT), 15) REMAIN_WRN_CNT
+			     , SUBSTR(MAX(TO_CHAR(B.BLD_DT, 'YYYYMMDDHH24MISS') || B.JOB_URL), 15) JOB_URL
+			     , SUM((CASE WHEN BLD_DT BETWEEN TRUNC(SYSDATE, 'YYYY')  AND ADD_MONTHS(TRUNC(SYSDATE, 'YYYY'), 6) - 1
+			                 THEN FXD_WRN_CNT
+			            ELSE 0 END)) AS FRST_HALF_CNT
+			     , SUM((CASE WHEN BLD_DT BETWEEN ADD_MONTHS(TRUNC(SYSDATE, 'YYYY'), 6)  AND ADD_MONTHS(TRUNC(SYSDATE, 'YYYY'), 12) - 1
+			                 THEN FXD_WRN_CNT
+			            ELSE 0 END)) AS SCND_HALF_CNT
+			     , SUM((CASE WHEN BLD_DT BETWEEN ADD_MONTHS(SYSDATE, -3) AND SYSDATE
+			                 THEN FXD_WRN_CNT
+			            ELSE 0 END)) AS THRE_MNTH_CNT
+			     , SUM((CASE WHEN BLD_DT BETWEEN ADD_MONTHS(SYSDATE, -1) AND SYSDATE
+			                 THEN FXD_WRN_CNT
+			            ELSE 0 END)) AS ONE_MNTH_CNT
+			     , SUM((CASE WHEN BLD_DT BETWEEN SYSDATE - 7  AND SYSDATE
+			                 THEN FXD_WRN_CNT
+			            ELSE 0 END)) AS ONE_WEEK_CNT
+				, ROUND( DECODE(SUBSTR(MAX(TO_CHAR(B.BLD_DT, 'YYYYMMDDHH24MISS') || B.TTL_WRN_CNT), 15), 0, 1, (SUM(B.FXD_WRN_CNT) / ( SUM(B.FXD_WRN_CNT) + SUBSTR(MAX(TO_CHAR(B.BLD_DT, 'YYYYMMDDHH24MISS') || B.TTL_WRN_CNT), 15))) ) * 100 , 1 ) AS TRTM_RATE
+			  FROM TCKBLD B
+			 WHERE SCRTY_TYPE_CD = #{scrtyTypeCd}
+			    AND BLD_DT >= TRUNC(SYSDATE, 'YYYY')
+			 GROUP BY JOB_NM
+			 ORDER BY FXD_WRN_CNT DESC, TTL_WRN_CNT DESC
+	]]>
+    </select>
+
+    <select id="selectJenkinsRuleSetInfoList" resultType="HashMap" parameterType="HashMap">
+		SELECT A.RULE_NM
+		        , A.PRTY_SBST
+		        , ADD_RANK
+		        , APLY_DT
+		<foreach collection="systemList" item="item" index="index">
+		        , NVL(SUM(DECODE(JOB_NM, #{item.JOB_NM}, RULE_CNT)), 0) AS "COL${index}"
+		</foreach>
+				,
+		<foreach collection="systemList" item="item" index="index" separator="+" open="(" close=")">
+	         	 NVL(SUM(DECODE(JOB_NM, #{item.JOB_NM}, RULE_CNT)), 0)
+		</foreach> AS TOTAL_CNT
+		 FROM (SELECT B.JOB_NM
+		                  , B.RULE_NM
+		                  , B.RULE_CNT
+		                  , B.PRTY_SBST
+		                  , C.ADD_RANK
+		                  , TO_CHAR(C.APLY_DT, 'YYYY/MM/DD HH24:MI:SS') AS APLY_DT
+		           FROM (SELECT JOB_NM
+		                            , SCRTY_TYPE_CD
+		                            , MAX(BLD_DT) AS BLD_DT
+		                      FROM TCKBLD
+		                    GROUP BY JOB_NM, SCRTY_TYPE_CD) A
+		                  , TCKBLD_DTL B
+		                  , (SELECT DENSE_RANK() OVER(ORDER BY APLY_DT DESC) ADD_RANK
+		                            , MST.RULE_NM
+		                            , MST.APLY_DT
+		                     FROM SCRTY_RULST_MST MST
+		                    WHERE SCRTY_TYPE_CD =  #{scrtyTypeCd} AND USE_YN = 'Y') C
+		          WHERE A.SCRTY_TYPE_CD =  #{scrtyTypeCd}
+		             AND A.JOB_NM = B.JOB_NM
+		             AND A.BLD_DT = B.BLD_DT
+		             AND A.SCRTY_TYPE_CD = B.SCRTY_TYPE_CD
+		             AND B.RULE_NM = C.RULE_NM) A
+		GROUP BY A.RULE_NM, A.PRTY_SBST, A.ADD_RANK, A.APLY_DT
+		<choose>
+			<when test="sidx != null and !sidx.equals('')">
+		ORDER BY ${sidx} ${sord}
+			</when>
+			<otherwise>
+		ORDER BY A.RULE_NM
+		            , DECODE(A.PRTY_SBST, 'high', 1, 'normal', 2, 3)
+			</otherwise>
+		</choose>
+
+    </select>
+
+    <select id="selectJobNmPivotColumns" resultType="HashMap" parameterType="HashMap">
+	<![CDATA[
+		SELECT JOB_NM
+		 FROM (SELECT JOB_NM
+		                  , SCRTY_TYPE_CD
+		           FROM TCKBLD
+		          WHERE TTL_WRN_CNT <> 0
+		             AND BLD_DT >= TRUNC(SYSDATE, 'YYYY')
+		          GROUP BY JOB_NM, SCRTY_TYPE_CD) A
+		WHERE SCRTY_TYPE_CD =  #{scrtyTypeCd}
+		ORDER BY JOB_NM
+	]]>
+    </select>
+
+    <select id="selectTotalJobNm" resultType="HashMap" parameterType="HashMap">
+    <![CDATA[
+		SELECT DISTINCT JOB_NM
+		 FROM (SELECT JOB_NM
+		                  , SCRTY_TYPE_CD
+		           FROM TCKBLD
+		          WHERE BLD_DT >= TRUNC(SYSDATE, 'YYYY')
+		          GROUP BY JOB_NM, SCRTY_TYPE_CD) A
+		ORDER BY JOB_NM
+	]]>
+    </select>
+
+</mapper>
