@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:include page="../../common/navigation.jsp" flush="false"/>
 
+
 <script type="text/javascript">
 	var contextPath = '<%=request.getContextPath()%>';
 </script>
