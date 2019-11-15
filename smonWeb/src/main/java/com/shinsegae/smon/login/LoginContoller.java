@@ -22,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.shinsegae.smon.common.user.UserService;
 import com.shinsegae.smon.model.UserVO;
 import com.shinsegae.smon.util.ActionBlossomPush;
-import com.shinsegae.smon.util.CubeoneAPIUtil;
 import com.shinsegae.smon.util.GenerateRandomNum;
 import com.shinsegae.smon.util.NLogger;
 
@@ -38,8 +37,6 @@ public class LoginContoller {
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String welcomeUrl(Locale locale, Model model) {
-		String strEnString = CubeoneAPIUtil.coencbyte("173917", 10, "PWD", "MGR", "MGR_PWD");
-		NLogger.debug("strEnString : ", strEnString);
 		return "redirect:/index.do";
 	}	
 	
