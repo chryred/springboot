@@ -122,6 +122,11 @@
 		    <artifactId>json</artifactId>
 		    <version>20190722</version>
 		</dependency>
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>5.1.38</version>
+		</dependency>
 		
 		<!-- local Repository -->
 		<dependency>
@@ -139,6 +144,14 @@
     		<artifactId>db2jcc</artifactId>
     		<version>10.1.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>custom</groupId>
+			<artifactId>cubeone</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/custom/cubeone/CubeOneAPI.jar</systemPath>
+		</dependency>
+		
 		<!-- 
 		<dependency>
 			<groupId>oracle</groupId>
@@ -169,6 +182,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<includeSystemScope>true</includeSystemScope>
+				</configuration>
 			</plugin>
 			
 			<!-- plugin>
