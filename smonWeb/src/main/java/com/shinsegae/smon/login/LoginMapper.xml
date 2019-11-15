@@ -18,6 +18,26 @@
 		WHERE MGR_ID = #{mgr_id}
 	</select>
 	
+	<!-- 사용자 사번으로 조회 -->
+	<select id="searchUser2" resultMap="userMap" parameterType="hashmap">
+		SELECT * 
+		  FROM MGR
+		 WHERE MGR_ID   = #{mgr_id}
+	  	   AND MGR_NAME = #{mgr_name}
+	</select>
+	
+	<!-- 현업이 올린 FAQ 중 새로운 답변이 있는지 확인 -->
+	<select id="newFaqReplyCount" resultType="int"  parameterType="String">
+	<![CDATA[
+		SELECT count(*)
+		  FROM FAQ
+		 WHERE FAQ_WRITER_ID = #{userId}
+           AND FAQ_ID IN (SELECT FAQ_PARENT
+		                    FROM FAQ
+		                   WHERE FAQ_PARENT IS NOT NULL
+		                     AND FAQ_PROG_STATE = '401')
+	]]>
+	</select>
  </mapper>
 
     
