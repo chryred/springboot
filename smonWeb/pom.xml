@@ -144,14 +144,7 @@
     		<artifactId>db2jcc</artifactId>
     		<version>10.1.0.0</version>
 		</dependency>
-		<dependency>
-			<groupId>custom</groupId>
-			<artifactId>cubeone</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/custom/cubeone/CubeOneAPI.jar</systemPath>
-		</dependency>
-		
+
 		<!-- 
 		<dependency>
 			<groupId>oracle</groupId>
