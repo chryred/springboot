@@ -93,7 +93,11 @@ public class CubeoneAPIHandler {
 	}
 	
 	public void cubeoneCallTest() {
+		Map<String, Object> map = null;
+		
 		CubeoneAPIHandler cubeoneAPIHandler = new CubeoneAPIHandler();
+		
+		/* 단방향 암호화 Start */
 		CubeoneVO cubeoneVO = new CubeoneVO();
 		
 		cubeoneVO.setMsg("173917");
@@ -102,7 +106,31 @@ public class CubeoneAPIHandler {
 		cubeoneVO.setTableName("MGR");
 		cubeoneVO.setColumnName("MGR_PWD");
 		
-		NLogger.debug(cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO));
+		map = cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO);
+		NLogger.debug("단방향 암호화 : ", map);
+		/* 단방향 암호화 End */
+		
+		
+		/* 양방향 암/복호화 Start */
+		cubeoneVO.setMsg("01012341125");
+		cubeoneVO.setCrudLog(10);
+		cubeoneVO.setItemCd("PHONE");
+		cubeoneVO.setTableName("MGR");
+		cubeoneVO.setColumnName("MGR_PWD");
+		
+		map = cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO);
+		NLogger.debug("양방향 암호화 : ", map);
+		
+		cubeoneVO.setMsg((String)map.get("retMsg"));
+		cubeoneVO.setCrudLog(10);
+		cubeoneVO.setItemCd("PHONE");
+		cubeoneVO.setTableName("MGR");
+		cubeoneVO.setColumnName("MGR_PWD");
+		
+		map = cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO);
+		NLogger.debug("양방향 암호화 : ", map);
+		
+		/* 양방향 암/복호화 End */
 	}
 	
 }
