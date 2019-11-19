@@ -15,8 +15,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinsegae.smon.model.CubeoneVO;
 
 public class CubeoneAPIHandler {
-		
-	public static Map<String, Object> callCubeoneAPI(String strCubeoneMethod, CubeoneVO cubeoneVO) throws Exception{
+	
+	private String strCubeoneServer;
+	
+	
+	public CubeoneAPIHandler(String server) {
+		strCubeoneServer = server;
+	}
+	
+	public Map<String, Object> callCubeoneAPI(String strCubeoneMethod, CubeoneVO cubeoneVO) {
 		StringBuilder sbResult = null;
 		URL url = null;
 		HttpURLConnection urlConnection = null;
@@ -25,8 +32,9 @@ public class CubeoneAPIHandler {
 		try
 		{
 			sbResult = new StringBuilder();
-
-			String wsUrl = "http://10.222.6.53/cubeone/api/" + strCubeoneMethod;
+			NLogger.debug("strCubeoneServer : ", strCubeoneServer);
+			
+			String wsUrl = "http://" + strCubeoneServer + "/cubeone/api/" + strCubeoneMethod;
 
 			url = new URL(wsUrl);
 			urlConnection = (HttpURLConnection) url.openConnection();
@@ -49,18 +57,23 @@ public class CubeoneAPIHandler {
 		} catch (Exception e) {
 			sbResult.append("{\"status\":\"500\", \"retMsg\":\"연결도중 오류가 발생하였습니다.\"}");
 		} finally {
-			if(out != null) {
-				out.close();
+			try {
+				if(out != null) {
+					out.close();
+				}
+				if(in != null) {
+					in.close();
+				}
+			} catch(IOException e) {
+				NLogger.debug("IOException : ", e.getMessage());
 			}
-			if(in != null) {
-				in.close();
-			}
+			
 		}
 		
 		return setValueObject(sbResult.toString());
 	}
 	
-	public static Map<String, Object> setValueObject(String strRetMsg) {
+	public Map<String, Object> setValueObject(String strRetMsg) {
 		NLogger.debug("strRetMsg : " + strRetMsg);
 
 		Map<String, Object> data = null;
@@ -85,8 +98,8 @@ public class CubeoneAPIHandler {
 		cubeoneVO.setItemCd("PWD");
 		cubeoneVO.setTableName("MGR");
 		cubeoneVO.setColumnName("MGR_PWD");
-		
-		System.out.println(callCubeoneAPI("coencbyte", cubeoneVO));
+		CubeoneAPIHandler cubeoneAPIHandler = new CubeoneAPIHandler("10.222.6.53");
+		System.out.println(cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO));
 	}
 	
 }
