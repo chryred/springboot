@@ -4,6 +4,9 @@ var g_intervalId;
 var g_colid;
 var g_sorting;
 
+var token = $("meta[name='_csrf']").attr("content");
+var header = $("meta[name='_csrf_header']").attr("content");
+
 $(document).ready(function() {
 	fn_start();
 	fn_event();
@@ -214,7 +217,8 @@ function fn_search() {
 		dataType : "json", //text, json, html, xml, csv, script, jsonp
 		async : true,
 		timeout : 2 * 60 * 1000, //2 min,
-		beforeSend : function() {
+		beforeSend: function (xhr, settings) { 
+			xhr.setRequestHeader(header, token); 
 			$.blockUI({ css: {color: '#fff'} });
 		},
 		complete : function() {
