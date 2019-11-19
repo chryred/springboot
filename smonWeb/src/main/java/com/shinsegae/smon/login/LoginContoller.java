@@ -45,6 +45,8 @@ public class LoginContoller {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String welcomeUrl(Locale locale, Model model) {
 		
+		NLogger.debug("cubeone : ", cubeoneProperties.getServer());
+		
 		CubeoneAPIHandler cubeoneAPIHandler = new CubeoneAPIHandler(cubeoneProperties.getServer());
 		
 		CubeoneVO cubeoneVO = new CubeoneVO();
