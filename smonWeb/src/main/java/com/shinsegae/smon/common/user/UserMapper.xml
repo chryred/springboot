@@ -178,7 +178,9 @@
     <!-- 사용자 업데이트 -->
 	<update id="updateUser" parameterType="hashmap">
 		UPDATE MGR
-		    SET LOGIN_FAIL_CNT = DECODE(#{successYn}, 'Y', 0, LOGIN_FAIL_CNT + 1)
+		    SET LOGIN_FAIL_CNT = CASE WHEN #{successYn} = 'Y' THEN 0
+		    						  ELSE LOGIN_FAIL_CNT + 1
+		    				     END
 			<if test="mgrStateCd != '' and mgrStateCd != null">
 				, MGR_STATE_CD = #{mgrStateCd}		   
 			</if>
