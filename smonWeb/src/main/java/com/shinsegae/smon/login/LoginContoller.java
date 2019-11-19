@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.shinsegae.smon.common.user.UserService;
-import com.shinsegae.smon.config.CubeoneProperties;
 import com.shinsegae.smon.model.CubeoneVO;
 import com.shinsegae.smon.model.UserVO;
 import com.shinsegae.smon.util.ActionBlossomPush;
@@ -38,25 +37,12 @@ public class LoginContoller {
 	@Autowired
 	UserService userService;
 	
-	@Autowired
-	CubeoneProperties cubeoneProperties;
-	
-	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String welcomeUrl(Locale locale, Model model) {
+	
+		CubeoneAPIHandler cubeoneAPIHandler = new CubeoneAPIHandler();
 		
-		NLogger.debug("cubeone : ", cubeoneProperties.getServer());
-		
-		CubeoneAPIHandler cubeoneAPIHandler = new CubeoneAPIHandler(cubeoneProperties.getServer());
-		
-		CubeoneVO cubeoneVO = new CubeoneVO();
-		
-		cubeoneVO.setMsg("173917");
-		cubeoneVO.setCrudLog(10);
-		cubeoneVO.setItemCd("PWD");
-		cubeoneVO.setTableName("MGR");
-		cubeoneVO.setColumnName("MGR_PWD");
-		NLogger.debug(cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO).get("status"));
+		cubeoneAPIHandler.cubeoneCallTest();
 		return "redirect:/index.do";
 	}	
 	

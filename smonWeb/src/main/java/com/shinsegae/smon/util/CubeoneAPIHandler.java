@@ -12,15 +12,17 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shinsegae.smon.config.CubeoneProperties;
+import com.shinsegae.smon.listner.BeanSupport;
 import com.shinsegae.smon.model.CubeoneVO;
 
 public class CubeoneAPIHandler {
 	
-	private String strCubeoneServer;
+	private CubeoneProperties cubeoneProperties;
 	
 	
-	public CubeoneAPIHandler(String server) {
-		strCubeoneServer = server;
+	public CubeoneAPIHandler() {
+		cubeoneProperties =  (CubeoneProperties)(BeanSupport.getBean("cubeoneProperties"));
 	}
 	
 	public Map<String, Object> callCubeoneAPI(String strCubeoneMethod, CubeoneVO cubeoneVO) {
@@ -32,9 +34,9 @@ public class CubeoneAPIHandler {
 		try
 		{
 			sbResult = new StringBuilder();
-			NLogger.debug("strCubeoneServer : ", strCubeoneServer);
+			NLogger.debug("strCubeoneServer : ", cubeoneProperties.getServer());
 			
-			String wsUrl = "http://" + strCubeoneServer + "/cubeone/api/" + strCubeoneMethod;
+			String wsUrl = "http://" + cubeoneProperties.getServer() + "/cubeone/api/" + strCubeoneMethod;
 
 			url = new URL(wsUrl);
 			urlConnection = (HttpURLConnection) url.openConnection();
@@ -90,7 +92,8 @@ public class CubeoneAPIHandler {
 		return data;
 	}
 	
-	public static void main(String[] ar) throws Exception {
+	public void cubeoneCallTest() {
+		CubeoneAPIHandler cubeoneAPIHandler = new CubeoneAPIHandler();
 		CubeoneVO cubeoneVO = new CubeoneVO();
 		
 		cubeoneVO.setMsg("173917");
@@ -98,8 +101,8 @@ public class CubeoneAPIHandler {
 		cubeoneVO.setItemCd("PWD");
 		cubeoneVO.setTableName("MGR");
 		cubeoneVO.setColumnName("MGR_PWD");
-		CubeoneAPIHandler cubeoneAPIHandler = new CubeoneAPIHandler("10.222.6.53");
-		System.out.println(cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO));
+		
+		NLogger.debug(cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO));
 	}
 	
 }
