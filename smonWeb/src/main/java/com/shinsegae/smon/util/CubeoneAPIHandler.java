@@ -92,6 +92,9 @@ public class CubeoneAPIHandler {
 		return data;
 	}
 	
+	/**
+	 * 큐브원 API 호출 예시
+	 */
 	public void cubeoneCallTest() {
 		Map<String, Object> map = null;
 		
