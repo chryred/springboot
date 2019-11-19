@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.shinsegae.smon.bat.BatShubMapper">
+	<resultMap id="rm_getShubBatchFolderList" type="com.shinsegae.smon.model.bat.DsBatchVO">
+        <result column="ID" property="id" javaType="string"  jdbcType="VARCHAR" />
+        <result column="P_ID" property="pId" javaType="string"  jdbcType="VARCHAR" />
+        <result column="NAME" property="name" javaType="string"  jdbcType="VARCHAR" />
+        <result column="LEV" property="lev" javaType="Integer"  jdbcType="NUMERIC" />
+        <result column="OPEN" property="open" javaType="string"  jdbcType="VARCHAR" />
+        <result column="ICON" property="icon" javaType="string"  jdbcType="VARCHAR" />
+        <result column="SUB_JOB_CNT" property="subJobCnt" javaType="Integer"  jdbcType="NUMERIC" />
+    </resultMap>
+    
+    <select id="getShubBatchFolderList" resultMap="rm_getShubBatchFolderList" parameterType="com.shinsegae.smon.model.bat.DsBatchVO">
+		<![CDATA[
+			 SELECT INVA.CODE AS "ID"
+			      , INVA.UP_CODE AS "P_ID"
+			      , INVA.CODE_NAME||
+			        CASE WHEN (SELECT COUNT(COMM_CD_DTL) FROM SHUB_USR.COMM_CD_DTL WHERE COMM_CD = 'CM011' AND USE_YN = 'Y' AND REF_VAL_1 = INVA.CODE) = 0 THEN ''
+			             ELSE '('||(SELECT COUNT(COMM_CD_DTL) FROM SHUB_USR.COMM_CD_DTL WHERE COMM_CD = 'CM011' AND USE_YN = 'Y' AND REF_VAL_1 = INVA.CODE)||')' END AS "NAME"
+			      , LEVEL AS "LEV" 
+			      , CASE WHEN LEVEL = 1 THEN 'TRUE' ELSE 'FALSE' END AS "OPEN"
+			      , CASE WHEN LEVEL = 1 THEN '/resources/css/ztree/zTreeStyle/img/diy/1_close.png' ELSE '/resources/css/ztree/zTreeStyle/img/diy/8.png' END AS "ICON"
+			      , (SELECT COUNT(COMM_CD_DTL) FROM SHUB_USR.COMM_CD_DTL WHERE COMM_CD = 'CM011' AND USE_YN = 'Y' AND REF_VAL_1 = INVA.CODE) AS "SUB_JOB_CNT"
+			   FROM (
+			            SELECT 'TOTAL' AS CODE
+			                 , 'BATCH' AS CODE_NAME
+			                 , 1 AS SORT_ORDER
+			                 , '-' UP_CODE
+			                 , 1 AS CODE_LEV
+			              FROM DUAL
+			             UNION ALL
+			            SELECT COMM_CD_DTL AS CODE
+			                 , COMM_CD_DTL_NM AS CODE_NAME
+			                 , ALIN_ORDR AS SORT_ORDER
+			                 , 'TOTAL' AS UP_CODE
+			                 , 2 AS CODE_LEV
+			              FROM SHUB_USR.COMM_CD_DTL A
+			             WHERE COMM_CD = 'ST007'  
+			               AND USE_YN = 'Y'
+			             UNION ALL
+			            SELECT REF_VAL_2||'.'||REF_VAL_10 AS CODE
+			                 , COMM_CD_DTL_NM AS CODE_NAME
+			                 , ALIN_ORDR AS SORT_ORDER
+			                 , REF_VAL_1 AS UP_CODE
+			                 , 3 AS CODE_LEV
+			              FROM SHUB_USR.COMM_CD_DTL A
+			             WHERE COMM_CD = 'CM011'  
+			               AND USE_YN = 'Y'
+			  		) INVA
+			  WHERE 1=1
+			  START WITH CODE = 'TOTAL'
+			CONNECT BY PRIOR CODE = UP_CODE
+			  ORDER SIBLINGS BY INVA.SORT_ORDER
+		]]> 
+	</select>	
+	
+	<resultMap id="rm_getShubBatchList" type="com.shinsegae.smon.model.bat.DsBatchVO">
+        <result column="JOB_ID" property="jobId" javaType="string"  jdbcType="VARCHAR" />
+        <result column="PROJECT_NAME" property="projectName" javaType="string"  jdbcType="VARCHAR" />
+        <result column="FOLDER_PATH" property="folderPath" javaType="string"  jdbcType="VARCHAR" />
+        <result column="SUB_FOLDER_PATH" property="subFolderPath" javaType="string"  jdbcType="VARCHAR" />
+        <result column="SUB_JOB_CNT" property="subJobCnt" javaType="Integer"  jdbcType="NUMERIC" />
+        <result column="JOB_NAME" property="jobName" javaType="string"  jdbcType="VARCHAR" />
+        <result column="JOB_SHORT_DESC" property="jobShortDesc" javaType="string"  jdbcType="VARCHAR" />
+        <result column="JOB_LONG_DESC" property="jobLongDesc" javaType="string"  jdbcType="VARCHAR" />
+        <result column="JOB_ID_RANK" property="jobIdRank" javaType="Integer"  jdbcType="NUMERIC" />
+        <result column="FLAG" property="flag" javaType="string"  jdbcType="VARCHAR" />
+        <result column="LEFT_PX" property="leftPx" javaType="Integer"  jdbcType="NUMERIC" />
+        <result column="LENGTH_PX" property="lengthPx" javaType="Integer"  jdbcType="NUMERIC" />
+        <result column="STA_DATE" property="staDate" javaType="string"  jdbcType="VARCHAR" />
+        <result column="END_DATE" property="endDate" javaType="string"  jdbcType="VARCHAR" />
+        <result column="RUN_MAJOR_STATUS" property="runMajorStatus" javaType="string"  jdbcType="VARCHAR" />
+        <result column="RUN_MINOR_STATUS" property="runMinorStatus" javaType="string"  jdbcType="VARCHAR" />
+        <result column="TOT_CNT" property="totCnt" javaType="Integer"  jdbcType="NUMERIC" />
+        <result column="FOK_CNT" property="fokCnt" javaType="Integer"  jdbcType="NUMERIC" />
+    </resultMap>
+    
+ 	<select id="getShubBatchList" resultMap="rm_getShubBatchList" parameterType="com.shinsegae.smon.model.bat.DsBatchVO">
+    	<![CDATA[
+		SELECT MSTM.JOB_ID
+		     , MSTM.PROJECT_NAME
+		     , MSTM.FOLDER_PATH
+		     , NULL AS SUB_FOLDER_PATH
+		     , -1 AS SUB_JOB_CNT
+		     , MSTM.JOB_NAME
+		     , MSTM.JOB_SHORT_DESC
+		     , MSTM.JOB_LONG_DESC 
+		     , MSTM.JOB_ID_RANK
+		     , MSTM.FLAG
+			 , CASE WHEN MSTM.FLAG = 'PREV' THEN 0
+					ELSE ROUND((MSTM.STA_DATE - MSTM.NOW_00_DATE) * 24 * 60) * 2
+					END AS LEFT_PX
+			 , CASE WHEN MSTM.FLAG = 'PREV' THEN DECODE(ROUND((MSTM.END_DATE - MSTM.NOW_00_DATE) * 24 * 60), 0, 1, ROUND((MSTM.END_DATE - MSTM.NOW_00_DATE) * 24 * 60)) * 2
+					WHEN MSTM.FLAG = 'NORM' THEN DECODE(ROUND((MSTM.END_DATE - MSTM.STA_DATE) * 24 * 60), 0, 1, ROUND((MSTM.END_DATE - MSTM.STA_DATE) * 24 * 60)) * 2
+					WHEN MSTM.FLAG = 'NEXT' THEN DECODE(ROUND((MSTM.NEXT_00_DATE - MSTM.STA_DATE) * 24 * 60), 0, 1, ROUND((MSTM.NEXT_00_DATE - MSTM.STA_DATE) * 24 * 60)) * 2
+					ELSE 0 END AS LENGTH_PX
+			 , MSTM.STA_DATE
+			 , MSTM.END_DATE
+			 , MSTM.RUN_MAJOR_STATUS
+			 , MSTM.RUN_MINOR_STATUS
+			 , SUM(1) OVER (PARTITION BY MSTM.JOB_ID_RANK) AS TOT_CNT
+			 , SUM(CASE WHEN MSTM.RUN_MINOR_STATUS = 'FOK' THEN 1 ELSE 0 END) OVER (PARTITION BY MSTM.JOB_ID_RANK) AS FOK_CNT
+		  FROM (
+		  			SELECT INVB.JOB_ID
+		                 , INVB.HOST_NAME
+		                 , INVB.PROJECT_NAME
+		                 , INVB.RUNID
+		                 , INVB.CONTROLLING_RUNID
+		                 , INVB.FOLDER_PATH
+		                 , INVB.JOB_NAME
+		                 , INVB.JOB_SHORT_DESC
+		                 , INVB.JOB_LONG_DESC
+		                 , INVB.RUN_START_TIMESTAMP
+		                 , INVB.RUN_END_TIMESTAMP 
+		                 , INVB.ELAPSED_RUN_SECS
+		                 , INVB.RUN_MAJOR_STATUS
+		                 , INVB.RUN_MINOR_STATUS
+						 , INVB.STA_DAY
+		                 , INVB.STA_TIME
+		                 , TO_DATE(INVB.STA_DAY || INVB.STA_TIME, 'YYYYMMDDHH24MISS') AS STA_DATE
+		                 , INVB.END_DAY
+		                 , INVB.END_TIME
+		                 , TO_DATE(INVB.END_DAY || INVB.END_TIME, 'YYYYMMDDHH24MISS') AS END_DATE
+		                 , INVB.PREV_DAY
+		                 , INVB.NOW_DAY
+		                 , INVB.NEXT_DAY
+		                 , INVB.PREV_00_DATE
+		                 , INVB.NOW_00_DATE
+		                 , INVB.NEXT_00_DATE
+		                 , DENSE_RANK() OVER (ORDER BY INVB.FOLDER_PATH, INVB.SORT_ORDER ASC) AS JOB_ID_RANK
+		                 , CASE WHEN INVB.STA_DAY = INVB.END_DAY THEN 'NORM'
+							    WHEN INVB.STA_DAY < INVB.NOW_DAY AND INVB.END_DAY = INVB.NOW_DAY THEN 'PREV'  
+		                        WHEN INVB.END_DAY > INVB.NOW_DAY AND INVB.STA_DAY = INVB.NOW_DAY THEN 'NEXT' 
+		                        ELSE 'ERROR' END AS FLAG
+		              FROM (  
+		                        WITH INVA AS (  
+		                             SELECT INVA.CODE AS "ID"
+		                                  , INVA.UP_CODE AS "P_ID"
+		                                  , INVA.CODE_NAME||
+		                                    CASE WHEN (SELECT COUNT(COMM_CD_DTL) FROM SHUB_USR.COMM_CD_DTL WHERE COMM_CD = 'CM011' AND USE_YN = 'Y' AND REF_VAL_1 = INVA.CODE) = 0 THEN ''
+		                                         ELSE '('||(SELECT COUNT(COMM_CD_DTL) FROM SHUB_USR.COMM_CD_DTL WHERE COMM_CD = 'CM011' AND USE_YN = 'Y' AND REF_VAL_1 = INVA.CODE)||')' END AS "NAME"
+		                                  , LEVEL AS "LEV" 
+		                                  , CASE WHEN LEVEL = 1 THEN 'TRUE' ELSE 'FALSE' END AS "OPEN"
+		                                  , CASE WHEN LEVEL = 1 THEN '/css/ztree/zTreeStyle/img/diy/1_close.png' ELSE '/css/ztree/zTreeStyle/img/diy/8.png' END AS "ICON"
+		                                  , (SELECT COUNT(COMM_CD_DTL) FROM SHUB_USR.COMM_CD_DTL WHERE COMM_CD = 'CM011' AND USE_YN = 'Y' AND REF_VAL_1 = INVA.CODE) AS "SUB_JOB_CNT"
+		                                  , SYS_CONNECT_BY_PATH(INVA.CODE, '\') "FOLDER_PATH" 
+		                                  , INVA.SORT_ORDER AS "SORT_ORDER"
+		                               FROM (
+		                                        SELECT 'TOTAL' AS CODE
+		                                             , 'BATCH' AS CODE_NAME
+		                                             , 1 AS SORT_ORDER
+		                                             , '-' UP_CODE
+		                                             , 1 AS CODE_LEV
+		                                          FROM DUAL
+		                                         UNION ALL
+		                                        SELECT COMM_CD_DTL AS CODE
+		                                             , COMM_CD_DTL_NM AS CODE_NAME
+		                                             , ALIN_ORDR AS SORT_ORDER
+		                                             , 'TOTAL' AS UP_CODE
+		                                             , 2 AS CODE_LEV
+		                                          FROM SHUB_USR.COMM_CD_DTL A
+		                                         WHERE COMM_CD = 'ST007'  
+		                                           AND USE_YN = 'Y'
+		                                         UNION ALL
+		                                        SELECT REF_VAL_2||'.'||REF_VAL_10 AS CODE
+		                                             , COMM_CD_DTL_NM AS CODE_NAME
+		                                             , ALIN_ORDR AS SORT_ORDER
+		                                             , REF_VAL_1 AS UP_CODE
+		                                             , 3 AS CODE_LEV
+		                                          FROM SHUB_USR.COMM_CD_DTL A
+		                                         WHERE COMM_CD = 'CM011'  
+		                                           AND USE_YN = 'Y'
+		                                         UNION ALL
+		                                        SELECT REF_VAL_2||'.'||REF_VAL_3 AS CODE
+		                                             , COMM_CD_DTL_NM AS CODE_NAME
+		                                             , ALIN_ORDR AS SORT_ORDER
+		                                             , REF_VAL_1 AS UP_CODE
+		                                             , 3 AS CODE_LEV
+		                                          FROM SHUB_USR.COMM_CD_DTL A
+		                                         WHERE COMM_CD = 'CM011'  
+		                                           AND USE_YN = 'Y'
+		                                    ) INVA
+		                              WHERE 1=1
+		                              START WITH CODE = 'TOTAL'
+		                            CONNECT BY PRIOR CODE = UP_CODE
+		                              ORDER SIBLINGS BY INVA.SORT_ORDER  
+		                        )
+		                        SELECT A.WORK_DT||LPAD(INVA.P_ID, 4, '0')||LPAD(INVA.SORT_ORDER, 4, '0')||LPAD(A.WORK_SEQ, 6, '0') AS "JOB_ID"
+		                             , 'SCDEP-ISHUB-WAS' AS "HOST_NAME"
+		                             , 'SHUB_BAT' AS "PROJECT_NAME"
+		                             , A.WORK_DT||LPAD(A.WORK_SEQ, 13, '0') AS "RUNID"
+		                             , NULL AS "CONTROLLING_RUNID"
+		                             , INVA.FOLDER_PATH AS "FOLDER_PATH"
+		                             , A.PGM_NM AS "JOB_NAME"
+		                             , A.PGM_NM AS "JOB_SHORT_DESC"
+		                             , A.PGM_NM AS "JOB_LONG_DESC"
+		                             , A.WORK_ST_HH AS "RUN_START_TIMESTAMP"
+		                             , A.WORK_END_HH AS "RUN_END_TIMESTAMP"
+		                             , CASE WHEN ROUND((A.WORK_END_HH - A.WORK_ST_HH) * 24 * 60 * 60, 0) = 0 THEN 1 
+		                                    ELSE ROUND((A.WORK_END_HH - A.WORK_ST_HH) * 24 * 60 * 60, 0) END AS "ELAPSED_RUN_SECS"
+		                             , CASE WHEN WORK_RESU = 'SUCCESS' THEN 'FOK' 
+		                                    WHEN WORK_RESU IS NULL THEN 'ING'
+		                                    ELSE 'ERR' END AS "RUN_MAJOR_STATUS"
+		                             , CASE WHEN WORK_RESU = 'SUCCESS' THEN 'FOK' 
+		                                    WHEN WORK_RESU IS NULL THEN 'ING'
+		                                    ELSE 'ERR' END AS "RUN_MINOR_STATUS"
+		                             , TO_CHAR(A.WORK_ST_HH, 'YYYYMMDD') AS "STA_DAY"
+		                             , TO_CHAR(A.WORK_ST_HH, 'HH24MISS') AS "STA_TIME"
+		                             , TO_CHAR(A.WORK_END_HH, 'YYYYMMDD') AS "END_DAY"
+		                             , TO_CHAR(A.WORK_END_HH, 'HH24MISS') AS "END_TIME"
+		                             , TO_CHAR(TO_DATE(#{baseDay}, 'YYYYMMDD') - 1, 'YYYYMMDD') AS "PREV_DAY" 
+		                             , TO_CHAR(TO_DATE(#{baseDay}, 'YYYYMMDD'), 'YYYYMMDD') AS "NOW_DAY"
+		                             , TO_CHAR(TO_DATE(#{baseDay}, 'YYYYMMDD') + 1, 'YYYYMMDD') AS "NEXT_DAY"
+		                             , TO_DATE(#{baseDay}, 'YYYYMMDD') - 1 AS "PREV_00_DATE"
+		                             , TO_DATE(#{baseDay}, 'YYYYMMDD') AS "NOW_00_DATE"
+		                             , TO_DATE(#{baseDay}, 'YYYYMMDD') + 1 AS "NEXT_00_DATE"
+		                             , INVA.SORT_ORDER AS "SORT_ORDER"
+		                             , INVA.P_ID AS "P_ID" 
+		                          FROM (
+		                          			SELECT B.WORK_DT
+		                                         , B.PGM_ID
+		                                         , B.WORK_SEQ
+		                                         , B.WORK_ST_HH
+		                                         , B.WORK_END_HH
+		                                         , B.PGM_NM
+		                                         , B.WORK_RESU
+		                                         , B.WORK_RESU_MSG
+		                                         , B.REG_DT
+		                                         , B.REGR_ID
+		                                         , NVL(C.NEW_PGM_SUB_ID, B.PGM_SUB_ID) AS PGM_SUB_ID
+		                                         , B.PGM_FULL_ID 
+		                                      FROM SHUB_USR.BAT_WORK_LOG B
+		                                         , (
+		                                              SELECT REF_VAL_2 AS PGM_ID
+		                                                   , REF_VAL_3 AS ORG_PGM_SUB_ID
+		                                                   , REF_VAL_10 AS NEW_PGM_SUB_ID
+		                                         		FROM SHUB_USR.COMM_CD_DTL A
+		                                               WHERE COMM_CD = 'CM011' 
+		                                           ) C
+		                                     WHERE B.PGM_ID = C.PGM_ID (+)
+		                                       AND B.PGM_SUB_ID = C.ORG_PGM_SUB_ID (+)
+		                                       AND (     B.WORK_DT = #{baseDay}
+		                                              OR (B.WORK_DT = TO_CHAR(TO_DATE(#{baseDay}, 'YYYYMMDD') - 1, 'YYYYMMDD') AND TO_CHAR(WORK_END_HH, 'YYYYMMDD') = #{baseDay})
+		                                              OR (B.WORK_DT = TO_CHAR(TO_DATE(#{baseDay}, 'YYYYMMDD') + 1, 'YYYYMMDD') AND TO_CHAR(WORK_ST_HH, 'YYYYMMDD') = #{baseDay})
+		                                           )
+		                                       AND B.PGM_SUB_ID IS NOT NULL
+		                               ) A
+		                             , INVA
+		                         WHERE A.PGM_ID||'.'||A.PGM_SUB_ID = INVA.ID
+		                           ]]>
+		                           <if test="jobName != null and jobName != ''">
+		                           <![CDATA[
+		                           AND A.PGM_NM LIKE #{jobName, jdbcType=VARCHAR}||'%'
+		                           ]]>
+		                           </if>
+		                           <if test="successYn != null and successYn != ''">
+		                           <![CDATA[
+		                           AND 1 = CASE WHEN A.WORK_RESU = 'SUCCESS' AND #{successYn, jdbcType=VARCHAR} = 'Y' THEN 1
+		                                        WHEN NVL(A.WORK_RESU, 'N') <> 'SUCCESS' AND #{successYn, jdbcType=VARCHAR} = 'N' THEN 1
+		                                        ELSE 0 END
+		                           ]]>
+		                           </if>
+		                           <if test="folderPath != null and folderPath != ''">
+		                           <![CDATA[
+		                           AND A.PGM_ID||'.'||A.PGM_SUB_ID IN (
+		                                    SELECT CODE 
+		                                      FROM (
+		                                                SELECT 'TOTAL' AS CODE
+		                                                     , 'BATCH' AS CODE_NAME
+		                                                     , 1 AS SORT_ORDER
+		                                                     , '-' UP_CODE
+		                                                     , 1 AS CODE_LEV
+		                                                  FROM DUAL
+		                                                 UNION ALL
+		                                                SELECT COMM_CD_DTL AS CODE
+		                                                     , COMM_CD_DTL_NM AS CODE_NAME
+		                                                     , ALIN_ORDR AS SORT_ORDER
+		                                                     , 'TOTAL' AS UP_CODE
+		                                                     , 2 AS CODE_LEV
+		                                                  FROM SHUB_USR.COMM_CD_DTL A
+		                                                 WHERE COMM_CD = 'ST007'  
+		                                                   AND USE_YN = 'Y'
+		                                                 UNION ALL
+		                                                SELECT REF_VAL_2||'.'||REF_VAL_10 AS CODE
+		                                                     , COMM_CD_DTL_NM AS CODE_NAME
+		                                                     , ALIN_ORDR AS SORT_ORDER
+		                                                     , REF_VAL_1 AS UP_CODE
+		                                                     , 3 AS CODE_LEV
+		                                                  FROM SHUB_USR.COMM_CD_DTL A
+		                                                 WHERE COMM_CD = 'CM011'  
+		                                                   AND USE_YN = 'Y'
+		                                                 UNION ALL
+		                                                SELECT REF_VAL_2||'.'||REF_VAL_3 AS CODE
+		                                                     , COMM_CD_DTL_NM AS CODE_NAME
+		                                                     , ALIN_ORDR AS SORT_ORDER
+		                                                     , REF_VAL_1 AS UP_CODE
+		                                                     , 3 AS CODE_LEV
+		                                                  FROM SHUB_USR.COMM_CD_DTL A
+		                                                 WHERE COMM_CD = 'CM011'  
+		                                                   AND USE_YN = 'Y'
+		                                            )
+		                                      WHERE 1=1
+		                                      START WITH CODE = #{folderPath, jdbcType=VARCHAR}
+		                                    CONNECT BY PRIOR CODE = UP_CODE  
+		                           	   )
+		                           	   ]]>
+		                           	   </if>
+			<![CDATA[
+		                        ORDER BY INVA.P_ID, INVA.SORT_ORDER, A.WORK_SEQ
+		                  ) INVB 
+			) MSTM
+			]]>
+	</select>		
+	
+	<sql id = "pagingHeader">
+		SELECT * FROM (
+			SELECT A.*
+			     , ROW_NUMBER() OVER(ORDER BY 1 ASC) AS RN
+			 FROM (
+	</sql>
+	<sql id = "pagingFooter">
+			) A
+		) WHERE RN BETWEEN #{start} AND #{end}	
+	</sql>
+ </mapper> 
