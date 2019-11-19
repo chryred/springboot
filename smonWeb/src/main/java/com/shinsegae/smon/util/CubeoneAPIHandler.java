@@ -34,7 +34,7 @@ public class CubeoneAPIHandler {
 		try
 		{
 			sbResult = new StringBuilder();
-			NLogger.debug("strCubeoneServer : ", cubeoneProperties.getServer());
+//			NLogger.debug("strCubeoneServer : ", cubeoneProperties.getServer());
 			
 			String wsUrl = "http://" + cubeoneProperties.getServer() + "/cubeone/api/" + strCubeoneMethod;
 
@@ -76,7 +76,7 @@ public class CubeoneAPIHandler {
 	}
 	
 	public Map<String, Object> setValueObject(String strRetMsg) {
-		NLogger.debug("strRetMsg : " + strRetMsg);
+//		NLogger.debug("strRetMsg : " + strRetMsg);
 
 		Map<String, Object> data = null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -127,7 +127,7 @@ public class CubeoneAPIHandler {
 		cubeoneVO.setTableName("MGR");
 		cubeoneVO.setColumnName("MGR_PWD");
 		
-		map = cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO);
+		map = cubeoneAPIHandler.callCubeoneAPI("codecchar", cubeoneVO);
 		NLogger.debug("양방향 암호화 : ", map);
 		
 		/* 양방향 암/복호화 End */
