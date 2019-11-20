@@ -13,8 +13,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.shinsegae.smon.common.user.UserService;
+import com.shinsegae.smon.model.CubeoneVO;
 import com.shinsegae.smon.model.UserVO;
+import com.shinsegae.smon.support.exception.CubeoneException;
 import com.shinsegae.smon.util.ActionBlossomPush;
+import com.shinsegae.smon.util.CubeoneAPIHandler;
 import com.shinsegae.smon.util.GenerateRandomNum;
 import com.shinsegae.smon.util.NLogger;
 
@@ -63,17 +66,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 		return loginUserDetails;
 	}
     
-    public UserDetails loadUserByUsernamePw(String userName,String userPw)	throws UsernameNotFoundException {
+    public UserDetails loadUserByUsernamePw(String userName,String userPw)	throws UsernameNotFoundException, CubeoneException {
 		LoginUserDetails loginUserDetails = null;
 		UserVO userVO = null;
 
 		HashMap<String, Object> paramVO = new HashMap<String, Object>();
-
+		
 		paramVO.put("mgrId", userName); // 사용자 아이디
-		paramVO.put("userPwd", userPw); // 사용자 비밀번호
+		paramVO.put("userPwd", CubeoneAPIHandler.getInstance().callCubeoneAPI("coencbyte", CubeoneVO.builder().msg(userPw).crudLog(10).itemCd("PWD").tableName("MGR").columnName("MGR_PWD").build())); // 사용자 비밀번호
 
 		try {
 			userVO = userService.getUser(paramVO); // 사용자 조회
+			NLogger.debug("userVO : ", userVO.toString());
 		} catch (Exception e) {
 			throw new UsernameNotFoundException("사용자정보 조회시 오류가 발생하였습다.", e);
 		}

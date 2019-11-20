@@ -8,6 +8,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
+import org.springframework.util.StringUtils;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -15,17 +17,30 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinsegae.smon.config.CubeoneProperties;
 import com.shinsegae.smon.listner.BeanSupport;
 import com.shinsegae.smon.model.CubeoneVO;
+import com.shinsegae.smon.support.exception.CubeoneException;
 
 public class CubeoneAPIHandler {
 	
+	private static CubeoneAPIHandler instance;
+	
 	private CubeoneProperties cubeoneProperties;
 	
+	public static CubeoneAPIHandler getInstance() {
+		if(instance == null) {
+			synchronized(CubeoneAPIHandler.class) {
+				if(instance == null) {
+					instance = new CubeoneAPIHandler();
+				}
+			}
+		}
+		return instance;
+	}
 	
 	public CubeoneAPIHandler() {
 		cubeoneProperties =  (CubeoneProperties)(BeanSupport.getBean("cubeoneProperties"));
 	}
 	
-	public Map<String, Object> callCubeoneAPI(String strCubeoneMethod, CubeoneVO cubeoneVO) {
+	public String callCubeoneAPI(String strCubeoneMethod, CubeoneVO cubeoneVO) throws CubeoneException {
 		StringBuilder sbResult = null;
 		URL url = null;
 		HttpURLConnection urlConnection = null;
@@ -72,7 +87,7 @@ public class CubeoneAPIHandler {
 			
 		}
 		
-		return setValueObject(sbResult.toString());
+		return retMsg(setValueObject(sbResult.toString()));
 	}
 	
 	public Map<String, Object> setValueObject(String strRetMsg) {
@@ -92,25 +107,28 @@ public class CubeoneAPIHandler {
 		return data;
 	}
 	
+	public String retMsg(Map<String, Object> mData) throws CubeoneException {
+		NLogger.debug("Cubeone Return Data : ", mData);
+		
+		String strRetMsg = (String)mData.get("retMsg");
+		// 성공이 아니거나 리턴값이 빈값일 경우 null 리턴
+		if(!"200".equals(mData.get("status")) || StringUtils.isEmpty(strRetMsg)) {
+			throw new CubeoneException((String)mData.get("errorMsg"), "암복호화 호출 실패");
+		} 
+		
+		return strRetMsg;
+	}
+	
 	/**
 	 * 큐브원 API 호출 예시
 	 */
-	public void cubeoneCallTest() {
-		Map<String, Object> map = null;
-		
+	public void cubeoneCallTest() throws Exception {
 		CubeoneAPIHandler cubeoneAPIHandler = new CubeoneAPIHandler();
 		
 		/* 단방향 암호화 Start */
-		CubeoneVO cubeoneVO = new CubeoneVO();
-		
-		cubeoneVO.setMsg("173917");
-		cubeoneVO.setCrudLog(10);
-		cubeoneVO.setItemCd("PWD");
-		cubeoneVO.setTableName("MGR");
-		cubeoneVO.setColumnName("MGR_PWD");
-		
-		map = cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO);
-		NLogger.debug("단방향 암호화 : ", map);
+		CubeoneVO cubeoneVO = CubeoneVO.builder().msg("173917").crudLog(10).itemCd("PWD").tableName("MGR").columnName("MGR_PWD").build();
+
+		NLogger.debug("단방향 암호화 : ", cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO));
 		/* 단방향 암호화 End */
 		
 		
@@ -121,18 +139,16 @@ public class CubeoneAPIHandler {
 		cubeoneVO.setTableName("MGR");
 		cubeoneVO.setColumnName("MGR_PWD");
 		
-		map = cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO);
-		NLogger.debug("양방향 암호화 : ", map);
+		String retMsg = cubeoneAPIHandler.callCubeoneAPI("coencbyte", cubeoneVO);
+		NLogger.debug("양방향 암호화 : ", retMsg);
 		
-		cubeoneVO.setMsg((String)map.get("retMsg"));
+		cubeoneVO.setMsg((String)retMsg);
 		cubeoneVO.setCrudLog(10);
 		cubeoneVO.setItemCd("PHONE");
 		cubeoneVO.setTableName("MGR");
 		cubeoneVO.setColumnName("MGR_PWD");
 		
-		map = cubeoneAPIHandler.callCubeoneAPI("codecchar", cubeoneVO);
-		NLogger.debug("양방향 암호화 : ", map);
-		
+		NLogger.debug("양방향 암호화 : ", cubeoneAPIHandler.callCubeoneAPI("codecchar", cubeoneVO));
 		/* 양방향 암/복호화 End */
 	}
 	

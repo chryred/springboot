@@ -73,7 +73,7 @@
 		</if>
 		<if test="userPwd != '' and userPwd != null">
 		<![CDATA[
-		   AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(#{userPwd}, 10, 'PWD')
+		   AND A.MGR_PWD = #{userPwd}
 		]]>
 		</if>
 		<if test="mgrStateCd != '' and mgrStateCd != null">
@@ -206,7 +206,7 @@
 			, #{logType, jdbcType=VARCHAR}
 			, #{loginIp, jdbcType=VARCHAR}
 			, #{loginSsid, jdbcType=VARCHAR}
-			, SYSDATE
+			, SYSDATE()
 		) 
 	</insert>	
     

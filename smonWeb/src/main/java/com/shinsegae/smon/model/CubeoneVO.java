@@ -1,5 +1,6 @@
 package com.shinsegae.smon.model;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -7,8 +8,9 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@Builder
 public class CubeoneVO {
-	private String status = "200";
+	private String status;
 	private String msg;
 	private int crudLog;
 	private String itemCd;
