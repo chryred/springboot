@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.shinsegae.smon.database.tablespace.TableSpaceDbMonitoringMapper">
+    <resultMap id="undoMap" type="java.util.LinkedHashMap">
+        <result column="TABLESPACE_NAME" property="TABLESPACE_NAME" javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CHECK_TIME"      property="CHECK_TIME"      javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="USED_RATE"       property="USED_RATE"       javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>  
+  
+    <select id="selectUndoTableSpaceState" resultMap="undoMap" parameterType="hashMap">
+    <![CDATA[
+       SELECT TABLESPACE_NAME,
+              CHECK_TIME AS CHECK_TIME,
+              USED_RATE
+         FROM TCKUNT
+        WHERE CHECK_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+          AND CONTENTS = 'UNDO'
+          AND DB_NAME = #{system}
+        ORDER BY TABLESPACE_NAME, CHECK_TIME
+    ]]> 
+    </select>
+   
+    
+    <resultMap id="statMap" type="java.util.LinkedHashMap">
+        <result column="CHANGE_SIZE"      property="CHANGE_SIZE"       javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="TABLESPACE_NAME"  property="TABLESPACE_NAME"   javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="FREE_SIZE"        property="FREE_SIZE"         javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="USED_SIZE"        property="USED_SIZE"         javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CURRENT_SIZE"     property="CURRENT_SIZE"      javaType="string"  jdbcType="VARCHAR" />
+        <result column="FREE_RATE"        property="FREE_RATE"         javaType="string"  jdbcType="VARCHAR" />
+        <result column="CHANGE_RATE"      property="CHANGE_RATE"       javaType="string"  jdbcType="VARCHAR" />
+    </resultMap>  
+  
+    <select id="selectTablespaceState" resultMap="statMap" parameterType="hashmap">
+    <![CDATA[
+    SELECT B.USED_SIZE - A.USED_SIZE AS CHANGE_SIZE,
+           A.TABLESPACE_NAME,
+           B.FREE_SIZE,
+           B.USED_SIZE,
+           B.CURRENT_SIZE,
+           B.FREE_RATE,
+           ((B.USED_SIZE - A.USED_SIZE) / B.CURRENT_SIZE * 100 ) AS CHANGE_RATE
+      FROM (SELECT *
+              FROM TCKUNT 
+             WHERE CHECK_YMD = TO_CHAR(SYSDATE - #{term}, 'YYYYMMDD')
+               AND DB_NAME = #{system}
+               AND CHECK_TIME = (SELECT MIN(CHECK_TIME)
+                                   FROM TCKUNT
+                                  WHERE CHECK_YMD = TO_CHAR(SYSDATE - #{term}, 'YYYYMMDD')
+                                    AND DB_NAME = #{system})) A,
+           (SELECT *
+              FROM TCKUNT 
+             WHERE CHECK_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+               AND DB_NAME = #{system}
+               AND CHECK_TIME = (SELECT MAX(CHECK_TIME)
+                                   FROM TCKUNT
+                                  WHERE CHECK_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                    AND DB_NAME = #{system})) B
+      WHERE A.DB_NAME = B.DB_NAME
+        AND A.TABLESPACE_NAME = B.TABLESPACE_NAME
+        AND (B.USED_SIZE - A.USED_SIZE ) > 0
+    ]]> 
+    </select>
+    
+    <select id="selectTablespaceSizeTckTotal" resultType="int" parameterType="hashmap">
+    <![CDATA[
+    SELECT COUNT(*) AS TOTAL_CNT
+      FROM TCKUNT 
+     WHERE CHECK_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+       AND DB_NAME = #{system}
+       AND CHECK_TIME = (SELECT MAX(CHECK_TIME)
+                           FROM TCKUNT
+                          WHERE CHECK_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+                            AND DB_NAME = #{system})
+       
+    ]]> 
+    </select>
+    
+    <select id="selectTablespaceSizeTck" resultMap="undoMap" parameterType="hashmap">
+    SELECT CHECK_YMD,  TABLESPACE_NAME, CHECK_TIME, CURRENT_SIZE, FREE_SIZE, USED_SIZE, FREE_RATE, USED_RATE, MAX_SIZE
+      FROM (SELECT CHECK_YMD,  TABLESPACE_NAME, CHECK_TIME, CURRENT_SIZE, FREE_SIZE, USED_SIZE, FREE_RATE, USED_RATE, MAX_SIZE, ROWNUM AS ROW_NO
+              FROM TCKUNT 
+             WHERE CHECK_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+               AND DB_NAME = #{system}
+               AND CHECK_TIME = (SELECT MAX(CHECK_TIME)
+                                   FROM TCKUNT
+                                  WHERE CHECK_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                    AND DB_NAME =  #{system})
+               )
+    <if test="page != null">
+     WHERE ROW_NO BETWEEN ((#{page}-1) * #{rows}) + 1 AND (#{page} * #{rows})
+    </if>
+    </select>
+
+ </mapper>

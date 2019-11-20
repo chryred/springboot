@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans 
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:oxm="http://www.springframework.org/schema/oxm"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context   http://www.springframework.org/schema/context/spring-context.xsd 
+        http://www.springframework.org/schema/aop       http://www.springframework.org/schema/aop/spring-aop.xsd 
+        http://www.springframework.org/schema/mvc       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/oxm       http://www.springframework.org/schema/oxm/spring-oxm.xsd
+        ">
+   
+    <mvc:annotation-driven>
+    	<mvc:message-converters>
+    		<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+    			<property name="supportedMediaTypes">
+    				<list>
+    					<value>text/html;charset=UTF-8</value>
+    					<value>application/json;charset=UTF-8</value>
+    				</list>
+    			</property>
+    		</bean>
+    	</mvc:message-converters>
+    </mvc:annotation-driven>
+    <mvc:resources mapping="/images/**" location="/images/" />
+    
+    <mvc:interceptors>
+        <mvc:interceptor>
+        	<mvc:mapping path="/**" />
+            <mvc:exclude-mapping path="/index*"/>
+            <mvc:exclude-mapping path="/confirmCertNum.do"/>
+            <mvc:exclude-mapping path="/confirmEmpNum.do"/>
+            <mvc:exclude-mapping path="/do_logout.do"/>
+            <mvc:exclude-mapping path="/saveMember.do"/>
+            <mvc:exclude-mapping path="/session_timeout.do"/>
+            <mvc:exclude-mapping path="/access_denied.do"/>
+            <mvc:exclude-mapping path="/sendUserTmpPassword.do"/>
+            <mvc:exclude-mapping path="/updateEmpPwd.do"/>
+            <mvc:exclude-mapping path="/confirmEmpPwd.do"/>
+            <mvc:exclude-mapping path="/duplicate_login.do"/>
+            <mvc:exclude-mapping path="/checkValidUserInfo.do"/>
+            <mvc:exclude-mapping path="/findPassword.do"/>
+            <mvc:exclude-mapping path="/checkOtpAndUpdatePwd.do"/>
+            <mvc:exclude-mapping path="/sendPwdOtpNumber.do"/>
+            <!-- <mvc:exclude-mapping path="/logi*"/>
+            <mvc:exclude-mapping path="/wiki/detail*"/>
+            <mvc:exclude-mapping path="/wiki/ajax/detail*/**"/>
+			<mvc:exclude-mapping path="/voc*"/> -->
+            <bean class="com.shinsegae.smon.support.LoginCheckInterceptor"/>         
+        </mvc:interceptor>        
+    </mvc:interceptors>
+    
+     
+	<!-- MappingJacksonJsonView 설정  Order:0-->
+	<bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+	    <property name="contentType" value="application/json;charset=UTF-8"> </property>
+	</bean>
+
+
+	<bean id="beanNameResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0" />
+	</bean>      
+	
+	<!-- 뷰리졸버 Order:2 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+		<property name="contentType" value="text/html; charset=utf-8" />
+		<property name="order" value="1" />
+	</bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"></bean>
+    
+</beans>

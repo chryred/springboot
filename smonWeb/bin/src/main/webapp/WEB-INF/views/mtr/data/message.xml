@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<message>
+    <selectLongOpQueryPasing>
+        <objects>
+        v$session_longops 
+        </objects>
+        <header>
+        <![CDATA[
+        단일 long running operation에 대한 진행상태를 제공하는 view <br>
+        실시간으로 제공되므로 오래 수행되는 쿼리에 대해 종료시간을 예측할 수 있다.
+        ]]> 
+        </header>
+        <contents>
+        <![CDATA[
+        ① OP_수행시간 : 쿼리 수행 중 발생한 Operation 수행 시간(초)<br>
+        ② QueryAvg_수행시간 : 쿼리 수행시간(초)<br>
+        ③ OWNER : 쿼리를 수행한 Oracle User<br>
+        ④ Operation명 : 쿼리 수행 중 발생한 Operation<br>
+        &nbsp&nbsp. Table scan<br>
+        &nbsp&nbsp. Index Full Scan<br>
+        &nbsp&nbsp. Sort/Merge<br>
+        &nbsp&nbsp. Sort Output<br>
+        &nbsp&nbsp. Rollback<br>
+        &nbsp&nbsp. Gather Table's Index Statistics<br>
+        ⑤ Target : Operation 발생된 오브젝트<br>
+        ⑥ 메세지 : 상세내역<br>
+        ]]> 
+        </contents>
+    </selectLongOpQueryPasing>
+    
+    <selectTempTablePasing>
+        <objects>
+        DBA_OBJECTS / ALL_OBJECTS
+        </objects>
+        <header>
+        <![CDATA[
+        DB내 오브젝트들을 조회할 수 있는 View<br>
+        오브젝트 생성/변경 시간을 확인할 수 있다.
+        ]]> 
+        </header>
+        <contents>
+        <![CDATA[
+        ① 소유자 : 오브젝트 소유자<br>
+        ② 오브젝트명 : 오브젝트 이름<br>
+        ③ 생성일자 : 오브젝트 생성일시<br>
+        ④ 구분 : 오브젝트 생성 및 삭제 현황<br>
+        &nbsp&nbsp. DEL TEMP TABLE : 익일 삭제될 TEMP 오브젝트<br>
+        &nbsp&nbsp. NOT BACKUP & NEW TABLE : TEMP 테이블이 아니며 신규로 생성된 오브젝트<br>
+        ]]> 
+        </contents>
+    </selectTempTablePasing>
+    
+    <selectTempTablePasing2>
+        <objects>
+        DBA_OBJECTS / ALL_OBJECTS
+        </objects>
+        <header>
+        <![CDATA[
+        Not decided yet
+        ]]> 
+        </header>
+        <contents>
+        <![CDATA[
+       	Not decided yet
+        ]]> 
+        </contents>
+    </selectTempTablePasing2>
+</message>
+
+              

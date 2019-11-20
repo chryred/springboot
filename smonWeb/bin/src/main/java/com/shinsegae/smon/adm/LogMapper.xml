@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.shinsegae.smon.adm.LogMapper">
+	<insert id="writeUserLog" parameterType="com.shinsegae.smon.model.UserAccessLogVO" >
+		<![CDATA[
+		INSERT INTO CM_USER_ACCESS_LOG
+		VALUES (
+				SEQ_USER_ACCESS_LOG.NEXTVAL,
+				#{userId, jdbcType=VARCHAR},
+				NULL,
+				SYSDATE,
+				#{URL, jdbcType=VARCHAR},
+				#{reqParams, jdbcType=VARCHAR},
+				#{logIp, jdbcType=VARCHAR},
+				#{regId, jdbcType=VARCHAR},
+				SYSDATE,
+				#{modId, jdbcType=VARCHAR},
+				SYSDATE,
+				#{execTime}
+			   )
+		]]>
+	</insert>
+	
+	
+	<insert id="setLogActionMap" parameterType="com.shinsegae.smon.model.AccessLogActionMapVO" >
+		<![CDATA[
+		
+		MERGE INTO CM_USER_ACCESS_LOG_ACTION_MAP 
+            USING DUAL
+            ON (URL = #{URL, jdbcType=VARCHAR})
+            WHEN MATCHED THEN
+                      UPDATE SET
+                      		  ACTION_NAME 		= #{actionName, jdbcType=VARCHAR},
+                      		  ACTION_GUBUN_CD 	= #{actionGubunCd, jdbcType=VARCHAR},
+                      		  PERSONAL_YN 		= #{personalYN, jdbcType=VARCHAR},
+                      		  MOD_ID 			= #{modId, jdbcType=VARCHAR},
+                      		  MOD_DATE 			= SYSDATE
+            WHEN NOT MATCHED THEN
+                      INSERT (
+                      		  URL,
+                      		  ACTION_NAME,
+                      		  ACTION_GUBUN_CD,
+                      		  PERSONAL_YN,
+                      		  REG_ID,
+                      		  REG_DATE,
+                      		  MOD_ID,
+                      		  MOD_DATE
+                      		 )
+                      VALUES (
+                      		  #{URL, jdbcType=VARCHAR},
+                      		  #{actionName, jdbcType=VARCHAR},
+                      		  #{actionGubunCd, jdbcType=VARCHAR},
+                      		  #{personalYN, jdbcType=VARCHAR},
+                      		  #{regId, jdbcType=VARCHAR},
+                      		  SYSDATE,
+                      		  #{modId, jdbcType=VARCHAR},
+                      		  SYSDATE
+                      		 )
+		]]> 
+	</insert>	
+	
+	<resultMap id="rm_logActionMap" type="com.shinsegae.smon.model.AccessLogActionMapVO">
+		<result column="URL" 	 			property="URL"				javaType="string" 	jdbcType="VARCHAR" />
+		<result column="ACTION_NAME" 		property="actionName" 		javaType="string" 	jdbcType="VARCHAR" />
+		<result column="ACTION_GUBUN_CD" 	property="actionGubunCd" 	javaType="string" 	jdbcType="VARCHAR" />
+		<result column="PERSONAL_YN"  		property="personalYN" 		javaType="string" 	jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getLogActionMap" resultMap="rm_logActionMap" parameterType="com.shinsegae.smon.model.AccessLogActionMapVO">
+		<![CDATA[
+		    SELECT 	URL,
+		    		ACTION_NAME,
+		    		ACTION_GUBUN_CD,
+		    		PERSONAL_YN
+		    FROM	CM_USER_ACCESS_LOG_ACTION_MAP
+		    WHERE	URL = #{URL}
+		]]> 
+	</select>
+	
+	<resultMap id="rm_logURLDistinct" type="java.util.Map">
+		<result column="TITLE" 	 property="title"	javaType="string" 	jdbcType="VARCHAR" />
+		<result column="CONTENT" property="content" javaType="string" 	jdbcType="VARCHAR" />
+		<result column="URL" 	 property="url" 	javaType="string" 	jdbcType="VARCHAR" />
+		<result column="MOD_ID"  property="modId" 	javaType="string" 	jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getLogURLDistinct" resultMap="rm_logURLDistinct">
+		<![CDATA[
+		    SELECT  A.*, B.MOD_ID
+		    FROM 	(
+		          	 SELECT    Nvl(SubStr(URL, InStr(URL, '/', 1, 3)+1, InStr(URL, '/', 1, 4)-InStr(URL, '/', 1, 3)-1), 'etc') TITLE,
+				               SubStr(URL, Decode(InStr(URL, '/', 1, 4)+1, 1, InStr(URL, '/', 1, 3)+1, InStr(URL, '/', 1, 4)+1), Length(URL)) CONTENT,
+				               URL
+				     FROM      CM_USER_ACCESS_LOG
+				     GROUP BY  Nvl(SubStr(URL, InStr(URL, '/', 1, 3)+1, InStr(URL, '/', 1, 4)-InStr(URL, '/', 1, 3)-1), 'etc'),
+				               SubStr(URL, Decode(InStr(URL, '/', 1, 4)+1, 1, InStr(URL, '/', 1, 3)+1, InStr(URL, '/', 1, 4)+1), Length(URL)),
+				               URL
+				     ORDER BY  1, 2
+		    		) A, CM_USER_ACCESS_LOG_ACTION_MAP B
+		    WHERE   A.URL = B.URL(+)
+		]]> 
+	</select>
+	
+	
+	<resultMap id="rm_UrlStatistics" type="com.shinsegae.smon.model.UrlStatisticsDTO">
+		<result column="URL" 	 		property="url" 			javaType="string" 	jdbcType="VARCHAR" />
+		<result column="PERSONAL_YN" 	property="personalYN" 	javaType="string" 	jdbcType="VARCHAR" />
+		<result column="AVG_TIME" 	 	property="avgExecTime" 	javaType="string" 	jdbcType="VARCHAR" />
+		<result column="REC_TIME" 		property="recExecTime" 	javaType="string" 	jdbcType="VARCHAR" />
+		<result column="CNT" 			property="reqCnt" 		javaType="string" 	jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getUrlStatistics" resultMap="rm_UrlStatistics" parameterType="com.shinsegae.smon.model.UrlStatisticsDTO">
+		<![CDATA[
+		SELECT * FROM (
+			SELECT ROWNUM rnum, H.* FROM (
+				SELECT		LOG.URL URL,
+							MAP.PERSONAL_YN PERSONAL_YN,
+							ROUND(AVG(EXEC_TIME), 0) AVG_TIME,
+							TO_CHAR(MAX(LOG.REG_DATE), 'RRRR-MM-DD') REC_TIME,
+							COUNT(LOG.URL) CNT
+				FROM 		CM_USER_ACCESS_LOG LOG, CM_USER_ACCESS_LOG_ACTION_MAP MAP
+				WHERE		LOG.URL = MAP.URL(+)
+				AND			LOG.URL LIKE '%'||#{url}||'%'
+				GROUP BY 	(LOG.URL, MAP.PERSONAL_YN)
+				ORDER BY ${colid} ${sorting}
+			) H
+			WHERE ROWNUM <= #{end}
+		)
+		WHERE rnum >= #{start}
+		]]> 
+	</select>
+	
+	<select id="getCountUrlStatisticsList" resultType="java.lang.Integer" parameterType="com.shinsegae.smon.model.UrlStatisticsDTO">
+		<![CDATA[
+		SELECT	COUNT(DISTINCT URL)
+		FROM	CM_USER_ACCESS_LOG
+		WHERE	URL LIKE '%'||#{url}||'%'
+		]]> 
+	</select>
+</mapper>

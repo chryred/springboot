@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shinsegae.smon.privacy.PersonalInfoMonitoringMapper">    
+	<resultMap id="TABLE_MAP" type="java.util.HashMap">
+        <result column="DB_NAME"           	property="DB_NAME"			javaType="string"  jdbcType="VARCHAR" />
+        <result column="CHECK_GUBN"         property="CHECK_GUBN"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="OWNER"     			property="OWNER"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="TABLE_NAME"     	property="TABLE_NAME"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="COLUMN_NAME"     	property="COLUMN_NAME"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="TABLE_COMMENT"     	property="TABLE_COMMENT"	javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="COLUMN_COMMENT"     property="COLUMN_COMMENT"	javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="MEMO"    			property="MEMO"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="PERSONALINFO_YN"    property="PERSONALINFO_YN"	javaType="string"  jdbcType="VARCHAR" />
+    </resultMap>
+	
+    <select id="selectPersonalInfoList" resultMap="TABLE_MAP" parameterType="HashMap">
+		SELECT DB_NAME
+			,CHECK_GUBN
+			,OWNER
+			,TABLE_NAME
+			,COLUMN_NAME
+			,TABLE_COMMENT
+			,COLUMN_COMMENT
+			,MEMO
+			,PERSONALINFO_YN
+		FROM
+			TCKPER_MERGE A
+		WHERE 1=1
+		<if test="dbName != '' and dbName != null">
+			AND A.DB_NAME = #{dbName}
+		</if>
+		<if test="owner != '' and owner != null">
+			AND A.OWNER = #{owner}
+		</if>
+		<if test="infoType != '' and infoType != null">
+			AND A.CHECK_GUBN = #{infoType}
+		</if>
+		<choose>
+			<when test="exceptFlag eq 'Y'.toString()">
+				AND A.PERSONALINFO_YN = 'N'
+			</when>
+			<when test="exceptFlag eq 'N'.toString()">
+				AND A.PERSONALINFO_YN IS NULL
+			</when>
+		</choose>
+	   	ORDER BY
+	   		1,2,3,4,5
+    </select>
+    
+    <select id="selectComboDBName" resultType="HashMap">
+    	SELECT
+			SYSTEM_NAME DB_NAME,
+			DB_SID
+		FROM
+			TCKSYS
+    </select>
+
+    <select id="selectComboOwner" parameterType="HashMap" resultType="HashMap">
+    	SELECT
+			DISTINCT OWNER
+		FROM
+			TCKPER_MERGE
+		WHERE
+			1=1
+			<if test="dbName != '' and dbName != null">
+			AND DB_NAME = #{dbName}
+			</if>
+    </select>
+    
+    <insert id="">
+    </insert>
+    
+    <update id="updatePersonalInfoException" parameterType="HashMap">
+    	UPDATE TCKPER_MERGE
+    	SET PERSONALINFO_YN = #{personinfoFlag}
+    	  , MEMO = #{memo, jdbcType = VARCHAR}
+    	  , USER_MOD_DATE = SYSDATE
+    	WHERE 1=1
+    		AND DB_NAME = #{dbName}
+    		AND CHECK_GUBN = #{checkGubn}
+    		AND OWNER = #{owner}
+    		AND TABLE_NAME = #{tableName}
+    		AND COLUMN_NAME = #{columnName}
+    </update>
+    
+    <select id="selectPersonalInfoProgressGraphList" resultType="HashMap" parameterType="HashMap">
+	    SELECT
+			A.CHECK_YMD,
+			A.CHECK_GUBN,
+			A.DB_NAME,
+			COUNT(A.CHECK_GUBN) AS CNT
+		FROM
+			TCKPER A
+		WHERE
+			NOT EXISTS(
+				SELECT 1
+				FROM TCKPER_EX B
+				WHERE A.DB_NAME = B.DB_NAME
+				AND A.OWNER = B.OWNER
+				AND A.TABLE_NAME = B.TABLE_NAME
+				AND A.COLUMN_NAME = B.COLUMN_NAME
+				AND A.CHECK_YMD >= TO_CHAR(B.ENT_DATE, 'YYYYMMDD')
+			)
+		  		AND CHECK_YMD BETWEEN #{checkStartDate} AND #{checkEndDate}
+		  	GROUP BY A.CHECK_YMD, A.CHECK_GUBN, A.DB_NAME
+		  	ORDER BY
+		  		A.CHECK_YMD ASC
+    </select>
+    
+    <select id="selectPersonalInfoProgressGraphList2" resultType="HashMap" parameterType="HashMap">
+		SELECT
+			SUBSTR(CHECK_YMD, 0, 6) AS CHECK_YM,
+			DB_NAME                 AS DB_NAME,
+			CHECK_GUBN              AS CHECK_GUBN,
+			COUNT(1)                AS CNT
+		FROM (
+			SELECT
+				*
+			FROM
+				TCKPER
+			WHERE
+				SUBSTR(CHECK_YMD, 0, 6) BETWEEN  TO_CHAR(ADD_MONTHS(TO_DATE(#{checkEndDate}, 'YYYYMM'), -12), 'YYYYMM') AND #{checkEndDate}
+				AND (
+					(CHECK_YMD >= TO_CHAR(LAST_DAY(TO_DATE(SUBSTR(CHECK_YMD, 0, 6), 'YYYYMM')), 'YYYYMMDD'))
+					OR
+					(CHECK_YMD >= TO_CHAR(SYSDATE-1, 'YYYYMMDD')
+				)
+			)
+		)
+		GROUP BY
+			SUBSTR(CHECK_YMD, 0, 6), DB_NAME, CHECK_GUBN
+    </select>
+    
+    <select id="selectPersonalInfoDetailList" resultType="HashMap" parameterType="HashMap">
+		SELECT
+			*
+		FROM
+			TCKPER A
+		WHERE
+			NOT EXISTS(
+				SELECT 1
+				FROM TCKPER_EX B
+				WHERE A.DB_NAME = B.DB_NAME
+				AND A.OWNER = B.OWNER
+				AND A.TABLE_NAME = B.TABLE_NAME
+				AND A.COLUMN_NAME = B.COLUMN_NAME
+				AND A.CHECK_YMD >= TO_CHAR(B.ENT_DATE, 'YYYYMMDD')
+			)
+		<choose>
+			<when test="periodType = 'day'">
+				AND A.CHECK_YMD BETWEEN #{startCheckDate} AND #{endCheckDate}
+			</when>
+			<when test="periodType = 'month'">
+				AND TO_CHAR(TO_DATE(A.CHECK_YMD, 'YYYYMMDD'), 'YYYYMM') BETWEEN #{startCheckDate} AND #{endCheckDate}
+			</when>
+		</choose>
+		<if test="dbName != '' and dbName != null">
+			AND A.DB_NAME = #{dbName}
+		</if>
+		AND A.CHECK_GUBN = #{infoType}
+	   	ORDER BY
+	   		A.CHECK_YMD DESC
+    </select>
+    
+</mapper> 

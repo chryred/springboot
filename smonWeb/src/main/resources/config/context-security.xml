@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns ="http://www.springframework.org/schema/beans"
+	xmlns:sec="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+    
+
+    <sec:http pattern="/" security="none" />
+    <!-- sec:http pattern="/index*.do" security="none" / -->
+    <sec:http pattern="/duplicate_login.do" security="none"/>
+    
+	<sec:http auto-config="false" use-expressions="true" entry-point-ref="customAuthenticationEntryPoint">
+		<!--  -->
+		<sec:intercept-url pattern="/adm/**" access="hasRole('ROLE_ADMIN')"/>
+		<sec:intercept-url pattern="/batch/**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')"/>
+		<sec:intercept-url pattern="/main.do" access="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')"/>
+		<sec:intercept-url pattern="/resources/**" access="permitAll" />
+		<!-- sec:intercept-url pattern="/**/*.js" access="permitAll"/>
+		<sec:intercept-url pattern="/**/*.css" access="permitAll"/>
+		<sec:intercept-url pattern="/images/**/*.*" access="permitAll"/-->		
+	
+		<!-- 세션관리 -->
+        <sec:session-management session-authentication-error-url = "/access_denied.do"
+					      invalid-session-url="/session_timeout.do" 
+					      session-fixation-protection="migrateSession">
+            <sec:concurrency-control max-sessions="10" expired-url="/session_timeout.do"/>
+        </sec:session-management>
+		
+		<!-- 커스텀 필터  -->		
+		<sec:custom-filter position="FORM_LOGIN_FILTER" ref="customAuthenticationFilter" />
+						
+		<!-- 로그아웃 설정 -->
+        <sec:logout logout-url="/logout.do" logout-success-url="/do_logout.do" invalidate-session="false" delete-cookies="JSESSIONID" />
+        <sec:csrf disabled="false"/>
+        <sec:access-denied-handler error-page="/access_denied.do"/>
+	</sec:http>
+	
+	
+	<!-- Session Check -->
+    <!-- <property name="sessionAuthenticationStrategy" ref="sas" /> -->
+	<bean id="customAuthenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+		<property name="usernameParameter" value="userId" />
+		<property name="passwordParameter" value="userPwd" />
+		<property name="filterProcessesUrl" value="/securityCheck.do" />
+		<property name="authenticationManager" ref="customAuthenticationManager" />
+		<property name="authenticationSuccessHandler" ref="loginSuccessHandler"/> 
+		<property name="authenticationFailureHandler" ref="loginFailureHandler"/>
+	</bean>
+
+	<bean id="customAuthenticationEntryPoint" class="com.shinsegae.smon.common.security.LoginUrlAuthenticationEntryPoint">
+		<property name="loginFormUrl" value="/index.do" />
+	</bean>  
+	
+	<!-- 인증 제공자 및 사용자정보 서비스
+	<bean id="customAuthenticationProvider" class="com.shinsegae.smon.common.security.CustomAuthenticationProvider" />
+	<bean id="customUserDetailsService" class="com.shinsegae.smon.common.security.CustomUserDetailsService" />
+	 -->
+	<!-- 로그인 성공/실패 핸들러  -->
+	<bean id="loginSuccessHandler" class="com.shinsegae.smon.common.security.LoginSuccessHandler"/>
+	<bean id="loginFailureHandler" class="com.shinsegae.smon.common.security.LoginFailureHandler"/>
+	
+	<!-- 사용자정의 인증 매니져 -->
+	<sec:authentication-manager alias="customAuthenticationManager">
+		<sec:authentication-provider ref="customAuthenticationProvider"/>
+		<sec:authentication-provider user-service-ref="customUserDetailsService"/>
+	</sec:authentication-manager>
+</beans>

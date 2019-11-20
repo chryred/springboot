@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+ 
+ 	<!-- 프로퍼티 암호화 bean 등록 -->
+    <bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+        <property name="algorithm" value="PBEWithMD5AndDES" />
+        <property name="password" value="deptEncKey2016"></property>
+    </bean>
+    
+    <bean id="shinsegaeConfigurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+        <property name="config" ref="environmentVariablesConfiguration" />
+    </bean>
+    
+    <bean id="propertyConfigurer" class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer">
+       <constructor-arg>
+           <ref bean="shinsegaeConfigurationEncryptor"/>
+       </constructor-arg>
+       <property name="locations">
+           <list>
+               <value>classpath:/config/jdbc.properties</value>
+           </list>
+       </property>
+    </bean>   
+ 
+ 	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+	    <property name="poolName" value="springHikariCP" />
+	    <property name="connectionTestQuery" value="${datasource.hikari.connection-test-query}" />
+	    <property name="driverClassName" value="${soss.datasource.driver-class-name}" />
+	    <property name="jdbcUrl" value="${soss.datasource.jdbc-url}" />
+	    <property name="maximumPoolSize" value="${datasource.hikari.maximum-pool-size}" />
+	    <property name="idleTimeout" value="${datasource.hikari.minimum-idle}" />
+	
+	    <property name="dataSourceProperties">
+	        <props>
+	            <prop key="user">${soss.datasource.username}</prop>
+	            <prop key="password">${soss.datasource.password}</prop>
+	        </props>
+	    </property>
+	</bean>
+	
+	<!-- HikariCP configuration -->
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+	    <constructor-arg ref="hikariConfig" />
+	</bean> 
+   
+    <!-- 공통. Datasource 
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="url" value="${spring.soss.datasource.jdbc-url}"/>
+        <property name="username" value="${spring.soss.datasource.username}"/>
+        <property name="password" value="${spring.soss.datasource.password}"/>
+    </bean>
+    -->    
+    <!-- 공통. Transaction Manager -->
+    <bean id="transactionManager"  class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
+        <property name="dataSource" ref="dataSource" /> 
+    </bean>
+
+	<!-- mybatis 설정 -->
+	<bean id="sqlSessionFactoryBean" class="com.shinsegae.smon.util.RefreshableSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:/mybatis/mybatis-config.xml"/>
+		<property name="mapperLocations">
+			<array>
+				<value>classpath*:/com/shinsegae/**/*Mapper.xml</value>
+			</array>
+		</property>
+		<!-- <property name="interval" value="2000" /> -->
+	</bean>
+	
+	<bean id="sqlSessionTemplatePrimary" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBean"/>
+	</bean>
+	
+    <bean id="sqlSessionFactoryBeanBatch" class="com.shinsegae.smon.util.RefreshableSqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:/mybatis/mybatis-config-batch.xml"/>
+        <property name="mapperLocations">
+            <array>
+                <value>classpath*:/com/shinsegae/**/*Mapper.xml</value>
+            </array>
+        </property>
+        <property name="interval" value="2000" />
+    </bean>
+    
+    <!-- 운영정보 Data Source SessionTemplate -->
+    <bean id="sqlSessionTemplateBatch" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBeanBatch"/>
+    </bean>
+    
+	<!-- 아카데미 Data Source -->
+    <bean id="dataSource_SCMS" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${scms.datasource.driver-class-name}"/>
+        <property name="url" value="${scms.datasource.jdbc-url}"/>
+        <property name="username" value="${scms.datasource.username}"/>
+        <property name="password" value="${scms.datasource.password}"/>
+        <!-- <property name="connectionProperties" value="characterEncoding=EUCKR" /> -->
+        <!-- <property name="maxActive" value="2"/> -->
+    </bean>
+    
+    <!-- 아카데미 SessionFactoryBean -->
+    <bean id="sqlSessionFactoryBean_SCMS" class="com.shinsegae.smon.util.RefreshableSqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource_SCMS"/>
+        <property name="configLocation" value="classpath:/mybatis/mybatis-config.xml"/>
+        <property name="mapperLocations">
+            <array>
+                <value>classpath*:/com/shinsegae/**/*Mapper.xml</value>
+            </array>
+        </property>
+        <property name="interval" value="2000" />
+    </bean>
+    
+	<!-- 아카데미 Data Source SessionTemplate -->
+    <bean id="sqlSessionTemplate_SCMS" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBean_SCMS"/>
+    </bean>
+    
+    
+    <!-- 엑사 Data Source -->
+    <bean id="dataSource_EXA" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${sossexa.datasource.driver-class-name}"/>
+        <property name="url" value="${sossexa.datasource.jdbc-url}"/>
+        <property name="username" value="${sossexa.datasource.username}"/>
+        <property name="password" value="${sossexa.datasource.password}"/>
+        <property name="connectionProperties" value="characterEncoding=UTF8" />
+        <!-- <property name="maxActive" value="2"/> -->
+    </bean>
+    
+    <!-- 엑사 SessionFactoryBean -->
+    <bean id="sqlSessionFactoryBean_EXA" class="com.shinsegae.smon.util.RefreshableSqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource_EXA"/>
+        <property name="configLocation" value="classpath:/mybatis/mybatis-config-UTF8.xml"/>
+        <property name="mapperLocations">
+            <array>
+                <value>classpath*:/com/shinsegae/**/*Mapper.xml</value>
+            </array>
+        </property>
+        <property name="interval" value="2000" />
+    </bean>
+    
+	<!-- 엑사 Data Source SessionTemplate -->
+    <bean id="sqlSessionTemplate_EXA" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBean_EXA"/>
+    </bean>
+    
+</beans>

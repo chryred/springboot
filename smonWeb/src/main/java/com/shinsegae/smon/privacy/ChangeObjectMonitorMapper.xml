@@ -135,7 +135,7 @@
     
     <update id="updateAuthedData" parameterType="HashMap">
     	UPDATE TCKDCO
-    	   SET CONFIRM_DATE = SYSDATE
+    	   SET CONFIRM_DATE = SYSDATE()
     	     , CONFIRM_EMPNO = #{empNo}
     	     , CONFIRM_YN = 'Y'
     	 WHERE 1=1

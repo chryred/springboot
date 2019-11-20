@@ -110,7 +110,7 @@
                VEHICLENUMBER_SUM,
                ETC_SUM
           FROM TCKTDO
-         WHERE TOTAL_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+         WHERE TOTAL_YMD = DATE_FORMAT(NOW(), '%Y%m%d')
         ORDER BY PROGRESS_PERCENTAGE, TOT_OBJ_CNT
     </select>
     
@@ -136,7 +136,7 @@
     		#{columnName},
     		#{tableComment},
     		#{columnComment},
-    		SYSDATE
+    		NOW()
     	)
     </insert>
     
@@ -156,7 +156,7 @@
 				AND A.OWNER = B.OWNER
 				AND A.TABLE_NAME = B.TABLE_NAME
 				AND A.COLUMN_NAME = B.COLUMN_NAME
-				AND A.CHECK_YMD = TO_CHAR(B.ENT_DATE, 'YYYYMMDD')
+				AND A.CHECK_YMD = DATE_FORMAT(B.ENT_DATE, '%Y%m%d')
 			)
 		  		AND CHECK_YMD BETWEEN #{checkStartDate} AND #{checkEndDate}
 		  	GROUP BY A.CHECK_YMD, A.CHECK_GUBN, A.DB_NAME
@@ -176,11 +176,11 @@
 			FROM
 				TCKPER
 			WHERE
-				SUBSTR(CHECK_YMD, 0, 6) BETWEEN  TO_CHAR(ADD_MONTHS(TO_DATE(#{checkEndDate}, 'YYYYMM'), -12), 'YYYYMM') AND #{checkEndDate}
+				SUBSTR(CHECK_YMD, 0, 6) BETWEEN  DATE_FORMAT(DATEADD(MM, -12, TO_DATE(#{checkEndDate}, 'YYYYMM')), '%Y%m') AND #{checkEndDate}
 				AND (
-					(CHECK_YMD = TO_CHAR(LAST_DAY(TO_DATE(SUBSTR(CHECK_YMD, 0, 6), 'YYYYMM')), 'YYYYMMDD'))
+					(CHECK_YMD = DATE_FORMAT(LAST_DAY(TO_DATE(SUBSTR(CHECK_YMD, 0, 6), 'YYYYMM')), '%Y%m%d'))
 					OR
-					(CHECK_YMD = TO_CHAR(SYSDATE-1, 'YYYYMMDD')
+					(CHECK_YMD = DATE_FORMAT(NOW()-1, '%Y%m')
 				)
 			)
 		)
@@ -201,7 +201,7 @@
 				AND A.OWNER = B.OWNER
 				AND A.TABLE_NAME = B.TABLE_NAME
 				AND A.COLUMN_NAME = B.COLUMN_NAME
-				AND A.CHECK_YMD = TO_CHAR(B.ENT_DATE, 'YYYYMMDD')
+				AND A.CHECK_YMD = DATE_FORMAT(B.ENT_DATE, '%Y%m%d')
 			)
     </select>
 	

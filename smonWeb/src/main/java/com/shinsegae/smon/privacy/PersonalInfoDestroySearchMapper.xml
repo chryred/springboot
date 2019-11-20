@@ -19,7 +19,7 @@
     			TCKCMP TA
 				WHERE 1=1
 				<if test="ifYmd == null">
-			   		AND TA.IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
+			   		AND TA.IF_YMD = DATE_FORMAT(SYSDATE,'YYYYMMDD')
 			   	</if>
 			   	<![CDATA[	
 			   		AND CNT > 0

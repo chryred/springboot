@@ -6,14 +6,14 @@
 </script>
 
 <!-- lib -->
-<script src="<%=request.getContextPath() %>/bootstrap/bower_components/datepicker/bootstrap-datepicker.js"></script>
-<script src="<%=request.getContextPath() %>/js/jqgrid/grid.locale-en.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath() %>/js/jqgrid/jquery.jqGrid.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath() %>/js/clipboard.min.js"></script>
+<script src="<%=request.getContextPath() %>/resources/bootstrap/bower_components/datepicker/bootstrap-datepicker.js"></script>
+<script src="<%=request.getContextPath() %>/resources/js/jqgrid/grid.locale-en.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath() %>/resources/js/jqgrid/jquery.jqGrid.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath() %>/resources/js/clipboard.min.js"></script>
 <!-- css -->
-<link href="<%=request.getContextPath() %>/bootstrap/bower_components/datepicker/datepicker.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" media="screen" href="<%=request.getContextPath() %>/css/ui.jqgrid.css" />
-<link href="<%=request.getContextPath() %>/css/app/personalInfo/personalInfoSearch.css" rel="stylesheet">
+<link href="<%=request.getContextPath() %>/resources/bootstrap/bower_components/datepicker/datepicker.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" media="screen" href="<%=request.getContextPath() %>/resources/css/ui.jqgrid.css" />
+<link href="<%=request.getContextPath() %>/resources/css/app/personalInfo/personalInfoSearch.css" rel="stylesheet">
 
 <div id="page-wrapper">
     <div class="row">&nbsp;</div>
@@ -95,6 +95,6 @@
 <textarea id="query" rows="0" cols="0" ></textarea>
 <!-- /#page-wrapper -->
 
-<script src="<%=request.getContextPath() %>/js/app/personalInfo/personalInfoSearch.js"></script>    
+<script src="<%=request.getContextPath() %>/resources/js/app/personalInfo/personalInfoSearch.js"></script>    
 </body>
 </html>

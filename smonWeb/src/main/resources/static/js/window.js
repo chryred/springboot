@@ -94,6 +94,7 @@ window.initCombo = function(comboType, targetRef, params, changeCallback, syncFl
 		},
 		error: function() {
 			alert("콤보박스 초기화 실패");
+
 		}
 	});
 }

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.shinsegae.smon.common.AlertMapper">
+
+    <insert id="insertAlertHistoryTable"  parameterType="com.shinsegae.smon.model.AlertVO">
+     INSERT INTO TCKLOG (
+                          CHECK_YMD,
+                          DB_NAME,
+                          CHECK_ITEM,
+                          CHECK_TIME, 
+                          CHECK_SUB_ITEM,
+                          CHECK_INFO                       
+                     ) VALUES (                                            
+                          TO_CHAR(SYSDATE, 'YYYYMMDD'), 
+                          #{dbName}, 
+                          #{checkItem},
+                          TO_CHAR(SYSDATE, 'HH24MISS'), 
+                          #{checkSubItem},
+                          #{checkInfo}                
+                     )                    
+    </insert>
+    
+    <select id="selectAlertMessage" resultType="String" parameterType="com.shinsegae.smon.model.AlertVO">
+        SELECT A.ETC_NAME || ' ' || B.ETC_NAME 
+          FROM TCKETC A,
+               TCKETC B
+         WHERE A.ETC_GUBN = '001'
+           AND A.ETC_CODE = #{checkItem}
+           AND B.ETC_GUBN = '002'
+           AND B.ETC_CODE = #{checkSubItem}    
+    </select>
+    
+    <resultMap id="alertMap" type="java.util.LinkedHashMap">
+        <result column="TIME"           property="TIME"            javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CHECK_INFO"     property="CHECK_INFO"      javaType="String"  jdbcType="VARCHAR" /> 
+        <result column="GUBN"           property="GUBN"            javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="ALERT_GUBN"     property="ALERT_GUBN"      javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>
+    
+    
+    <select id="selectAlertLog" resultMap="alertMap">
+    <![CDATA[
+        SELECT CASE WHEN ((SYSDATE - TO_DATE(B.CHECK_YMD || B.CHECK_TIME, 'YYYYMMDDHH24MISS')) * 24 * 60) < 60 THEN ROUND(((SYSDATE - TO_DATE(B.CHECK_YMD || B.CHECK_TIME, 'YYYYMMDDHH24MISS')) * 24 * 60),0) || ' minutes ago'
+                    ELSE SUBSTR(B.CHECK_TIME, 1, 2) || ':' || SUBSTR(B.CHECK_TIME, 3, 2) 
+               END AS TIME,
+               B.DB_NAME || '(' || 
+               (SELECT C.ETC_NAME
+                  FROM TCKETC C
+                 WHERE C.ETC_GUBN ='001'
+                   AND C.ETC_CODE = B.CHECK_ITEM) || ' ' || 
+               (SELECT C.ETC_NAME
+                  FROM TCKETC C
+                 WHERE C.ETC_GUBN ='002'
+                   AND C.ETC_CODE = B.CHECK_SUB_ITEM) || ' ' ||     
+                B.CHECK_INFO|| ')' AS CHECK_INFO,
+               'SYSTEM' AS GUBN,
+               CASE WHEN ((SYSDATE - TO_DATE(B.CHECK_YMD || B.CHECK_TIME, 'YYYYMMDDHH24MISS')) * 24 * 60 * 60) < 80 THEN 1
+                    ELSE 2
+               END AS ALERT_GUBN
+          FROM (SELECT CHECK_YMD,
+                       DB_NAME,
+                       CHECK_ITEM,
+                       CHECK_SUB_ITEM,
+                       MAX(CHECK_TIME) AS CHECK_TIME
+                  FROM TCKLOG
+                 WHERE CHECK_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+                   AND DB_NAME = 'DAPP'
+                   GROUP BY CHECK_YMD, DB_NAME, CHECK_ITEM, CHECK_SUB_ITEM) A,
+                TCKLOG B
+         WHERE A.CHECK_YMD = B.CHECK_YMD
+           AND A.DB_NAME = B.DB_NAME
+           AND A.CHECK_ITEM = B.CHECK_ITEM
+           AND A.CHECK_TIME = B.CHECK_TIME
+           AND A.CHECK_SUB_ITEM = B.CHECK_SUB_ITEM
+           AND A.DB_NAME = #{system}
+       ]]> 
+    </select>
+    
+    <resultMap id="ratioMap" type="java.util.LinkedHashMap">
+        <result column="GUBN"           property="GUBN"            javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="HIT_RATIO"      property="HIT_RATIO"       javaType="string"  jdbcType="VARCHAR" />
+        <result column="CSS_GUBN"       property="CSS_GUBN"        javaType="string"  jdbcType="VARCHAR" />
+        <result column="URL"            property="URL"             javaType="string"  jdbcType="VARCHAR" />
+    </resultMap>
+    
+    
+    <select id="selectHitRatio" resultMap="ratioMap" parameterType="HashMap">
+    <![CDATA[
+	    SELECT B.GUBN,
+	           B.HIT_RATIO,
+	           CASE 
+	                WHEN B.GUBN = 'BCHR' THEN (CASE WHEN HIT_RATIO >= 90 THEN 0 ELSE 1 END)
+	                WHEN B.GUBN = 'LCHR' THEN (CASE WHEN HIT_RATIO <= 1 THEN 0 ELSE 1 END)
+	                WHEN B.GUBN = 'DDHR' THEN (CASE WHEN HIT_RATIO >= 87 THEN 0 ELSE 1 END)
+	           END AS CSS_GUBN,
+	           CASE 
+	                WHEN B.GUBN = 'BCHR' THEN 'longOpQuery.do'
+	                WHEN B.GUBN = 'LCHR' THEN 'notBindQuery.do'
+	                WHEN B.GUBN = 'DDHR' THEN '#'
+	           END AS URL
+	      FROM (SELECT CHECK_YMD, DB_NAME, GUBN, MAX(CHECK_TIME) AS CHECK_TIME
+	              FROM TCKHIT
+	             WHERE CHECK_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+	               AND DB_NAME = #{system}
+	            GROUP BY CHECK_YMD, DB_NAME, GUBN) A,
+	           TCKHIT B
+	     WHERE A.CHECK_YMD = B.CHECK_YMD
+	       AND A.DB_NAME = B.DB_NAME
+	       AND A.GUBN = B.GUBN
+	       AND A.CHECK_TIME = B.CHECK_TIME
+	]]> 
+    </select>
+ </mapper>
