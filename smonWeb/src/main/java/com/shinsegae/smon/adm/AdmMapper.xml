@@ -181,19 +181,17 @@
                       UPDATE SET
                             AUTH_CD = 	 #{authCd, jdbcType=VARCHAR}	,
                             MOD_ID = '',
-                            MOD_DATE = ''										
+                            MOD_DATE = SYSDATE()										
             WHEN NOT MATCHED THEN
                       INSERT(
 					MENU_ID,
 					AUTH_GROUP_ID,
 					AUTH_CD,
-					REG_ID,
-					REG_DATE
+					REG_ID
 				)values ( 
 				    #{id, jdbcType=VARCHAR},
 				    #{authGroupid , jdbcType=VARCHAR},
 			 	    #{authCd, jdbcType=VARCHAR},
-			        '',
 			        ''
 		        )
  
