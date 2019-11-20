@@ -169,27 +169,6 @@
         <result column="SQL_FULLTEXT"      property="SQL_FULLTEXT"     javaType="string"  jdbcType="CLOB" />
     </resultMap>
 
-
-    <select id="selectLongQuery_bak" resultMap="longQueryMap" parameterType="hashmap">
-    <![CDATA[
-	SELECT B.TIME, NVL(A.EXE_TIME, 0) AS EXE_TIME, SQL_ID
-	  FROM (SELECT SUBSTR(REPLACE(LAST_LOAD_TIME, ':', ''), 12, 4) || '00' AS TIME,
-	               EXE_TIME
-	          FROM TCKLOQ
-	         WHERE DB_NAME = #{system}
-	           AND SUBSTR(LAST_LOAD_TIME, 0, 10) = TO_CHAR(SYSDATE -1, 'YYYY-MM-DD')) A,
-	       (SELECT HOUR || MI || '00' AS TIME
-	          FROM (SELECT TRIM(TO_CHAR(LEVEL, '00')) AS HOUR
-	                  FROM DUAL
-	                 CONNECT BY LEVEL < 25) A,
-	               (SELECT TRIM(TO_CHAR(LEVEL -1, '00')) AS MI
-	                  FROM DUAL
-	                 CONNECT BY LEVEL < 61)) B
-	 WHERE B.TIME = A.TIME(+)
-	ORDER BY TIME
-    ]]>
-    </select>
-
     <select id="selectLongQuery" resultMap="longQueryMap" parameterType="hashmap">
     <![CDATA[
 	SELECT NVL(ELAPSED_TIME, 0) AS ELAPSED_TIME,

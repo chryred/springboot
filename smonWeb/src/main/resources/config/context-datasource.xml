@@ -33,6 +33,51 @@
        </property>
     </bean>   
  
+ 	<!-- Aurora 설정 Start -->
+ 	<bean id="hikariConfigAurora" class="com.zaxxer.hikari.HikariConfig">
+	    <property name="poolName" value="springHikariCP" />
+	    <property name="connectionTestQuery" value="${datasource.hikari.mysql.connection-test-query}" />
+	    <property name="driverClassName" value="${aurora.datasource.driver-class-name}" />
+	    <property name="jdbcUrl" value="${aurora.datasource.jdbc-url}" />
+	    <property name="maximumPoolSize" value="${datasource.hikari.maximum-pool-size}" />
+	    <property name="idleTimeout" value="${datasource.hikari.minimum-idle}" />
+	
+	    <property name="dataSourceProperties">
+	        <props>
+	            <prop key="user">${aurora.datasource.username}</prop>
+	            <prop key="password">${aurora.datasource.password}</prop>
+	        </props>
+	    </property>
+	</bean>
+	
+	<!-- HikariCP configuration -->
+	<bean id="dataSourceAurora" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+	    <constructor-arg ref="hikariConfigAurora" />
+	</bean> 
+   
+    <!-- 공통. Transaction Manager -->
+    <bean id="transactionAuroraManager"  class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
+        <property name="dataSource" ref="dataSourceAurora" /> 
+    </bean>
+
+	<!-- mybatis 설정 -->
+	<bean id="sqlSessionFactoryAuroraBean" class="com.shinsegae.smon.util.RefreshableSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceAurora"/>
+		<property name="configLocation" value="classpath:/mybatis/mybatis-config-UTF8.xml"/>
+		<property name="mapperLocations">
+			<array>
+				<value>classpath*:/com/shinsegae/**/*Mapper.xml</value>
+			</array>
+		</property>
+		<!-- <property name="interval" value="2000" /> -->
+	</bean>
+	
+	<bean id="sqlSessionTemplatePrimary" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryAuroraBean"/>
+	</bean>
+	<!-- Aurora설정 End -->
+ 
+ 	<!-- on-pem환경 운영정보 개발기 oracle 설정 Start -->
  	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
 	    <property name="poolName" value="springHikariCP" />
 	    <property name="connectionTestQuery" value="${datasource.hikari.connection-test-query}" />
@@ -54,14 +99,6 @@
 	    <constructor-arg ref="hikariConfig" />
 	</bean> 
    
-    <!-- 공통. Datasource 
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
-        <property name="url" value="${spring.soss.datasource.jdbc-url}"/>
-        <property name="username" value="${spring.soss.datasource.username}"/>
-        <property name="password" value="${spring.soss.datasource.password}"/>
-    </bean>
-    -->    
     <!-- 공통. Transaction Manager -->
     <bean id="transactionManager"  class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
         <property name="dataSource" ref="dataSource" /> 
@@ -79,10 +116,11 @@
 		<!-- <property name="interval" value="2000" /> -->
 	</bean>
 	
-	<bean id="sqlSessionTemplatePrimary" class="org.mybatis.spring.SqlSessionTemplate">
+	<bean id="sqlSessionTemplateOnprem" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBean"/>
 	</bean>
-	
+	<!-- on-pem환경 운영정보 개발기 oracle 설정 End -->
+    
     <bean id="sqlSessionFactoryBeanBatch" class="com.shinsegae.smon.util.RefreshableSqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="classpath:/mybatis/mybatis-config-batch.xml"/>
@@ -154,4 +192,30 @@
         <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBean_EXA"/>
     </bean>
     
+    <!-- 스마트허브 Data Source -->
+    <bean id="dataSource_SHUB" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${shub.datasource.driver-class-name}"/>
+        <property name="url" value="${shub.datasource.jdbc-url}"/>
+        <property name="username" value="${shub.datasource.username}"/>
+        <property name="password" value="${shub.datasource.password}"/>        
+        <!-- <property name="connectionProperties" value="characterEncoding=EUCKR" /> -->
+        <!-- <property name="maxActive" value="2"/> -->
+    </bean>
+    
+    <!-- 스마트허브 SessionFactoryBean -->
+    <bean id="sqlSessionFactoryBean_SHUB" class="com.shinsegae.smon.util.RefreshableSqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource_SHUB"/>
+        <property name="configLocation" value="classpath:/mybatis/mybatis-config.xml"/>
+        <property name="mapperLocations">
+            <array>
+                <value>classpath*:/com/shinsegae/**/*Mapper.xml</value>
+            </array>
+        </property>
+        <property name="interval" value="2000" />
+    </bean>
+    
+	<!-- 스마트허브 Data Source SessionTemplate -->
+    <bean id="sqlSessionTemplate_SHUB" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBean_SHUB"/>
+    </bean>
 </beans>

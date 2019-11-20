@@ -6,6 +6,8 @@ var Gubn_chk="";
 var g_intervalId;
 var g_colid;
 var g_sorting;
+var token = $("meta[name='_csrf']").attr("content");
+var header = $("meta[name='_csrf_header']").attr("content");
 
 $(document).ready(function() {
 
@@ -188,7 +190,8 @@ function fnBtnCtrl(Gubn){
 			dataType : "json", //text, json, html, xml, csv, script, jsonp
 			async : true,
 			timeout : 2 * 60 * 1000, //2 min,
-			beforeSend : function() {
+			beforeSend : function(xhr, settings) {
+				xhr.setRequestHeader(header, token); 
 				$.blockUI({ css: {color: '#fff'} });
 			},
 			complete : function() {
@@ -246,9 +249,10 @@ function fnBtnCtrl(Gubn){
 					    		dataType : "json", //text, json, html, xml, csv, script, jsonp
 					    		async : true,
 					    		timeout : 2 * 60 * 1000, //2 min,
-					    		beforeSend : function() {			 
-					    		//	$.blockUI({ css: { color: '#fff'} });
-					    		},
+					    		beforeSend : function(xhr, settings) {
+									xhr.setRequestHeader(header, token); 
+									//$.blockUI({ css: {color: '#fff'} });
+								},
 					    		complete : function() {
 					    			$.unblockUI();				
 					    		},
@@ -308,7 +312,8 @@ function fnBtnCtrl(Gubn){
 			dataType : "json", //text, json, html, xml, csv, script, jsonp
 			async : true,
 			timeout : 2 * 60 * 1000, //2 min,
-			beforeSend : function() {
+			beforeSend : function(xhr, settings) {
+				xhr.setRequestHeader(header, token); 
 				$.blockUI({ css: {color: '#fff'} });
 			},
 			complete : function() {
@@ -393,7 +398,8 @@ function fnBtnCtrl(Gubn){
 			dataType : "json", //text, json, html, xml, csv, script, jsonp
 			async : true,
 			timeout : 2 * 60 * 1000, //2 min,
-			beforeSend : function() {
+			beforeSend : function(xhr, settings) {
+				xhr.setRequestHeader(header, token); 
 			},
 			complete : function() {
 			},
@@ -457,7 +463,8 @@ function fn_update() {
 			dataType : "json", //text, json, html, xml, csv, script, jsonp
 			async : true,
 			timeout : 2 * 60 * 1000, //2 min,
-			beforeSend : function() {
+			beforeSend : function(xhr, settings) {
+				xhr.setRequestHeader(header, token); 
 			},
 			complete : function() {
 			},
@@ -499,7 +506,8 @@ function fn_delete() {
 			dataType : "json", //text, json, html, xml, csv, script, jsonp
 			async : true,
 			timeout : 2 * 60 * 1000, //2 min,
-			beforeSend : function() {
+			beforeSend : function(xhr, settings) {
+				xhr.setRequestHeader(header, token); 
 			},
 			complete : function() {
 			},

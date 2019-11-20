@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,16 +35,17 @@ import com.shinsegae.smon.util.NLogger;
 @Component("customAuthenticationProvider")
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 	
-    @Override
-    public boolean supports(Class<?> authentication) {
-        return authentication.equals(UsernamePasswordAuthenticationToken.class);
-    }
-    
-    @Autowired(required = false)
+	@Autowired(required = false)
     private HttpServletRequest request;
 	
 	@Autowired
 	private CustomUserDetailsService customUserDetailService;	
+	
+	@Override
+    public boolean supports(Class<?> authentication) {
+        return authentication.equals(UsernamePasswordAuthenticationToken.class);
+    }
+    
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {

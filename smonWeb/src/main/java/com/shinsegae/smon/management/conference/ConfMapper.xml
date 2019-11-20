@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.shinsegae.smon.management.conference.ConfMapper">
+    
+    <resultMap id="wikiMap" type="java.util.HashMap">
+    
+        <result column="SEQ"        		property="SEQ"				javaType="integer" jdbcType="INTEGER" /> 
+        <result column="SBJ"        		property="SBJ"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="LOGINID"        	property="LOGINID"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="YMD"        		property="YMD"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="REGID"        		property="REGID"			javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>
+    
+    <resultMap id="attndMap" type="java.util.HashMap"> 
+        <result column="SEQ"        		property="SEQ"				javaType="integer" jdbcType="INTEGER" /> 
+        <result column="YMD"        		property="YMD"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STDID"        		property="STDID"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="ATTNDYN"        	property="ATTNDYN"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="NAME"        		property="NAME"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="REGNAME"       		property="REGNAME"			javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>
+    
+    <resultMap id="confInfoMap" type="java.util.HashMap"> 
+        <result column="SEQ"        		property="SEQ"				javaType="integer" jdbcType="INTEGER" /> 
+        <result column="YMD"        		property="YMD"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="SBJ"        		property="SBJ"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="REGID"        		property="REGID"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="REGDT"        		property="REGDT"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="REGNAME"        	property="REGNAME"			javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>
+    
+    <resultMap id="attndResultMap" type="java.util.HashMap"> 
+        <result column="STDID"        		property="STDID"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="NAME"        		property="NAME"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNT"        		property="CNT"				javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>
+    
+    <resultMap id="hostResultMap" type="java.util.HashMap"> 
+        <result column="STDID"        		property="STDID"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="NAME"        		property="NAME"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNT"        		property="CNT"				javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>
+    
+    <resultMap id="excelDownMap" type="java.util.HashMap"> 
+        <result column="SBJ"        		property="SBJ"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="YMD"        		property="YMD"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="NAME"        		property="NAME"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="ATTNDYN"        	property="ATTNDYN"			javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>
+
+    
+    <select id="SelectBox" resultType="java.lang.String">
+    	SELECT	SBJ
+    	  FROM	DPSS_TBL
+      ORDER BY 	SBJ
+    </select>
+    
+    <select id="selectList" resultMap="attndMap">
+    	SELECT	A.SEQ
+    	     ,	A.YMD
+    	     ,	A.SBJ
+             ,	LISTAGG(B.MGR_NAME,',') WITHIN GROUP(ORDER BY B.MGR_NAME) REGNAME
+     	  FROM	CONF_ADM_TBL A
+             ,  MGR B
+         WHERE 	A.REGID = B.MGR_ID
+      GROUP BY  SEQ, YMD, SBJ
+      ORDER BY 	YMD DESC, SEQ DESC
+    </select>
+    
+    <select id="searchHost" resultMap="attndMap" parameterType="com.shinsegae.smon.model.ConfVO">
+    	SELECT MGR_ID STDID, MGR_NAME NAME
+          FROM MGR
+         WHERE (MGR_ID LIKE CONCAT('%',CONCAT(#{STDID}, '%')) OR MGR_NAME LIKE CONCAT('%',CONCAT(#{STDID}, '%')))
+           AND MGR_STATE_CD = 'Y'
+    </select>
+    
+    <select id="confHostYN" resultType="java.lang.String" parameterType="com.shinsegae.smon.model.ConfVO">
+        SELECT COUNT(*) CNT
+          FROM CONF_ADM_TBL A
+             , CONF_ADMIN B 
+         WHERE A.SEQ = #{SEQ}
+           AND (A.REGID = #{LOGINID} OR B.ADMID = #{LOGINID})
+    </select>
+    
+    <select id="searchAttndList" resultMap="excelDownMap" parameterType="com.shinsegae.smon.model.ConfVO">
+       SELECT B.YMD, B.SBJ, C.MGR_NAME NAME, A.ATTNDYN
+          FROM CONF_ATTND_TBL A
+             , (SELECT DISTINCT YMD, SBJ
+                  FROM CONF_ADM_TBL
+                 WHERE SEQ = #{SEQ}) B
+             , MGR C
+         WHERE A.STDID = C.MGR_ID 
+           AND A.SEQ = #{SEQ}
+      ORDER BY MGR_NAME
+    </select>
+    
+    <select id="searchAttndResult" resultMap="attndResultMap" parameterType="com.shinsegae.smon.model.ConfVO">
+    	SELECT A.STDID, A.NAME, COUNT(*) CNT
+     	  FROM CONF_ATTND_TBL A
+     	     , MGR B
+         WHERE A.ATTNDYN = '1'        
+           AND SUBSTR(A.YMD,0,4) = #{YMD}
+           <if test="HALFYEAR == '0'.toString()"><![CDATA[
+           AND SUBSTR(A.YMD,5,2) <='06'
+           ]]>
+           </if>
+           <if test="HALFYEAR == '1'.toString()"><![CDATA[
+           AND SUBSTR(A.YMD,5,2) > '06'
+           ]]>
+           </if>
+           AND A.STDID = B.MGR_ID
+           AND B.MGR_STATE_CD = 'Y'
+      GROUP BY A.STDID, A.NAME
+      ORDER BY CNT DESC, NAME
+    </select>
+    
+    <select id="searchHostResult" resultMap="hostResultMap" parameterType="com.shinsegae.smon.model.ConfVO">
+   		SELECT A.REGID STDID, B.MGR_NAME NAME, COUNT(*) CNT
+          FROM CONF_ADM_TBL A
+             , MGR B
+         WHERE SUBSTR(A.YMD,0,4) = #{YMD}
+          <if test="HALFYEAR == '0'.toString()"><![CDATA[
+           AND SUBSTR(A.YMD,5,2) <='06'
+           ]]>
+           </if>
+           <if test="HALFYEAR == '1'.toString()"><![CDATA[
+           AND SUBSTR(A.YMD,5,2) > '06'
+           ]]>
+           </if>
+           AND A.REGID = B.MGR_ID
+           AND B.MGR_STATE_CD = 'Y'
+      GROUP BY A.REGID, B.MGR_NAME
+      ORDER BY CNT DESC, NAME
+    </select>
+    
+    <select id="selConfName" resultMap="confInfoMap" parameterType="com.shinsegae.smon.model.ConfVO">
+    	SELECT A.SEQ
+             , A.YMD
+             , A.SBJ
+             , LISTAGG(B.MGR_NAME,',') WITHIN GROUP(ORDER BY B.MGR_NAME) REGNAME
+          FROM CONF_ADM_TBL A
+             , MGR B
+         WHERE A.SEQ = #{SEQ}
+           AND A.REGID = B.MGR_ID
+      GROUP BY SEQ, YMD, SBJ
+    </select>
+    
+    <delete id ="deleteConf" parameterType="com.shinsegae.smon.model.ConfVO">
+    	DELETE FROM CONF_ADM_TBL
+    	      WHERE SEQ = #{SEQ}
+    </delete>
+    
+    <delete id ="deleteAttndList" parameterType="com.shinsegae.smon.model.ConfVO">
+    	DELETE FROM CONF_ATTND_TBL
+    	      WHERE SEQ = #{SEQ}
+    </delete>
+    
+    <select id="selectAttndList" resultMap="attndMap" parameterType="com.shinsegae.smon.model.ConfVO">
+    	SELECT	SEQ
+    	     ,	YMD
+    	     ,	STDID
+    	     ,  ATTNDYN
+    	     ,  NAME
+     	  FROM	CONF_ATTND_TBL
+     	 WHERE  SEQ = #{SEQ}
+      ORDER BY 	NAME
+    </select>
+    
+    <select id="selectConfSeq" resultType="java.lang.String">
+    	SELECT CONF_SEQ.NEXTVAL	
+    	  FROM DUAL
+    </select>
+    
+    <delete id="deleteData" parameterType="com.shinsegae.smon.model.ConfVO">
+    DELETE 
+      FROM	DPSS_TBL
+     WHERE	SEQ = #{SEQ}
+    </delete>
+    
+    <insert id="insertConf" parameterType="com.shinsegae.smon.model.ConfVO">
+    <![CDATA[
+    INSERT INTO CONF_ADM_TBL
+    VALUES (
+	    		#{SEQ}				,
+	    		#{YMD}				,
+	    		#{SBJ}				,
+	    		#{REGID}			,	
+	    		SYSDATE  		
+    		)
+    		]]>
+    </insert>
+    
+    <insert id="attndChng" parameterType="com.shinsegae.smon.model.ConfVO">
+    <![CDATA[
+    UPDATE CONF_ATTND_TBL
+       SET ATTNDYN 	= 	#{ATTNDYN}
+     WHERE STDID 	=	#{STDID}
+       AND YMD		=	#{YMD}
+       AND SEQ		=	#{SEQ}
+    ]]>
+    </insert>
+    
+    
+    <insert id="insertAttnd" parameterType="com.shinsegae.smon.model.ConfVO">
+    <![CDATA[
+    MERGE INTO CONF_ATTND_TBL B
+    	 USING (SELECT A.SEQ, A.YMD, B.MGR_ID STDID, B.MGR_NAME NAME, '0' ATTNDYN, A.REGID, SYSDATE REGDT
+                  FROM (SELECT *
+                          FROM CONF_ADM_TBL 
+                         WHERE YMD = #{YMD} 
+                           AND SEQ = #{SEQ}
+                           AND ROWNUM = '1') A
+                     , MGR B
+                 WHERE B.MGR_STATE_CD = 'Y') A
+            ON (1 != 1)
+          WHEN NOT MATCHED THEN
+    	INSERT ( B.SEQ, B.YMD, B.STDID, B.ATTNDYN, B.REGID, B.REGDT, B.NAME)
+        VALUES ( A.SEQ, A.YMD, A.STDID, A.ATTNDYN, A.REGID, A.REGDT, A.NAME)
+    		]]>
+    </insert>
+    
+</mapper> 

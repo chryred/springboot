@@ -30,6 +30,9 @@ var settings = {
           jobCount : 500
       };
 
+var token = $("meta[name='_csrf']").attr("content");
+var header = $("meta[name='_csrf_header']").attr("content");
+
 $(document).ready(function() {
 	fn_start();
 	fn_event();
@@ -122,7 +125,7 @@ function fn_search() {
 		, projectName : $("#projectName").val()
 		, contextPath : contextPath
 	};
-	var formURL = contextPath + "/batch/listFolderJson.do";
+	var formURL = contextPath + "listFolderJson.do";
 	//$("#form1").attr("action");
 	
 	$.ajax({
@@ -132,7 +135,8 @@ function fn_search() {
 		dataType : "json", //text, json, html, xml, csv, script, jsonp
 		async : true,
 		timeout : 2 * 60 * 1000, //2 min,
-		beforeSend : function() {
+		beforeSend: function (xhr, settings) { 
+			xhr.setRequestHeader(header, token); 
 			$.blockUI({ css: {color: '#fff'} });
 		},
 		complete : function() {
@@ -218,7 +222,7 @@ function fn_searchDetail(p_folderPath, p_index) {
 	//var postData = $("#form1").serializeArray();
 	//$("#form1").attr("action");
 	
-	var formURL = contextPath + "/batch/listDsBatchJson.do";
+	var formURL = contextPath + "listDsBatchJson.do";
 	
 	if (p_index != null) {
 		p_folderPath = g_rstList[p_index].subFolderPath;
@@ -243,9 +247,10 @@ function fn_searchDetail(p_folderPath, p_index) {
 		dataType : "json", //text, json, html, xml, csv, script, jsonp
 		async : true,
 		timeout : 2 * 60 * 1000, //2 min,
-		beforeSend : function() {
+		beforeSend: function (xhr, settings) { 
+			xhr.setRequestHeader(header, token); 
 			$("#span_header").html("");
-			$.blockUI({ css: { color: '#fff'} });
+			$.blockUI({ css: {color: '#fff'} });
 		},
 		complete : function() {
 			$.unblockUI();

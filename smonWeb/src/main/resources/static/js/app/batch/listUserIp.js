@@ -5,6 +5,8 @@ var gCellChkCnt  = 255;  // 출력할 셀 카운트
 var gSplitStdNum = 12;   // 자르는 기준
 var gSelectedRow;
 var gStndrdIp    = "10.174.179.";
+var token = $("meta[name='_csrf']").attr("content");
+var header = $("meta[name='_csrf_header']").attr("content");
 
 /**===============================================================================
 // DataTable - IP Sort를 위한 설정

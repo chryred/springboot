@@ -57,14 +57,15 @@
 		     , A.MGR_GRADE
 		     , A.CERT_NUM 
 		     , A.MGR_PWD
-		     , TO_CHAR(MGR_PWD_CHG_DATE, 'YYYY/MM/DD HH24:MI:SS') AS MGR_PWD_CHG_DATE
+		     , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE
 		     , A.MGR_STATE_CD
 		     , A.MGR_TASK
 		     , A.LOGIN_FAIL_CNT
 		     , B.ROLE_GROUP
-		  FROM MGR A, CM_ROLE_GROUP B
-         WHERE A.MGR_GRADE = B.AUTH_GROUP_ID (+)
-           AND A.MGR_ID = #{mgrId}		 
+		  FROM MGR A 
+		  LEFT OUTER JOIN CM_ROLE_GROUP B
+		    ON A.MGR_GRADE = B.AUTH_GROUP_ID
+         WHERE A.MGR_ID = #{mgrId}		 
 		<if test="certNum != '' and certNum != null">
 		<![CDATA[
 		   AND A.CERT_NUM = #{certNum}
@@ -177,7 +178,9 @@
     <!-- 사용자 업데이트 -->
 	<update id="updateUser" parameterType="hashmap">
 		UPDATE MGR
-		    SET LOGIN_FAIL_CNT = DECODE(#{successYn}, 'Y', 0, LOGIN_FAIL_CNT + 1)
+		    SET LOGIN_FAIL_CNT = CASE WHEN #{successYn} = 'Y' THEN 0
+		    						  ELSE LOGIN_FAIL_CNT + 1
+		    				     END
 			<if test="mgrStateCd != '' and mgrStateCd != null">
 				, MGR_STATE_CD = #{mgrStateCd}		   
 			</if>

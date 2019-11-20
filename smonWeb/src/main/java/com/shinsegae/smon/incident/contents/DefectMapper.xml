@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.shinsegae.smon.incident.contents.DefectMapper">
+
+	<resultMap id="wikiMap" type="java.util.HashMap">
+        <result column="ENT_DATE"        		property="ENT_DATE"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="SEQ"        			property="SEQ"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="ENT_EMPNO"        		property="ENT_EMPNO"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="GRADE"					property="GRADE"     		javaType="string"  jdbcType="VARCHAR" />
+        <result column="TARGET"					property="TARGET"     		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="EFFECT"					property="EFFECT"       	javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="RANGE"          		property="RANGE"     		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="START_DATE"          	property="START_DATE"       javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="END_DATE"          		property="END_DATE"         javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="REPORT_DATE"          	property="REPORT_DATE"      javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="REPORT_MSG"          	property="REPORT_MSG"       javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STATUS"          		property="STATUS"         	javaType="string"  jdbcType="VARCHAR" /> 
+    </resultMap>
+
+	<select id="selectList" parameterType="HashMap" resultMap="wikiMap">
+       SELECT HIS.ENT_DATE                             		AS ENT_DATE    -- 등록일자
+     		, HIS.SEQ                                  		AS SEQ         -- 등록순번
+    		, HIS.ENT_EMPNO                            		AS ENT_EMPNO   -- 등록자 사번
+     		, HIS.GRADE                                		AS GRADE       -- 장애등급
+     		, STUDY.F_GET_COM_NAME('001',HIS.TARGET)        AS TARGET      -- 대상시스템
+     		, STUDY.F_GET_COM_NAME('002',HIS.EFFECT)        AS EFFECT      -- 업무영향
+     		, STUDY.F_GET_COM_NAME('003',HIS.SYS_TYPE)      AS SYS_TYPE    -- 장애시스템종류
+     		, STUDY.F_GET_COM_NAME('004',HIS.RANGE)         AS RANGE       -- 장애시스템범위
+     		, TO_CHAR(HIS.START_DATE,'YYYY-MM-DD HH24:MI')  AS START_DATE  -- 장애발생시각
+     		, TO_CHAR(HIS.END_DATE,'YYYY-MM-DD HH24:MI')    AS END_DATE    -- 장애종료시각
+     		, TO_CHAR(HIS.REPORT_DATE,'YYYY-MM-DD HH24:MI') AS REPORT_DATE -- 장애보고시각
+     		, HIS.REPORT_MSG                           		AS REPORT_MSG  -- 장애보고내용
+     		, STUDY.F_GET_COM_NAME('005',HIS.STATUS)        AS STATUS      -- 현재 상태
+  		 FROM STUDY.T_INCIDENT_HIS HIS
+ 	    WHERE 1=1
+   	      AND HIS.STATUS LIKE '%'
+   	<if test="effect != '' and effect != null">
+	      AND STUDY.HIS.EFFECT = #{effect}
+	</if>
+	<if test="effectRange != '' and effectRange != null">
+	      AND STUDY.HIS.RANGE  = #{effectRange}
+	</if>
+	<if test="targetSystem != '' and targetSystem != null">
+	      AND STUDY.HIS.TARGET = #{targetSystem}
+	</if>
+	<if test="status != '' and status != null">
+	      AND STUDY.HIS.STATUS = #{status}
+	</if>
+	<if test="defectGrade != '' and defectGrade != null">
+	      AND STUDY.HIS.GRADE = STUDY.F_GET_COM_NAME('006',#{defectGrade})
+	</if>
+	<if test="period != '' and period != null">
+	      AND START_DATE <![CDATA[<=]]> TO_DATE(#{period},'MM/DD/YYYY')
+	</if>
+  	 ORDER BY STUDY.HIS.ENT_DATE DESC
+    </select>
+    
+    <insert id="insertData" parameterType="HashMap">
+    INSERT INTO STUDY.T_INCIDENT_HIS 
+    VALUES (
+	    		TO_CHAR(SYSDATE,'YYYYMMDD')								,	
+	    		STUDY.T_INCIDENT_SEQ.NEXTVAL							, 		
+	    		#{sId}													, 						
+	    		#{defectGrade}											, 			
+	    		#{defect.targetSystem}									,
+	    		#{defect.effect}										,
+	    		#{defect.selBox}										,
+	    		#{defect.effectRange}									,	
+	    		TO_DATE(#{defect.myLocalDate1},'YYYY-MM-DD HH24:MI')	, 		
+	    		NULL													,						
+	    		TO_DATE(#{defect.myLocalDate2},'YYYY-MM-DD HH24:MI')	, 		
+	    		#{defectMessage}										,				
+	    		'1'								
+    		)
+    </insert>
+    
+    <update id="updateStatus" parameterType="HashMap">
+    Update	STUDY.T_INCIDENT_HIS
+    SET		STATUS		=	#{status}	,
+    		END_DATE	=	SYSDATE		  
+    WHERE	SEQ 		= 	#{rowId}
+    </update>
+ </mapper>
+
+    

@@ -12,7 +12,7 @@ import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties
 @SpringBootApplication
 @EnableEncryptableProperties
 @EnableWebSecurity
-@PropertySource(value = { "classpath:/config/jdbc.properties" })
+@PropertySource(value = { "classpath:/config/jdbc.properties", "classpath:/config/cubeone.properties" })
 @ImportResource({
 	 "classpath:/config/context-aspect.xml"
    , "classpath:/config/context-datasource.xml"

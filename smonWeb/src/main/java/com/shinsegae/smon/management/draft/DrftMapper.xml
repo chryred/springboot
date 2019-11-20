@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.shinsegae.smon.management.draft.DrftMapper">
+
+	<resultMap id="wikiMap" type="java.util.HashMap">
+    
+        <result column="SEQ"        		property="SEQ"				javaType="integer" jdbcType="INTEGER" /> 
+        <result column="SBJ"        		property="SBJ"				javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CONTENT"        	property="CONTENT"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STLEMPTYP1"        	property="STLEMPTYP1"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STLEMPTYP2"        	property="STLEMPTYP2"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STLEMPTYP3"        	property="STLEMPTYP3"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STLEMPTYP4"        	property="STLEMPTYP4"		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STLNM1"        		property="STLNM1"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STLNM2"        		property="STLNM2"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STLNM3"        		property="STLNM3"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STLNM4"        		property="STLNM4"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STLORDR1"        	property="STLORDR1"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STLORDR2"        	property="STLORDR2"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STLORDR3"        	property="STLORDR3"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="STLORDR4"        	property="STLORDR4"			javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNSTEMPTYP1"		property="CNSTEMPTYP1"     	javaType="string"  jdbcType="VARCHAR" />
+        <result column="CNSTEMPTYP2"		property="CNSTEMPTYP2"     	javaType="string"  jdbcType="VARCHAR" />
+        <result column="CNSTEMPTYP3"		property="CNSTEMPTYP3"     	javaType="string"  jdbcType="VARCHAR" />
+        <result column="CNSTEMPTYP4"		property="CNSTEMPTYP4"     	javaType="string"  jdbcType="VARCHAR" />
+        <result column="CNSTEMPTYP5"		property="CNSTEMPTYP5"     	javaType="string"  jdbcType="VARCHAR" />
+        <result column="CNSTNM1"			property="CNSTNM1"     		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNSTNM2"			property="CNSTNM2"     		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNSTNM3"			property="CNSTNM3"     		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNSTNM4"			property="CNSTNM4"     		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNSTNM5"			property="CNSTNM5"     		javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNSTORDR1"			property="CNSTORDR1"      	javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNSTORDR2"			property="CNSTORDR2"     	javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNSTORDR3"			property="CNSTORDR3"     	javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNSTORDR4"			property="CNSTORDR4"     	javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="CNSTORDR5"			property="CNSTORDR5"     	javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="MODID"				property="MODID"      	 	javaType="string"  jdbcType="VARCHAR" /> 
+        <result column="MODDT"          	property="MODDT"     		javaType="string"  jdbcType="VARCHAR" /> 
+    
+    </resultMap>
+
+    
+    <select id="selectBox" resultType="hashmap">
+    	SELECT	SBJ
+    	  FROM	DPSS_TBL
+      ORDER BY 	SBJ
+    </select>
+    
+    <select id="selectList" resultMap="wikiMap">
+    	SELECT	SEQ,
+    			SBJ,
+    			CONTENT,
+    			STLEMPTYP1,
+    			STLEMPTYP2,
+    			STLEMPTYP3,
+    			STLEMPTYP4,
+    			STLNM1,
+    			STLNM2,
+    			STLNM3,
+    			STLNM4,
+    			STLORDR1,
+    			STLORDR2,
+    			STLORDR3,
+    			STLORDR4,
+    			CNSTEMPTYP1,
+    			CNSTEMPTYP2,
+    			CNSTEMPTYP3,
+    			CNSTEMPTYP4,
+    			CNSTEMPTYP5,
+    			CNSTNM1,
+    			CNSTNM2,
+    			CNSTNM3,
+    			CNSTNM4,
+    			CNSTNM5,
+    			CNSTORDR1,
+    			CNSTORDR2,
+    			CNSTORDR3,
+    			CNSTORDR4,
+    			CNSTORDR5,
+    			MODID,
+    			TO_CHAR(MODDT, 'YYYYMMDD') AS MODDT
+     	  FROM	DPSS_TBL
+      ORDER BY 	SBJ
+    </select>
+    <delete id="deleteData" parameterType="com.shinsegae.smon.model.DrftVO">
+    DELETE 
+      FROM	DPSS_TBL
+     WHERE	SEQ = #{SEQ}
+    </delete>
+    
+    <insert id="insertData" parameterType="com.shinsegae.smon.model.DrftVO">
+    <![CDATA[
+    INSERT INTO DPSS_TBL
+    VALUES (
+	    		DPSS_SEQ.NEXTVAL						,	
+	    		#{SBJ, jdbcType=VARCHAR}				, 		
+	    		#{CONTENT, jdbcType=VARCHAR}			, 						
+	    		#{STLEMPTYP1, jdbcType=VARCHAR}			, 			
+	    		#{STLEMPTYP2, jdbcType=VARCHAR}			, 			
+	    		#{STLEMPTYP3, jdbcType=VARCHAR}			, 			
+	    		#{STLEMPTYP4, jdbcType=VARCHAR}			, 			
+	    		#{STLNM1, jdbcType=VARCHAR}				, 			
+	    		#{STLNM2, jdbcType=VARCHAR}				, 			
+	    		#{STLNM3, jdbcType=VARCHAR}				, 			
+	    		#{STLNM4, jdbcType=VARCHAR}				, 			
+	    	    #{CNSTEMPTYP1, jdbcType=VARCHAR}		, 			
+	    		#{CNSTEMPTYP2, jdbcType=VARCHAR}		, 			
+	    		#{CNSTEMPTYP3, jdbcType=VARCHAR}		, 			
+	    		#{CNSTEMPTYP4, jdbcType=VARCHAR}		, 			
+	    		#{CNSTEMPTYP5, jdbcType=VARCHAR}		, 			
+	    		#{CNSTNM1, jdbcType=VARCHAR}			, 			
+	    		#{CNSTNM2, jdbcType=VARCHAR}			, 			
+	    		#{CNSTNM3, jdbcType=VARCHAR}			, 			
+	    		#{CNSTNM4, jdbcType=VARCHAR}			, 			
+	    		#{CNSTNM5, jdbcType=VARCHAR}			, 			
+	    		#{MODID, jdbcType=VARCHAR}				,
+    			SYSDATE									,
+    			#{MODID, jdbcType=VARCHAR}				,
+    			SYSDATE									,
+    			#{STLORDR1, jdbcType=VARCHAR}			, 			
+	    		#{STLORDR2, jdbcType=VARCHAR}			, 			
+	    		#{STLORDR3, jdbcType=VARCHAR}			, 			
+	    		#{STLORDR4, jdbcType=VARCHAR}			, 	
+	    		#{CNSTORDR1, jdbcType=VARCHAR}			, 			
+	    		#{CNSTORDR2, jdbcType=VARCHAR}			, 			
+	    		#{CNSTORDR3, jdbcType=VARCHAR}			, 			
+	    		#{CNSTORDR4, jdbcType=VARCHAR}			, 			
+	    		#{CNSTORDR5, jdbcType=VARCHAR}			
+    		)
+    		]]>
+    </insert>
+    
+    <update id="updateData" parameterType="com.shinsegae.smon.model.DrftVO">
+    Update	DPSS_TBL
+    SET		SBJ				= 	#{SBJ, jdbcType=VARCHAR}				, 		
+	    	CONTENT 		=	#{CONTENT, jdbcType=VARCHAR}			, 						
+	    	STLEMPTYP1		=	#{STLEMPTYP1, jdbcType=VARCHAR}			, 			
+	    	STLEMPTYP2		=	#{STLEMPTYP2, jdbcType=VARCHAR}			, 			
+	    	STLEMPTYP3		=	#{STLEMPTYP3, jdbcType=VARCHAR}			, 			
+	    	STLEMPTYP4		=	#{STLEMPTYP4, jdbcType=VARCHAR}			, 			
+	    	STLNM1			=	#{STLNM1, jdbcType=VARCHAR}				, 			
+	    	STLNM2			=	#{STLNM2, jdbcType=VARCHAR}				, 			
+	    	STLNM3			=	#{STLNM3, jdbcType=VARCHAR}				, 			
+	    	STLNM4			=	#{STLNM4, jdbcType=VARCHAR}				, 	
+	    	STLORDR1		=	#{STLORDR1, jdbcType=VARCHAR}			, 			
+	    	STLORDR2		=	#{STLORDR2, jdbcType=VARCHAR}			, 			
+	    	STLORDR3		=	#{STLORDR3, jdbcType=VARCHAR}			, 			
+	    	STLORDR4		=	#{STLORDR4, jdbcType=VARCHAR}			, 		
+	    	CNSTEMPTYP1		=	#{CNSTEMPTYP1, jdbcType=VARCHAR}		, 			
+	    	CNSTEMPTYP2		=	#{CNSTEMPTYP2, jdbcType=VARCHAR}		, 			
+	    	CNSTEMPTYP3		=	#{CNSTEMPTYP3, jdbcType=VARCHAR}		, 			
+	    	CNSTEMPTYP4		=	#{CNSTEMPTYP4, jdbcType=VARCHAR}		, 			
+	    	CNSTEMPTYP5		=	#{CNSTEMPTYP5, jdbcType=VARCHAR}		, 			
+	    	CNSTNM1			=	#{CNSTNM1, jdbcType=VARCHAR}			, 			
+	    	CNSTNM2			=	#{CNSTNM2, jdbcType=VARCHAR}			, 			
+	    	CNSTNM3			=	#{CNSTNM3, jdbcType=VARCHAR}			, 			
+	    	CNSTNM4			=	#{CNSTNM4, jdbcType=VARCHAR}			, 			
+	    	CNSTNM5			=	#{CNSTNM5, jdbcType=VARCHAR}			, 	
+	    	CNSTORDR1		=	#{CNSTORDR1, jdbcType=VARCHAR}			, 			
+	    	CNSTORDR2		=	#{CNSTORDR2, jdbcType=VARCHAR}			, 			
+	    	CNSTORDR3		=	#{CNSTORDR3, jdbcType=VARCHAR}			, 			
+	    	CNSTORDR4		=	#{CNSTORDR4, jdbcType=VARCHAR}			, 			
+	    	CNSTORDR5		=	#{CNSTORDR5, jdbcType=VARCHAR}			,		
+    		MODID			=	#{MODID, jdbcType=VARCHAR}				,
+    		MODDT			=	SYSDATE									
+    WHERE	SEQ 			= 	#{SEQ}
+    </update>
+</mapper>
+
+    

@@ -19,6 +19,13 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>	
 	
+	<repositories>
+		<repository>
+			<id>localrepository</id>
+			<url>file://${project.basedir}/libs</url>
+		</repository>
+	</repositories>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -72,7 +79,6 @@
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-log4j2</artifactId>
 	    </dependency>
-		
 		<dependency>
 		    <groupId>javax.servlet</groupId>
 		    <artifactId>jstl</artifactId>
@@ -81,46 +87,67 @@
 		    <groupId>org.apache.tomcat.embed</groupId>
 		    <artifactId>tomcat-embed-jasper</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
-
 		<dependency>
 		    <groupId>org.aspectj</groupId>
 		    <artifactId>aspectjweaver</artifactId>
 		</dependency>
-		
 		<dependency>
 		    <groupId>org.apache.servicemix.bundles</groupId>
 		    <artifactId>org.apache.servicemix.bundles.jasypt-spring31</artifactId>
 		    <version>1.9.2_1</version>
 		</dependency>
-		
 		<dependency>
 		    <groupId>commons-fileupload</groupId>
 		    <artifactId>commons-fileupload</artifactId>
 		    <version>1.4</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>net.sf.json-lib</groupId>
 			<artifactId>json-lib</artifactId>
 			<version>2.4</version>
 			<classifier>jdk15</classifier>
 		</dependency>
-		
 		<dependency>
 		    <groupId>com.jfinal</groupId>
 		    <artifactId>cos</artifactId>
 		    <version>2019.8</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20190722</version>
+		</dependency>
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>5.1.38</version>
+		</dependency>
 		
 		<!-- local Repository -->
 		<dependency>
-			<groupId>com.oracle</groupId>
+			<groupId>custom</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>11.2.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>custom</groupId>
+    		<artifactId>blossompush</artifactId>
+    		<version>1.0.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>custom</groupId>
+    		<artifactId>db2jcc</artifactId>
+    		<version>10.1.0.0</version>
+		</dependency>
+
+		<!-- 
+		<dependency>
+			<groupId>oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
 			<version>11.2.0.4</version>
 			<scope>system</scope>
@@ -140,7 +167,7 @@
     		<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/blossom-push-1.0.0.jar</systemPath>
 		</dependency>
-		
+		 -->
 	</dependencies>
 
 	<build>
@@ -148,8 +175,41 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<includeSystemScope>true</includeSystemScope>
+				</configuration>
 			</plugin>
+			
+			<!-- plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-dependency-plugin</artifactId>
+	            <executions>
+	                <execution>
+	                    <id>copy-dependencies</id>
+	                    <phase>package</phase>
+	                    <goals>
+	                        <goal>copy-dependencies</goal>
+	                    </goals>
+	                    <configuration>
+	                        <outputDirectory>BOOT-INF/lib</outputDirectory>
+	                        <includeScope>system</includeScope>
+	                    </configuration>
+	                </execution>
+	            </executions>
+	        </plugin -->
 		</plugins>
+		
+		<resources>
+	        <resource>
+	            <directory>src/main/java</directory>
+	            <includes>                      
+	                <include>**/*.xml</include>
+	            </includes>
+	        </resource>
+	        <resource>
+	            <directory>src/main/resources</directory>
+	        </resource>
+		</resources>
 	</build>
 
 </project>

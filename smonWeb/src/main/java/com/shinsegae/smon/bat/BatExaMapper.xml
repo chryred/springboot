@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.shinsegae.smon.bat.BatExaMapper">
+    <resultMap id="rm_getSossBatchList" type="com.shinsegae.smon.model.bat.DsBatchVO">
+        <result column="PROJECTNAME" property="projectName" javaType="string"  jdbcType="VARCHAR" />
+        <result column="JOBNAME" property="jobName" javaType="string"  jdbcType="VARCHAR" />
+        <result column="RUNMAJORSTATUS" property="runMajorStatus" javaType="string"  jdbcType="VARCHAR" />
+        <result column="RUNMINORSTATUS" property="runMinorStatus" javaType="string"  jdbcType="VARCHAR" />
+        <result column="ELAPSEDRUNSECS" property="elapsedRunSecs" javaType="string"  jdbcType="VARCHAR" />
+        <result column="RUNSTARTDATE" property="runStartDate" javaType="string"  jdbcType="VARCHAR" />
+        <result column="RUNSTARTTIME" property="runStartTime" javaType="string"  jdbcType="VARCHAR" />
+        <result column="RUNENDDATE" property="runEndDate" javaType="string"  jdbcType="VARCHAR" />
+        <result column="RUNENDTIME" property="runEndTime" javaType="string"  jdbcType="VARCHAR" />
+        <result column="RNUM" property="rnum" javaType="Integer"  jdbcType="NUMERIC" />
+    </resultMap>
+    
+    <select id="getSossBatchList" resultMap="rm_getSossBatchList" parameterType="com.shinsegae.smon.model.bat.DsBatchVO">
+		<![CDATA[
+WITH TMPA AS (
+    SELECT R.*
+    FROM (
+        SELECT
+            --H.HOSTNAME
+            J.PROJECTNAME
+            --,J.JOBID
+            ,J.JOBNAME
+            --,R.RUNID
+            ,R.RUNMAJORSTATUS
+            ,R.RUNMINORSTATUS
+            --,R.TOTALROWSCONSUMED
+            --,R.TOTALROWSPRODUCED
+            ,R.ELAPSEDRUNSECS/3600||':'||(MOD(R.ELAPSEDRUNSECS,3600)/60)||':'||MOD(MOD(R.ELAPSEDRUNSECS,3600),60) AS ELAPSEDRUNSECS
+            ,TO_CHAR(R.RUNSTARTTIMESTAMP + 9 HOUR, 'YYYYMMDD') AS RUNSTARTDATE
+            ,TO_CHAR(R.RUNSTARTTIMESTAMP + 9 HOUR, 'HH24MISS') AS RUNSTARTTIME
+            ,TO_CHAR(R.RUNENDTIMESTAMP + 9 HOUR, 'YYYYMMDD') AS RUNENDDATE
+            ,TO_CHAR(R.RUNENDTIMESTAMP + 9 HOUR, 'HH24MISS') AS RUNENDTIME
+            --,R.ELAPSEDRUNSECS
+            ,ROW_NUMBER() OVER (PARTITION BY  J.JOBNAME ORDER BY R.RunStartTimestamp DESC) AS RNUM
+        FROM
+             DSODB.JOBEXEC J
+            ,DSODB.JOBRUN R
+            ,DSODB.HOST H
+        WHERE
+             H.HOSTID = J.HOSTID
+         AND R.JOBID = J.JOBID
+    ) R
+    WHERE RNUM =1
+)
+SELECT *
+  FROM (
+	SELECT ROW_NUMBER() OVER(ORDER BY R.JOBNAME ASC) AS ROWNUM2, R.*
+	FROM TMPA R
+	WHERE 1=1
+	    AND R.PROJECTNAME = 'WORK_BAT' --'SOSS_BAT', 'WORK_BAT'
+	    AND R.JOBNAME LIKE '%%'
+	    AND R.RUNSTARTDATE >= '20170814'
+) R
+WHERE ROWNUM2 <= 5
+ORDER BY ROWNUM2 ASC, R.PROJECTNAME, ELAPSEDRUNSECS DESC, R.RUNSTARTDATE, R.RUNSTARTTIME
+		]]> 
+	</select>
+	
+	<resultMap id="rm_getDsFolderList" type="com.shinsegae.smon.model.bat.DsBatchVO">
+        <result column="ID" property="id" javaType="string"  jdbcType="VARCHAR" />
+        <result column="P_ID" property="pId" javaType="string"  jdbcType="VARCHAR" />
+        <result column="NAME" property="name" javaType="string"  jdbcType="VARCHAR" />
+        <result column="LEV" property="lev" javaType="Integer"  jdbcType="NUMERIC" />
+        <result column="OPEN" property="open" javaType="string"  jdbcType="VARCHAR" />
+        <result column="ICON" property="icon" javaType="string"  jdbcType="VARCHAR" />
+        <result column="SUB_JOB_CNT" property="subJobCnt" javaType="Integer"  jdbcType="NUMERIC" />
+    </resultMap>
+    
+    <select id="getDsFolderList" resultMap="rm_getDsFolderList" parameterType="com.shinsegae.smon.model.bat.DsBatchVO">
+		<![CDATA[
+			WITH INVA AS (
+				SELECT FOLDERPATH AS ID
+				     , SUBSTR(FOLDERPATH, 1, INSTR(FOLDERPATH, '\', -1)-1) AS P_ID
+				     , SUBSTR(FOLDERPATH, INSTR(FOLDERPATH, '\', -1)+1) AS NAME 
+				     , LENGTH(FOLDERPATH) - LENGTH(REPLACE(FOLDERPATH, '\', '')) AS LEV
+				  FROM (
+							SELECT DISTINCT FOLDERPATH 
+							  FROM JOBEXEC A
+							 WHERE 1=1
+				  			   AND PROJECTNAME = #{projectName}
+				       )
+			)
+     		SELECT MSTM.ID
+			     , MSTM.P_ID
+			     , CASE WHEN MSTM.SUB_JOB_CNT = 0 THEN MSTM.NAME ELSE MSTM.NAME||'('||MSTM.SUB_JOB_CNT||')' END AS NAME
+			     , MSTM.LEV
+			     , CASE WHEN MSTM.LEV <= 1 THEN 'true' ELSE 'false' END AS OPEN
+			     , CASE WHEN MSTM.LEV = 1 THEN '${contextPath}/resources/css/ztree/zTreeStyle/img/diy/1_close.png'
+			            WHEN MSTM.LEV >= 2 THEN '${contextPath}/resources/css/ztree/zTreeStyle/img/diy/8.png' END AS ICON
+			     , MSTM.SUB_JOB_CNT AS SUB_JOB_CNT
+			  FROM (     
+						SELECT FOLDERPATH AS ID
+						     , SUBSTR(FOLDERPATH, 1, INSTR(FOLDERPATH, '\', -1)-1) AS P_ID
+						     , SUBSTR(FOLDERPATH, INSTR(FOLDERPATH, '\', -1)+1) AS NAME 
+						     , LENGTH(FOLDERPATH) - LENGTH(REPLACE(FOLDERPATH, '\', '')) AS LEV
+						     , 'false' AS OPEN
+						     , '/css/ztree/zTreeStyle/img/diy/1_open.png' AS ICON 
+						     , (SELECT COUNT(ID) FROM INVA WHERE INVA.P_ID LIKE FOLDERPATH) AS SUB_JOB_CNT
+						  FROM (
+									SELECT DISTINCT FOLDERPATH 
+									  FROM JOBEXEC A
+									 WHERE 1=1
+						  			   AND PROJECTNAME = #{projectName}
+						       )
+			) MSTM 
+		]]> 
+	</select>	
+	
+	<resultMap id="rm_getDsBatchList" type="com.shinsegae.smon.model.bat.DsBatchVO">
+        <result column="JOB_ID" property="jobId" javaType="string"  jdbcType="VARCHAR" />
+        <result column="PROJECT_NAME" property="projectName" javaType="string"  jdbcType="VARCHAR" />
+        <result column="FOLDER_PATH" property="folderPath" javaType="string"  jdbcType="VARCHAR" />
+        <result column="SUB_FOLDER_PATH" property="subFolderPath" javaType="string"  jdbcType="VARCHAR" />
+        <result column="SUB_JOB_CNT" property="subJobCnt" javaType="Integer"  jdbcType="NUMERIC" />
+        <result column="JOB_NAME" property="jobName" javaType="string"  jdbcType="VARCHAR" />
+        <result column="JOB_SHORT_DESC" property="jobShortDesc" javaType="string"  jdbcType="VARCHAR" />
+        <result column="JOB_LONG_DESC" property="jobLongDesc" javaType="string"  jdbcType="VARCHAR" />
+        <result column="JOB_ID_RANK" property="jobIdRank" javaType="Integer"  jdbcType="NUMERIC" />
+        <result column="FLAG" property="flag" javaType="string"  jdbcType="VARCHAR" />
+        <result column="LEFT_PX" property="leftPx" javaType="Integer"  jdbcType="NUMERIC" />
+        <result column="LENGTH_PX" property="lengthPx" javaType="Integer"  jdbcType="NUMERIC" />
+        <result column="STA_DATE" property="staDate" javaType="string"  jdbcType="VARCHAR" />
+        <result column="END_DATE" property="endDate" javaType="string"  jdbcType="VARCHAR" />
+        <result column="RUN_MAJOR_STATUS" property="runMajorStatus" javaType="string"  jdbcType="VARCHAR" />
+        <result column="RUN_MINOR_STATUS" property="runMinorStatus" javaType="string"  jdbcType="VARCHAR" />
+        <result column="TOT_CNT" property="totCnt" javaType="Integer"  jdbcType="NUMERIC" />
+        <result column="FOK_CNT" property="fokCnt" javaType="Integer"  jdbcType="NUMERIC" />
+    </resultMap>
+    
+ 	<select id="getDsBatchList" resultMap="rm_getDsBatchList" parameterType="com.shinsegae.smon.model.bat.DsBatchVO">
+    	<![CDATA[
+		WITH INVA AS (
+			SELECT R.JOBID AS JOB_ID
+				 , H.HOSTNAME AS HOST_NAME
+			     , X.PROJECTNAME AS PROJECT_NAME
+			     , R.RUNID
+			     , R.CONTROLLING_RUNID
+			     , X.FOLDERPATH AS FOLDER_PATH
+			     , X.JOBNAME AS JOB_NAME
+			     , X.JOBSHORTDESCRIPTION AS JOB_SHORT_DESC
+			     , X.JOBLONGDESCRIPTION AS JOB_LONG_DESC
+			     , R.RUNSTARTTIMESTAMP AS RUN_START_TIMESTAMP
+			     , R.RUNENDTIMESTAMP AS RUN_END_TIMESTAMP
+			     , R.ELAPSEDRUNSECS AS ELAPSED_RUN_SECS
+			     , R.RUNMAJORSTATUS AS RUN_MAJOR_STATUS
+			     , R.RUNMINORSTATUS AS RUN_MINOR_STATUS
+				 , TO_CHAR(R.RUNSTARTTIMESTAMP + 9 HOUR, 'YYYYMMDD') AS STA_DAY
+			     , TO_CHAR(R.RUNSTARTTIMESTAMP + 9 HOUR, 'HH24MISS') AS STA_TIME
+			     , TO_CHAR(R.RUNENDTIMESTAMP + 9 HOUR, 'YYYYMMDD') AS END_DAY
+			     , TO_CHAR(R.RUNENDTIMESTAMP + 9 HOUR, 'HH24MISS') AS END_TIME
+			     , TO_CHAR(TIMESTAMP(TO_DATE(#{baseDay}, 'YYYYMMDD')) - 24 HOUR, 'YYYYMMDD') AS PREV_DAY
+			     , TO_CHAR(TIMESTAMP(TO_DATE(#{baseDay}, 'YYYYMMDD')), 'YYYYMMDD') AS NOW_DAY
+			     , TO_CHAR(TIMESTAMP(TO_DATE(#{baseDay}, 'YYYYMMDD')) + 24 HOUR, 'YYYYMMDD') AS NEXT_DAY
+			     , TO_DATE(TO_CHAR(TIMESTAMP(TO_DATE(#{baseDay}, 'YYYYMMDD')) - 24 HOUR, 'YYYYMMDD')||'000000', 'YYYYMMDDHH24MISS') AS PREV_00_DATE
+			     , TO_DATE(TO_CHAR(TIMESTAMP(TO_DATE(#{baseDay}, 'YYYYMMDD')), 'YYYYMMDD')||'000000', 'YYYYMMDDHH24MISS') AS NOW_00_DATE
+			     , TO_DATE(TO_CHAR(TIMESTAMP(TO_DATE(#{baseDay}, 'YYYYMMDD')) + 24 HOUR, 'YYYYMMDD')||'000000', 'YYYYMMDDHH24MISS') AS NEXT_00_DATE
+			  FROM JOBRUN R
+			 INNER JOIN JOBEXEC X ON R.JOBID = X.JOBID
+			 INNER JOIN HOST H ON X.HOSTID = H.HOSTID
+		), INVB AS (
+			SELECT R.RUNID
+			     , R.CONTROLLING_RUNID
+			     , X.PROJECTNAME AS PROJECT_NAME
+			     , R.JOBID AS JOB_ID
+			     , X.JOBNAME AS JOB_NAME
+			     , X.FOLDERPATH AS FOLDER_PATH
+			     , TO_CHAR(R.RUNSTARTTIMESTAMP + 9 HOUR, 'YYYYMMDD') AS STA_DAY
+			     , TO_CHAR(R.RUNENDTIMESTAMP + 9 HOUR, 'YYYYMMDD') AS END_DAY
+			  FROM JOBRUN R
+			 INNER JOIN JOBEXEC X ON R.JOBID = X.JOBID
+			 INNER JOIN HOST H ON X.HOSTID = H.HOSTID
+			 WHERE X.PROJECTNAME = #{projectName}
+		)
+		SELECT MSTM.JOB_ID
+		     , MSTM.PROJECT_NAME
+		     , MSTM.FOLDER_PATH
+		     , MSTM.SUB_FOLDER_PATH
+		     ]]>
+		     <if test="displaySub != null and displaySub != '' and  displaySub == 'Y'.toString()">
+		     , INVD.SUB_JOB_CNT AS SUB_JOB_CNT
+		     </if>
+		     <if test="displaySub != null and displaySub != '' and  displaySub == 'N'.toString()">
+		     , -1 AS SUB_JOB_CNT
+		     </if>
+		     <![CDATA[
+		     , MSTM.JOB_NAME
+		     , MSTM.JOB_SHORT_DESC
+		     , MSTM.JOB_LONG_DESC
+		     , MSTM.JOB_ID_RANK
+		     , MSTM.FLAG
+		     , CASE WHEN MSTM.FLAG = 'PREV' THEN 0 
+		            ELSE TIMESTAMPDIFF(4, TIMESTAMP(MSTM.STA_DATE) - TIMESTAMP(MSTM.NOW_00_DATE)) * 2 END AS LEFT_PX
+		     , CASE WHEN MSTM.FLAG = 'PREV' THEN TIMESTAMPDIFF(4, TIMESTAMP(MSTM.END_DATE) - TIMESTAMP(MSTM.NOW_00_DATE)) * 2
+		            WHEN MSTM.FLAG = 'NORM' THEN TIMESTAMPDIFF(4, TIMESTAMP(MSTM.END_DATE) - TIMESTAMP(MSTM.STA_DATE)) * 2
+		            WHEN MSTM.FLAG = 'NEXT' THEN TIMESTAMPDIFF(4, TIMESTAMP(MSTM.NEXT_00_DATE) - TIMESTAMP(MSTM.STA_DATE)) * 2 ELSE 0 END AS LENGTH_PX
+		     , MSTM.STA_DATE
+		     , MSTM.END_DATE
+		     , MSTM.RUN_MAJOR_STATUS
+		     , MSTM.RUN_MINOR_STATUS
+		     , SUM(1) OVER(PARTITION BY MSTM.JOB_ID_RANK) AS TOT_CNT
+		     , SUM(CASE WHEN MSTM.RUN_MINOR_STATUS = 'FOK' THEN 1 ELSE 0 END) OVER(PARTITION BY MSTM.JOB_ID_RANK) AS FOK_CNT
+		  FROM (
+					SELECT INVA.JOB_ID
+					     , INVA.PROJECT_NAME
+					     , INVA.FOLDER_PATH
+					     , INVC.FOLDER_PATH AS SUB_FOLDER_PATH
+					     , INVA.JOB_NAME
+					     , INVA.JOB_SHORT_DESC
+					     , INVA.JOB_LONG_DESC
+					     , CASE WHEN INVA.STA_DAY = INVA.END_DAY THEN 'NORM' 
+					            WHEN INVA.STA_DAY < INVA.NOW_DAY AND INVA.END_DAY = INVA.NOW_DAY THEN 'PREV'   
+					            WHEN INVA.END_DAY > INVA.NOW_DAY AND INVA.STA_DAY = INVA.NOW_DAY THEN 'NEXT' ELSE 'ERROR' END AS FLAG
+					     , DENSE_RANK() OVER(ORDER BY INVA.FOLDER_PATH, INVA.JOB_NAME ASC) AS JOB_ID_RANK
+					     , INVA.STA_DAY AS STA_DAY
+					     , INVA.STA_TIME AS STA_TIME
+					     , TO_DATE(INVA.STA_DAY||INVA.STA_TIME, 'YYYYMMDDHH24MISS') AS STA_DATE 
+					     , INVA.END_DAY AS END_DAY
+					     , INVA.END_TIME AS END_TIME
+					     , TO_DATE(INVA.END_DAY||INVA.END_TIME, 'YYYYMMDDHH24MISS') AS END_DATE
+					     , INVA.PREV_DAY AS PREV_DAY
+					     , INVA.NOW_00_DATE AS NOW_00_DATE
+					     , INVA.NEXT_00_DATE AS NEXT_00_DATE
+					     , INVA.RUN_MAJOR_STATUS AS RUN_MAJOR_STATUS
+			     		 , INVA.RUN_MINOR_STATUS AS RUN_MINOR_STATUS
+					  FROM INVA
+					  LEFT OUTER JOIN (SELECT INVB.PROJECT_NAME
+						 			        , INVB.CONTROLLING_RUNID
+						 			        , INVB.FOLDER_PATH 
+						 			     FROM INVB
+						 			    GROUP BY INVB.PROJECT_NAME
+						 			        , INVB.CONTROLLING_RUNID
+						 			        , INVB.FOLDER_PATH) INVC ON (INVA.PROJECT_NAME = INVC.PROJECT_NAME AND INVA.RUNID = INVC.CONTROLLING_RUNID)		  
+					 WHERE INVA.PROJECT_NAME = #{projectName}
+					   AND INVA.STA_DAY >= INVA.PREV_DAY
+					   AND INVA.STA_DAY <= INVA.NOW_DAY
+					   AND INVA.END_DAY <> INVA.PREV_DAY
+					   ]]>
+					   <if test="successYn != '' and successYn != null">
+					       <if test="successYn == 'Y'.toString()"><![CDATA[
+							  AND INVA.RUN_MINOR_STATUS = 'FOK'
+						   ]]>
+						   </if>
+						   <if test="successYn == 'N'.toString()"><![CDATA[
+							  AND INVA.RUN_MINOR_STATUS <> 'FOK'
+						   ]]>
+						   </if>
+					   </if>
+					   <if test="folderPath != '' and folderPath != null">				   
+						   <if test="subYn != null and subYn != '' and  subYn == 'Y'.toString()">
+						       AND INVA.FOLDER_PATH LIKE #{folderPath, jdbcType=VARCHAR}||'%'
+						   </if>
+						   <if test="subYn != null and subYn != '' and  subYn == 'N'.toString()">
+						       AND INVA.FOLDER_PATH = #{folderPath, jdbcType=VARCHAR}
+						   </if>
+					   </if>
+					   <if test="jobName != null and jobName != ''">
+					       AND INVA.JOB_NAME LIKE '%'||#{jobName, jdbcType=VARCHAR}||'%'
+					   </if>
+					   
+		<![CDATA[
+		) MSTM
+		]]>
+		<if test="displaySub != null and displaySub != '' and  displaySub == 'Y'.toString()">
+			<![CDATA[
+			LEFT OUTER JOIN (
+				SELECT INVA.PROJECT_NAME
+				     , INVA.FOLDER_PATH
+				     , COUNT(DISTINCT JOB_ID) AS SUB_JOB_CNT
+				  FROM INVA
+				 WHERE INVA.STA_DAY >= INVA.PREV_DAY 
+			       AND INVA.STA_DAY <= INVA.NOW_DAY 
+			       AND INVA.END_DAY <> INVA.PREV_DAY
+		      GROUP BY INVA.PROJECT_NAME
+				     , INVA.FOLDER_PATH
+			) INVD ON (MSTM.PROJECT_NAME = INVD.PROJECT_NAME AND MSTM.SUB_FOLDER_PATH = INVD.FOLDER_PATH)
+			ORDER BY MSTM.PROJECT_NAME, MSTM.FOLDER_PATH, MSTM.JOB_NAME
+			]]>
+		</if>
+	</select>	
+	
+	<select id="getCountSimpleSossBatchList" resultType="java.lang.Integer" parameterType="com.shinsegae.smon.model.bat.DsBatchVO">
+		SELECT COUNT(*) AS COUNT	
+		  FROM HOST H
+		     , JOBEXEC X
+		     , JOBRUN R
+		 WHERE H.HOSTID = X.HOSTID
+		   AND X.JOBID = R.JOBID
+			<if test="projectName != '' and projectName != null">
+		  		 AND X.PROJECTNAME = #{projectName}
+		   </if>
+		   <if test="baseDay != '' and baseDay != null">
+		  		 AND TO_CHAR(R.RUNSTARTTIMESTAMP + 9 HOUR, 'YYYYMMDD') = #{baseDay}
+		   </if>
+		   <if test="successYn != '' and successYn != null">
+		       <if test="successYn == 'Y'.toString()"><![CDATA[
+				  AND R.RUNMINORSTATUS = 'FOK'
+			   ]]>
+			   </if>
+			   <if test="successYn == 'N'.toString()"><![CDATA[
+				  AND R.RUNMINORSTATUS <> 'FOK'
+			   ]]>
+			   </if>
+		   </if>
+		   <if test="folderPath != '' and folderPath != null">
+			   AND X.FOLDERPATH LIKE '%' || #{folderPath, jdbcType=VARCHAR}|| '%'
+		   </if>
+		   <if test="jobName != null and jobName != ''">
+		       AND X.JOBNAME LIKE '%' ||#{jobName, jdbcType=VARCHAR}|| '%'
+		   </if>
+	</select>
+	
+	<resultMap id="rm_getSimpleSossBatchList" type="com.shinsegae.smon.model.bat.DsBatchVO">
+        <result column="JOB_ID" property="jobId" javaType="string" jdbcType="VARCHAR" />
+        <result column="PROJECT_NAME" property="projectName" javaType="string" jdbcType="VARCHAR" />
+        <result column="JOB_NAME" property="jobName" javaType="string" jdbcType="VARCHAR" />
+        <result column="FOLDER_PATH" property="folderPath" javaType="string" jdbcType="VARCHAR" />
+        <result column="RUNID" property="runid" javaType="Integer" jdbcType="NUMERIC" />
+        <result column="CONTROLLING_RUNID" property="controllingRunid" javaType="Integer" jdbcType="NUMERIC" />
+        <result column="STA_DAY" property="staDay" javaType="string" jdbcType="VARCHAR" />
+        <result column="STA_TIME" property="staTime" javaType="string" jdbcType="VARCHAR" />
+        <result column="END_DAY" property="endDay" javaType="string" jdbcType="VARCHAR" />
+        <result column="END_TIME" property="endTime" javaType="string" jdbcType="VARCHAR" />
+        <result column="ELAPSE_TIME" property="elapseTime" javaType="string" jdbcType="VARCHAR" />
+        <result column="RUN_MAJOR_STATUS" property="runMajorStatus" javaType="string" jdbcType="VARCHAR" />
+        <result column="RUN_MINOR_STATUS" property="runMinorStatus" javaType="string" jdbcType="VARCHAR" />
+        <result column="MASTER_PID" property="masterPid" javaType="Integer" jdbcType="NUMERIC" />
+        <result column="CONDUCTOR_PID" property="conductorPid" javaType="Integer" jdbcType="NUMERIC" />
+        <result column="TOT_CNT" property="totCnt" javaType="Integer" jdbcType="NUMERIC" />
+        <result column="TOT_OK_CNT" property="totOkCnt" javaType="Integer" jdbcType="NUMERIC" />
+        <result column="TOT_RATE" property="totRate" javaType="string" jdbcType="VARCHAR" />
+        <result column="JOB_TOT_CNT" property="jobCnt" javaType="Integer" jdbcType="NUMERIC" />
+        <result column="JOB_OK_CNT" property="jobOkCnt" javaType="Integer" jdbcType="NUMERIC" />
+        <result column="JOB_RATE" property="jobRate" javaType="string" jdbcType="VARCHAR" />
+        <result column="TOTALCPU" property="totalCpu" javaType="Integer" jdbcType="NUMERIC" />
+    </resultMap>
+    
+ 	<select id="getSimpleSossBatchList" resultMap="rm_getSimpleSossBatchList" parameterType="com.shinsegae.smon.model.bat.DsBatchVO">	
+ 		<include refid="pagingHeader"></include>
+		SELECT X.JOBID AS JOB_ID
+		     , X.PROJECTNAME AS PROJECT_NAME
+		     , X.JOBNAME AS JOB_NAME
+		     , X.FOLDERPATH AS FOLDER_PATH
+		     , X.JOBTYPE AS JOB_TYPE
+		     , R.RUNID AS RUN_ID
+		     , R.CONTROLLING_RUNID AS CONTROLLING_RUN_ID
+		     , R.CREATIONTIMESTAMP AS REG_DATE
+		     , R.LASTUPDATETIMESTAMP AS MOD_DATE
+		     , R.RUNSTARTTIMESTAMP AS START_DATE
+		     , TO_CHAR(R.RUNSTARTTIMESTAMP + 9 HOUR, 'YYYY/MM/DD') AS STA_DAY
+		     , TO_CHAR(R.RUNSTARTTIMESTAMP + 9 HOUR, 'HH24:MI:SS') AS STA_TIME
+		     , R.RUNENDTIMESTAMP AS END_DATE
+		     , TO_CHAR(R.RUNENDTIMESTAMP + 9 HOUR, 'YYYY/MM/DD') AS END_DAY
+		     , TO_CHAR(R.RUNENDTIMESTAMP + 9 HOUR, 'HH24:MI:SS') AS END_TIME 
+		     , R.ELAPSEDRUNSECS AS ELAPSED_RUN_SECS
+		     , FLOOR(TO_NUMBER(R.ELAPSEDRUNSECS) / (60*60)) || '시간 ' || 
+		       LPAD(FLOOR(MOD(TO_NUMBER(R.ELAPSEDRUNSECS) / 60, 60)), 2, 0) || '분 ' ||
+		       LPAD(FLOOR(MOD(TO_NUMBER(R.ELAPSEDRUNSECS), 60)), 2, 0) || '초' AS ELAPSE_TIME
+		     , R.RUNMAJORSTATUS AS RUN_MAJOR_STATUS
+		     , R.RUNMINORSTATUS AS RUN_MINOR_STATUS
+		     , R.MASTERPID AS MASTER_PID
+		     , R.CONDUCTORPID AS CONDUCTOR_PID
+		     , SUM(1) OVER() AS TOT_CNT
+		     , SUM(CASE WHEN R.RUNMINORSTATUS = 'FOK' THEN 1 ELSE 0 END) OVER() AS TOT_OK_CNT
+		     , ROUND(DOUBLE(SUM(CASE WHEN R.RUNMINORSTATUS = 'FOK' THEN 1 ELSE 0 END) OVER()) / DOUBLE(NULLIF(SUM(1) OVER(), 0)) * 100, 1) AS TOT_RATE
+		     , SUM(1) OVER(PARTITION BY R.JOBID) AS JOB_CNT
+		     , SUM(CASE WHEN R.RUNMINORSTATUS = 'FOK' THEN 1 ELSE 0 END) OVER(PARTITION BY R.JOBID) AS JOB_OK_CNT
+		     , ROUND(DOUBLE(SUM(CASE WHEN R.RUNMINORSTATUS = 'FOK' THEN 1 ELSE 0 END) OVER(PARTITION BY R.JOBID)) / DOUBLE(NULLIF(SUM(1) OVER(PARTITION BY R.JOBID), 0)) * 100, 1) AS JOB_RATE
+		     , R.TOTALCPU
+		  FROM HOST H
+		     , JOBEXEC X
+		     , JOBRUN R
+		 WHERE H.HOSTID = X.HOSTID
+		   AND X.JOBID = R.JOBID
+		   <if test="projectName != '' and projectName != null">
+		  		 AND X.PROJECTNAME = #{projectName}
+		   </if>
+		   <if test="baseDay != '' and baseDay != null">
+		  		 AND TO_CHAR(R.RUNSTARTTIMESTAMP + 9 HOUR, 'YYYYMMDD') = #{baseDay}
+		   </if>
+		   <if test="successYn != '' and successYn != null">
+		       <if test="successYn == 'Y'.toString()"><![CDATA[
+				  AND R.RUNMINORSTATUS = 'FOK'
+			   ]]>
+			   </if>
+			   <if test="successYn == 'N'.toString()"><![CDATA[
+				  AND R.RUNMINORSTATUS <> 'FOK'
+			   ]]>
+			   </if>
+		   </if>
+		   <if test="folderPath != '' and folderPath != null">
+			   AND X.FOLDERPATH LIKE '%' || #{folderPath, jdbcType=VARCHAR}|| '%'
+		   </if>
+		   <if test="jobName != null and jobName != ''">
+		       AND X.JOBNAME LIKE '%' ||#{jobName, jdbcType=VARCHAR}|| '%'
+		   </if>
+		<choose>
+			<when test="colid != null and colid != ''">
+				ORDER BY ${colid} ${sorting}
+			</when>
+			<otherwise>
+				ORDER BY FOLDER_PATH, JOB_NAME
+			</otherwise>
+		</choose>
+		 <include refid="pagingFooter"></include>    
+	</select>		 
+	
+	<sql id = "pagingHeader">
+		SELECT * FROM (
+			SELECT A.*
+			     , ROW_NUMBER() OVER(ORDER BY 1 ASC) AS RN
+			 FROM (
+	</sql>
+	<sql id = "pagingFooter">
+			) A
+		) WHERE RN BETWEEN #{start} AND #{end}	
+	</sql>
+ </mapper> 

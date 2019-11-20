@@ -655,4 +655,226 @@ public class LoginContoller {
 
 		return jsonResult;
 	}
+	
+	// 입력된 사번으로 블라썸 인증번호를 전송 - 인증번호 JSON 리턴
+		@RequestMapping(value="/loginCertiNum.do", method = RequestMethod.POST)
+		public @ResponseBody Map<String, Object> getCertiNum(HttpServletRequest request, HttpServletResponse response,
+															 @RequestParam(value = "sabun") String sabun,
+															 @RequestParam(value = "name") String name) throws Exception{
+			NLogger.debug("----- /loginCertiNum Controller -----");
+			
+			Map<String, Object> jsonResult = new HashMap<String, Object>();
+			HashMap<String, Object> params = new HashMap<String, Object>();
+		
+			try {
+				//난수 발생
+				String randomNum = String.valueOf(GenerateRandomNum.generateNumber(6));
+				
+				//String encodeName = new String(name.getBytes("KSC5601") ,"8859_1");
+				
+				params.put("mgr_id", sabun); // 관리자ID
+				params.put("mgr_name", name); // 관리자명
+				params.put("certNum", randomNum); // 인증번호
+				
+				HashMap<String, Object> user = loginService.oneUser(params);
+				
+				if (user == null) {
+					jsonResult.put("result", "0");
+					return jsonResult;
+				}
+				
+				HttpSession session = request.getSession(true);
+		        session.setAttribute("randomNum", randomNum);
+				
+				String message = "본인 확인을 위해 인증번호["+randomNum+"]를 입력해 주세요!";
+				ActionBlossomPush.actionBlossomPush(sabun, message, randomNum);
+				
+				userService.updateCertNum(params);
+				
+				jsonResult.put("result", "1");
+			} catch (Exception e) {
+				jsonResult.put("result", "0");
+			}
+			
+			return jsonResult;
+		}
+		
+		@RequestMapping(value="loginCheckUser", method = RequestMethod.POST)
+		public @ResponseBody Map<String, Object> checkUser(HttpServletRequest request, HttpServletResponse response,
+														   @RequestParam(value = "sabun") String sabun,
+														   @RequestParam(value = "certiNum") String certiNum,
+														   @RequestParam(value = "name") String name) throws Exception{
+			NLogger.debug("----- /loginCheckUser Controller -----");
+			
+			Boolean certificated = false;
+			HttpSession session = request.getSession(true);
+			Map<String, Object> jsonResult = new HashMap<String, Object>();
+			HashMap<String, Object> params = new HashMap<String, Object>();
+			//String encodeName = new String(name.getBytes("KSC5601") ,"8859_1");
+			
+			
+			
+			if(session.getAttribute("randomNum").equals(certiNum)){
+				NLogger.info("인증완료");
+			}else{
+				certificated = false;
+				jsonResult.put("certificated", certificated);
+				return jsonResult;
+				
+			}
+
+			
+			params.put("mgr_id", sabun);
+			params.put("mgr_name", name);
+			
+			HashMap<String, Object> result = loginService.oneUser(params);
+			
+			// MGR테이블에 해당 사번을 가진 데이터가 있으며, MGR_GRADE 컬럼이 admin인 경우 
+			// certificated를 true로 설정 이외의 경우는 false
+			if(result != null){
+				if(result.get("MGR_GRADE").equals("admin")){
+					certificated = true;
+					jsonResult.put("certificated", certificated);
+					jsonResult.put("userId", result.get("MGR_ID"));
+					jsonResult.put("userName",result.get("MGR_NAME"));
+					return jsonResult;
+				}
+			}else{
+				certificated = false;
+				jsonResult.put("certificated", certificated);
+				return jsonResult;
+			}
+			
+			return jsonResult;
+			
+			//결과 리턴
+			
+		}
+		
+		/*******************************
+		 * 기존 회원 여부 확인
+		 * @return ModelAndView
+		 *******************************/
+	    @RequestMapping(value="/confirmEmpNum.do")
+	    public @ResponseBody ModelAndView confirmEmpNum(HttpServletRequest request, UserVO paramUserVO) {
+	    	ModelAndView mav = new ModelAndView();
+			
+			mav.setViewName("jsonView"); 
+	    	
+	    	try {
+	    		HashMap<String, Object> paramVO = new HashMap<String, Object>();
+	    		
+	    		String varMgrId = paramUserVO.getMgrId(); // 아이디
+	    		
+	    		paramVO.put("mgrId", varMgrId);
+	    		
+	    		UserVO userVO = userService.getUser(paramVO); // 사용자 확인
+	    		
+	    		if (userVO != null) {
+	    			throw new Exception("이미 등록된 사용자 입니다.");
+	    		}
+	    		
+	    		mav.addObject("chkResult", "OK");
+			} catch (Exception e) {							
+				mav.addObject("chkResult", "FAIL");
+				mav.addObject("errorMsg", e.toString());
+			}
+	    	
+	    	return mav;
+	    }
+	    
+	    
+	    /*******************************
+		 * 회원가입
+		 * @return ModelAndView
+		 *******************************/
+	    @RequestMapping(value="/saveMember.do")
+	    public @ResponseBody ModelAndView saveMember(UserVO paramUserVO) {
+	    	ModelAndView mav = new ModelAndView();
+			
+			mav.setViewName("jsonView"); 
+	    	
+	    	try {
+	    		HashMap<String, Object> paramVO = new HashMap<String, Object>();
+	    		
+	    		String varMgrId = paramUserVO.getMgrId(); // 아이디
+	    		String varMgrPwd = paramUserVO.getMgrPwd(); // 패스워드
+	    		String varMgrPwd2 = paramUserVO.getMgrPwd2(); // 패스워드 확인
+	    		
+	    		paramVO.put("mgrId", varMgrId);
+	    		
+	    		UserVO userSossVO = userService.getSossUser(paramVO); // 운영정보 사용자 확인
+	    		//UserVO userVO = userService.getUser(paramVO); // 운영관리 사용자 확인
+	    		
+	    		HashMap<String, Object> paramMap = new HashMap<String, Object>();
+	    		
+	    		/***************************
+	    		 * 1. 패스워드 동일여부 파라미터 세팅
+	    		 **************************/
+	    		HashMap<String, Object> paramMapSub1 = new HashMap<String, Object>();
+	    		
+	    		paramMapSub1.put("password", varMgrPwd); // 비밀번호
+	    		paramMapSub1.put("password2", varMgrPwd2); // 비밀번호 확인
+	    		
+	    		paramMap.put("PASSWORD_DIFFERENCE", paramMapSub1);
+	    		
+	    		/***************************
+	    		 * 2. 비밀번호 생성규칙(정규식)
+	    		 * - 3가지 조합 8자리 이상
+	    		 * - 연속된 숫자, 문자
+	    		 **************************/
+	    		HashMap<String, Object> paramMapSub2 = new HashMap<String, Object>();
+	    		
+	    		paramMapSub2.put("password", varMgrPwd);
+	    		
+	    		paramMap.put("PASSWORD_COMBINATION", paramMapSub2);
+	    		
+	    		/***************************
+	    		 * 3. 비밀번호 생성규칙
+	    		 *    - 사용자 연관된 정보(생일, 전화번호, 아이디, 사번, 이메일ID 등 연관된 비밀번호)
+	    		 **************************/
+	    		List<HashMap<String, Object>> wordMaps = userService.getAssociatedWordMap(paramVO); // 연관된 단어
+	    		HashMap<String, Object> paramMapSub3 = new HashMap<String, Object>();
+	    		
+	    		paramMapSub3.put("password", varMgrPwd);
+	    		paramMapSub3.put("wordMaps", wordMaps);
+	    		
+	    		paramMap.put("PASSWORD_ASSOCIATED", paramMapSub3);
+	    		
+	    		/***************************
+	    		 * 4. 기 비밀번호 일치 체크
+	    		 *************************
+	    		HashMap<String, Object> paramMapSub4 = new HashMap<String, Object>();
+	    		
+	    		paramMapSub4.put("password", varMgrPwd);
+	    		paramMapSub4.put("passwordBefore", "ABCD"); 
+	    		
+	    		paramMap.put("PASSWORD_DIFFERENCE_BEFORE", paramMapSub4);
+	    		*/
+	    		
+	    		HashMap<String, Object> returnMap = userService.confirmPwd(paramMap); // 패스워드 확인
+	    		
+	    		String varResultCode = (String) returnMap.get("resultCode");
+	    		String varResultMsg = (String) returnMap.get("resultMsg");
+	    		
+	    		if (userSossVO == null) {
+	    			throw new Exception("해당 사용자는 회원가입할 수 없습니다.");
+	    		} else if (!varResultCode.equals("0000")) {
+	    			throw new Exception(varResultMsg);
+	    		} else {
+	    			paramUserVO.setMgrName(userSossVO.getMgrName()); // 관리자명
+	    			paramUserVO.setMgrStateCd("R"); // 요청 상태
+	    			
+	    			userService.saveMember(paramUserVO); // 저장
+	    		}
+	    		
+	    		mav.addObject("chkResult", "OK");
+			} catch (Exception e) {							
+				mav.addObject("chkResult", "FAIL");
+				mav.addObject("errorMsg", e.getMessage());
+			}
+	    	
+	    	return mav;
+	    }
+	
 }

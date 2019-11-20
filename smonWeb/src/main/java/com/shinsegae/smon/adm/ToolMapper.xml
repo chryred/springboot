@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.shinsegae.smon.tool.ToolMapper">
+	<resultMap id="rm_getSystemCodes" type="com.shinsegae.smon.model.tool.SystemCodeVO">
+        <result column="GROUP_CODE" property="groupCode" javaType="string"  jdbcType="VARCHAR" />
+        <result column="SYSTEM_CODE" property="systemCode" javaType="string"  jdbcType="VARCHAR" />
+        <result column="SYSTEM_NAME" property="systemName" javaType="string"  jdbcType="VARCHAR" />
+        <result column="HOST_NAME" property="hostName" javaType="string"  jdbcType="VARCHAR" />
+        <result column="DB_SID" property="dbSid" javaType="string"  jdbcType="VARCHAR" />
+        <result column="ENT_EMPNO" property="entEmpno" javaType="string"  jdbcType="VARCHAR" />
+        <result column="ENT_DATE" property="entDate" javaType="string"  jdbcType="VARCHAR" />
+        <result column="MOD_EMPNO" property="modEmpno" javaType="string"  jdbcType="VARCHAR" />
+        <result column="MOD_DATE" property="modDate" javaType="string"  jdbcType="VARCHAR" />
+    </resultMap>    
+    
+    <select id="getSystemCodes" resultMap="rm_getSystemCodes" parameterType="com.shinsegae.smon.model.tool.SystemCodeVO">
+        SELECT GROUP_CODE
+             , SYSTEM_CODE
+             , SYSTEM_NAME AS NAME
+             , SYSTEM_NAME
+             , HOST_NAME
+             , DB_SID AS CODE
+             , DB_SID
+             , ENT_EMPNO
+             , ENT_DATE
+             , MOD_EMPNO
+             , MOD_DATE
+          FROM TCKSYS
+         WHERE GROUP_CODE = #{groupCode}
+         <if test="svnYn != '' and svnYn != null">
+		   AND SVN_URL IS NOT NULL
+		   AND SVN_USER IS NOT NULL
+		   AND SVN_PWD IS NOT NULL 
+		 </if>
+         ORDER BY GROUP_CODE, SYSTEM_CODE
+    </select> 
+</mapper>
