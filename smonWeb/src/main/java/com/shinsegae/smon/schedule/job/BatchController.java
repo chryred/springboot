@@ -11,11 +11,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.shinsegae.smon.schedule.job.data.BaseInfoBatchJob;
 
 @Controller
+@RequestMapping("/batch")
 public class BatchController {
 	@Autowired
 	BaseInfoBatchJob baseInfoBatchJob;
 	
-	@RequestMapping("/baseInfoBatchJob.do")
+	@RequestMapping("/baseInfoJob.do")
 	@ResponseBody
 	public Map<String, Object> baseInfoBatchJob() {
 		Map<String, Object> retMap = new HashMap<String, Object>();
