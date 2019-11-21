@@ -1,6 +1,6 @@
-2019-11-20 11:28:35 INFO Starting SmonWebApplication on IC0-W-N08968R with PID 26684 (C:\Users\SSG\git\springboot\smonWeb\target\classes started by 194765 in C:\Users\SSG\git\springboot\smonWeb)
-2019-11-20 11:28:35 DEBUG Running with Spring Boot v2.1.8.RELEASE, Spring v5.1.9.RELEASE
-2019-11-20 11:28:35 INFO No active profile set, falling back to default profiles: default
-2019-11-20 11:35:39 INFO Starting SmonWebApplication on IC0-W-N08968R with PID 33508 (C:\Users\SSG\git\springboot\smonWeb\target\classes started by 194765 in C:\Users\SSG\git\springboot\smonWeb)
-2019-11-20 11:35:39 DEBUG Running with Spring Boot v2.1.8.RELEASE, Spring v5.1.9.RELEASE
-2019-11-20 11:35:39 INFO No active profile set, falling back to default profiles: default
+2019-11-22 08:34:05 INFO Starting SmonWebApplication on IC0-W-N08968R with PID 23968 (C:\Users\SSG\git\springboot\smonWeb\target\classes started by 194765 in C:\Users\SSG\git\springboot\smonWeb)
+2019-11-22 08:34:06 DEBUG Running with Spring Boot v2.1.8.RELEASE, Spring v5.1.9.RELEASE
+2019-11-22 08:34:06 INFO No active profile set, falling back to default profiles: default
+2019-11-22 08:34:17 DEBUG ==>  Preparing: SELECT BEAN_ID , TRIGGER_GROUP , CRON_EXPRESSION , TRIGGER_SBST FROM SCHEDULE_CRON_TRIGGERS WHERE USE_YN = 'Y' 
+2019-11-22 08:34:17 DEBUG ==> Parameters: 
+2019-11-22 08:34:17 DEBUG <==      Total: 1

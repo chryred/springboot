@@ -1,0 +1,222 @@
+2019-11-20 11:28:35 INFO Starting SmonWebApplication on IC0-W-N08968R with PID 26684 (C:\Users\SSG\git\springboot\smonWeb\target\classes started by 194765 in C:\Users\SSG\git\springboot\smonWeb)
+2019-11-20 11:28:35 DEBUG Running with Spring Boot v2.1.8.RELEASE, Spring v5.1.9.RELEASE
+2019-11-20 11:28:35 INFO No active profile set, falling back to default profiles: default
+2019-11-20 11:35:39 INFO Starting SmonWebApplication on IC0-W-N08968R with PID 33508 (C:\Users\SSG\git\springboot\smonWeb\target\classes started by 194765 in C:\Users\SSG\git\springboot\smonWeb)
+2019-11-20 11:35:39 DEBUG Running with Spring Boot v2.1.8.RELEASE, Spring v5.1.9.RELEASE
+2019-11-20 11:35:39 INFO No active profile set, falling back to default profiles: default
+2019-11-20 11:43:54 INFO Starting SmonWebApplication on IC0-W-N08968R with PID 31524 (C:\Users\SSG\git\springboot\smonWeb\target\classes started by 194765 in C:\Users\SSG\git\springboot\smonWeb)
+2019-11-20 11:43:54 DEBUG Running with Spring Boot v2.1.8.RELEASE, Spring v5.1.9.RELEASE
+2019-11-20 11:43:54 INFO No active profile set, falling back to default profiles: default
+2019-11-20 13:03:45 INFO Starting SmonWebApplication on IC0-W-N08968R with PID 26052 (C:\Users\SSG\git\springboot\smonWeb\target\classes started by 194765 in C:\Users\SSG\git\springboot\smonWeb)
+2019-11-20 13:03:45 DEBUG Running with Spring Boot v2.1.8.RELEASE, Spring v5.1.9.RELEASE
+2019-11-20 13:03:45 INFO No active profile set, falling back to default profiles: default
+2019-11-20 13:26:53 INFO Starting SmonWebApplication on IC0-W-N08968R with PID 11956 (C:\Users\SSG\git\springboot\smonWeb\target\classes started by 194765 in C:\Users\SSG\git\springboot\smonWeb)
+2019-11-20 13:26:53 DEBUG Running with Spring Boot v2.1.8.RELEASE, Spring v5.1.9.RELEASE
+2019-11-20 13:26:53 INFO No active profile set, falling back to default profiles: default
+2019-11-20 13:27:01 DEBUG ==>  Preparing: SELECT BEAN_ID , TRIGGER_GROUP , CRON_EXPRESSION , TRIGGER_SBST FROM SCHEDULE_CRON_TRIGGERS WHERE USE_YN = 'Y' 
+2019-11-20 13:27:01 DEBUG ==> Parameters: 
+2019-11-20 13:27:01 DEBUG <==      Total: 0
+2019-11-20 13:27:05 INFO Started SmonWebApplication in 12.233 seconds (JVM running for 14.81)
+2019-11-20 13:28:55 DEBUG [CustomAuthenticationProvider:authenticate:55] authenticate : ===========================================
+2019-11-20 13:28:55 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(?, 10, 'PWD') 
+2019-11-20 13:28:55 DEBUG ==> Parameters: 194765(String), @eunk1004(String)
+2019-11-20 13:28:55 DEBUG [CustomAuthenticationProvider:authenticate:96] 로그인 인증 종료
+2019-11-20 13:28:55 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:28:55 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:28:55 DEBUG <==      Total: 1
+2019-11-20 13:28:55 INFO [LoginFailureHandler:onAuthenticationFailure:45] 로그인 아이디 : 194765
+2019-11-20 13:28:55 INFO [LoginFailureHandler:onAuthenticationFailure:46] 로그인 실패 = A granted authority textual representation is required
+2019-11-20 13:28:55 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:28:55 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:28:55 DEBUG <==      Total: 1
+2019-11-20 13:28:55 DEBUG ==>  Preparing: UPDATE MGR SET LOGIN_FAIL_CNT = CASE WHEN ? = 'Y' THEN 0 ELSE LOGIN_FAIL_CNT + 1 END WHERE MGR_ID = ? 
+2019-11-20 13:28:55 DEBUG ==> Parameters: N(String), 194765(String)
+2019-11-20 13:28:55 DEBUG <==    Updates: 1
+2019-11-20 13:29:24 DEBUG [CustomAuthenticationProvider:authenticate:55] authenticate : ===========================================
+2019-11-20 13:29:24 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(?, 10, 'PWD') 
+2019-11-20 13:29:24 DEBUG ==> Parameters: 194765(String), @eunk1004(String)
+2019-11-20 13:29:24 DEBUG [CustomAuthenticationProvider:authenticate:96] 로그인 인증 종료
+2019-11-20 13:29:24 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:29:24 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:29:24 DEBUG <==      Total: 1
+2019-11-20 13:29:24 INFO [LoginFailureHandler:onAuthenticationFailure:45] 로그인 아이디 : 194765
+2019-11-20 13:29:24 INFO [LoginFailureHandler:onAuthenticationFailure:46] 로그인 실패 = A granted authority textual representation is required
+2019-11-20 13:29:24 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:29:24 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:29:24 DEBUG <==      Total: 1
+2019-11-20 13:29:24 DEBUG ==>  Preparing: UPDATE MGR SET LOGIN_FAIL_CNT = CASE WHEN ? = 'Y' THEN 0 ELSE LOGIN_FAIL_CNT + 1 END WHERE MGR_ID = ? 
+2019-11-20 13:29:24 DEBUG ==> Parameters: N(String), 194765(String)
+2019-11-20 13:29:24 DEBUG <==    Updates: 1
+2019-11-20 13:29:35 DEBUG [CustomAuthenticationProvider:authenticate:55] authenticate : ===========================================
+2019-11-20 13:29:35 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(?, 10, 'PWD') 
+2019-11-20 13:29:35 DEBUG ==> Parameters: 194765(String), ekzzang0!(String)
+2019-11-20 13:29:35 DEBUG [CustomAuthenticationProvider:authenticate:96] 로그인 인증 종료
+2019-11-20 13:29:35 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:29:35 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:29:35 DEBUG <==      Total: 1
+2019-11-20 13:29:35 INFO [LoginFailureHandler:onAuthenticationFailure:45] 로그인 아이디 : 194765
+2019-11-20 13:29:35 INFO [LoginFailureHandler:onAuthenticationFailure:46] 로그인 실패 = A granted authority textual representation is required
+2019-11-20 13:29:35 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:29:35 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:29:35 DEBUG <==      Total: 1
+2019-11-20 13:29:35 DEBUG ==>  Preparing: UPDATE MGR SET LOGIN_FAIL_CNT = CASE WHEN ? = 'Y' THEN 0 ELSE LOGIN_FAIL_CNT + 1 END WHERE MGR_ID = ? 
+2019-11-20 13:29:35 DEBUG ==> Parameters: N(String), 194765(String)
+2019-11-20 13:29:35 DEBUG <==    Updates: 1
+2019-11-20 13:29:44 DEBUG [CustomAuthenticationProvider:authenticate:55] authenticate : ===========================================
+2019-11-20 13:29:44 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(?, 10, 'PWD') 
+2019-11-20 13:29:44 DEBUG ==> Parameters: 194765(String), @eunk1004(String)
+2019-11-20 13:29:44 DEBUG [CustomAuthenticationProvider:authenticate:96] 로그인 인증 종료
+2019-11-20 13:29:44 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:29:44 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:29:44 DEBUG <==      Total: 1
+2019-11-20 13:29:44 INFO [LoginFailureHandler:onAuthenticationFailure:45] 로그인 아이디 : 194765
+2019-11-20 13:29:44 INFO [LoginFailureHandler:onAuthenticationFailure:46] 로그인 실패 = A granted authority textual representation is required
+2019-11-20 13:29:44 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:29:44 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:29:45 DEBUG <==      Total: 1
+2019-11-20 13:29:45 DEBUG ==>  Preparing: UPDATE MGR SET LOGIN_FAIL_CNT = CASE WHEN ? = 'Y' THEN 0 ELSE LOGIN_FAIL_CNT + 1 END WHERE MGR_ID = ? 
+2019-11-20 13:29:45 DEBUG ==> Parameters: N(String), 194765(String)
+2019-11-20 13:29:45 DEBUG <==    Updates: 1
+2019-11-20 13:29:55 DEBUG [CustomAuthenticationProvider:authenticate:55] authenticate : ===========================================
+2019-11-20 13:29:55 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(?, 10, 'PWD') 
+2019-11-20 13:29:55 DEBUG ==> Parameters: 194765(String), @EUNK1004(String)
+2019-11-20 13:29:55 DEBUG [CustomAuthenticationProvider:authenticate:96] 로그인 인증 종료
+2019-11-20 13:29:55 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:29:55 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:29:55 DEBUG <==      Total: 1
+2019-11-20 13:29:55 INFO [LoginFailureHandler:onAuthenticationFailure:45] 로그인 아이디 : 194765
+2019-11-20 13:29:55 INFO [LoginFailureHandler:onAuthenticationFailure:46] 로그인 실패 = A granted authority textual representation is required
+2019-11-20 13:29:55 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:29:55 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:29:55 DEBUG <==      Total: 1
+2019-11-20 13:29:55 DEBUG ==>  Preparing: UPDATE MGR SET LOGIN_FAIL_CNT = CASE WHEN ? = 'Y' THEN 0 ELSE LOGIN_FAIL_CNT + 1 END WHERE MGR_ID = ? 
+2019-11-20 13:29:55 DEBUG ==> Parameters: N(String), 194765(String)
+2019-11-20 13:29:55 DEBUG <==    Updates: 1
+2019-11-20 13:30:07 DEBUG [LoginContoller:checkValidUserInfo:417] 사용자 정보 확인
+2019-11-20 13:30:07 DEBUG ==>  Preparing: SELECT MGR_ID , MGR_NAME , (SELECT DBMS_RANDOM.STRING ('X', 10) FROM DUAL) AS INIT_PASSWD FROM MGR WHERE MGR_ID = ? AND MGR_NAME = ? 
+2019-11-20 13:30:07 DEBUG ==> Parameters: 194765(String), 오은경(String)
+2019-11-20 13:30:07 ERROR [LoginContoller:checkValidUserInfo:442] 비밀번호 찾기 오류 : org.springframework.jdbc.BadSqlGrammarException: ### Error querying database.  Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: FUNCTION dbms_random.STRING does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual### The error may exist in file [C:\Users\SSG\git\springboot\smonWeb\target\classes\com\shinsegae\smon\common\user\UserMapper.xml]### The error may involve com.shinsegae.smon.common.user.UserMapper.selectUserPasswordInitInfo-Inline### The error occurred while setting parameters### SQL: SELECT MGR_ID        , MGR_NAME        , (SELECT DBMS_RANDOM.STRING ('X', 10)                   FROM DUAL)      AS INIT_PASSWD    FROM MGR   WHERE MGR_ID   = ?     AND MGR_NAME = ?### Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: FUNCTION dbms_random.STRING does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual; bad SQL grammar []; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: FUNCTION dbms_random.STRING does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual
+2019-11-20 13:30:07 DEBUG [LoginContoller:checkValidUserInfo:447] 비밀번호 찾기 종료
+2019-11-20 13:30:13 DEBUG [LoginContoller:checkValidUserInfo:417] 사용자 정보 확인
+2019-11-20 13:30:13 DEBUG ==>  Preparing: SELECT MGR_ID , MGR_NAME , (SELECT DBMS_RANDOM.STRING ('X', 10) FROM DUAL) AS INIT_PASSWD FROM MGR WHERE MGR_ID = ? AND MGR_NAME = ? 
+2019-11-20 13:30:13 DEBUG ==> Parameters: 194765(String), 오은경(String)
+2019-11-20 13:30:13 ERROR [LoginContoller:checkValidUserInfo:442] 비밀번호 찾기 오류 : org.springframework.jdbc.BadSqlGrammarException: ### Error querying database.  Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: FUNCTION dbms_random.STRING does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual### The error may exist in file [C:\Users\SSG\git\springboot\smonWeb\target\classes\com\shinsegae\smon\common\user\UserMapper.xml]### The error may involve com.shinsegae.smon.common.user.UserMapper.selectUserPasswordInitInfo-Inline### The error occurred while setting parameters### SQL: SELECT MGR_ID        , MGR_NAME        , (SELECT DBMS_RANDOM.STRING ('X', 10)                   FROM DUAL)      AS INIT_PASSWD    FROM MGR   WHERE MGR_ID   = ?     AND MGR_NAME = ?### Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: FUNCTION dbms_random.STRING does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual; bad SQL grammar []; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: FUNCTION dbms_random.STRING does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual
+2019-11-20 13:30:13 DEBUG [LoginContoller:checkValidUserInfo:447] 비밀번호 찾기 종료
+2019-11-20 13:30:25 DEBUG [CustomAuthenticationProvider:authenticate:55] authenticate : ===========================================
+2019-11-20 13:30:25 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(?, 10, 'PWD') 
+2019-11-20 13:30:25 DEBUG ==> Parameters: 194765(String), @EUNK1004(String)
+2019-11-20 13:30:25 DEBUG [CustomAuthenticationProvider:authenticate:96] 로그인 인증 종료
+2019-11-20 13:30:25 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:30:25 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:30:25 DEBUG <==      Total: 1
+2019-11-20 13:30:25 INFO [LoginFailureHandler:onAuthenticationFailure:45] 로그인 아이디 : 194765
+2019-11-20 13:30:25 INFO [LoginFailureHandler:onAuthenticationFailure:46] 로그인 실패 = A granted authority textual representation is required
+2019-11-20 13:30:25 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:30:25 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:30:25 DEBUG <==      Total: 1
+2019-11-20 13:30:25 DEBUG ==>  Preparing: UPDATE MGR SET LOGIN_FAIL_CNT = CASE WHEN ? = 'Y' THEN 0 ELSE LOGIN_FAIL_CNT + 1 END , MGR_STATE_CD = ? WHERE MGR_ID = ? 
+2019-11-20 13:30:25 DEBUG ==> Parameters: N(String), N(String), 194765(String)
+2019-11-20 13:30:25 DEBUG <==    Updates: 1
+2019-11-20 13:48:07 DEBUG [CustomAuthenticationProvider:authenticate:55] authenticate : ===========================================
+2019-11-20 13:48:07 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(?, 10, 'PWD') 
+2019-11-20 13:48:07 DEBUG ==> Parameters: 194765(String), @eunk1004(String)
+2019-11-20 13:48:08 DEBUG [CustomAuthenticationProvider:authenticate:96] 로그인 인증 종료
+2019-11-20 13:48:08 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:48:08 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:48:08 DEBUG <==      Total: 1
+2019-11-20 13:48:08 INFO [LoginFailureHandler:onAuthenticationFailure:45] 로그인 아이디 : 194765
+2019-11-20 13:48:08 INFO [LoginFailureHandler:onAuthenticationFailure:46] 로그인 실패 = A granted authority textual representation is required
+2019-11-20 13:48:08 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:48:08 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:48:08 DEBUG <==      Total: 1
+2019-11-20 13:48:08 DEBUG ==>  Preparing: UPDATE MGR SET LOGIN_FAIL_CNT = CASE WHEN ? = 'Y' THEN 0 ELSE LOGIN_FAIL_CNT + 1 END , MGR_STATE_CD = ? WHERE MGR_ID = ? 
+2019-11-20 13:48:08 DEBUG ==> Parameters: N(String), N(String), 194765(String)
+2019-11-20 13:48:08 DEBUG <==    Updates: 1
+2019-11-20 13:48:35 DEBUG [CustomAuthenticationProvider:authenticate:55] authenticate : ===========================================
+2019-11-20 13:48:35 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(?, 10, 'PWD') 
+2019-11-20 13:48:35 DEBUG ==> Parameters: 194765(String), @EUNK1004(String)
+2019-11-20 13:48:35 DEBUG [CustomAuthenticationProvider:authenticate:96] 로그인 인증 종료
+2019-11-20 13:48:35 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:48:35 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:48:35 DEBUG <==      Total: 1
+2019-11-20 13:48:35 INFO [LoginFailureHandler:onAuthenticationFailure:45] 로그인 아이디 : 194765
+2019-11-20 13:48:35 INFO [LoginFailureHandler:onAuthenticationFailure:46] 로그인 실패 = A granted authority textual representation is required
+2019-11-20 13:48:35 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:48:35 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:48:35 DEBUG <==      Total: 1
+2019-11-20 13:48:35 DEBUG ==>  Preparing: UPDATE MGR SET LOGIN_FAIL_CNT = CASE WHEN ? = 'Y' THEN 0 ELSE LOGIN_FAIL_CNT + 1 END , MGR_STATE_CD = ? WHERE MGR_ID = ? 
+2019-11-20 13:48:35 DEBUG ==> Parameters: N(String), N(String), 194765(String)
+2019-11-20 13:48:35 DEBUG <==    Updates: 1
+2019-11-20 13:49:11 DEBUG [CustomAuthenticationProvider:authenticate:55] authenticate : ===========================================
+2019-11-20 13:49:12 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(?, 10, 'PWD') 
+2019-11-20 13:49:12 DEBUG ==> Parameters: 194765(String), @EUNK1004(String)
+2019-11-20 13:49:12 DEBUG [CustomAuthenticationProvider:authenticate:96] 로그인 인증 종료
+2019-11-20 13:49:12 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:49:12 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:49:12 DEBUG <==      Total: 1
+2019-11-20 13:49:12 INFO [LoginFailureHandler:onAuthenticationFailure:45] 로그인 아이디 : 194765
+2019-11-20 13:49:12 INFO [LoginFailureHandler:onAuthenticationFailure:46] 로그인 실패 = A granted authority textual representation is required
+2019-11-20 13:49:12 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:49:12 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:49:12 DEBUG <==      Total: 1
+2019-11-20 13:49:12 DEBUG ==>  Preparing: UPDATE MGR SET LOGIN_FAIL_CNT = CASE WHEN ? = 'Y' THEN 0 ELSE LOGIN_FAIL_CNT + 1 END , MGR_STATE_CD = ? WHERE MGR_ID = ? 
+2019-11-20 13:49:12 DEBUG ==> Parameters: N(String), N(String), 194765(String)
+2019-11-20 13:49:12 DEBUG <==    Updates: 1
+2019-11-20 13:50:30 DEBUG [CustomAuthenticationProvider:authenticate:55] authenticate : ===========================================
+2019-11-20 13:50:30 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(?, 10, 'PWD') 
+2019-11-20 13:50:30 DEBUG ==> Parameters: 194765(String), @eunk1004(String)
+2019-11-20 13:50:30 DEBUG [CustomAuthenticationProvider:authenticate:96] 로그인 인증 종료
+2019-11-20 13:50:30 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:50:30 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:50:30 DEBUG <==      Total: 1
+2019-11-20 13:50:30 INFO [LoginFailureHandler:onAuthenticationFailure:45] 로그인 아이디 : 194765
+2019-11-20 13:50:30 INFO [LoginFailureHandler:onAuthenticationFailure:46] 로그인 실패 = A granted authority textual representation is required
+2019-11-20 13:50:30 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 13:50:30 DEBUG ==> Parameters: 194765(String)
+2019-11-20 13:50:30 DEBUG <==      Total: 1
+2019-11-20 13:50:30 DEBUG ==>  Preparing: UPDATE MGR SET LOGIN_FAIL_CNT = CASE WHEN ? = 'Y' THEN 0 ELSE LOGIN_FAIL_CNT + 1 END , MGR_STATE_CD = ? WHERE MGR_ID = ? 
+2019-11-20 13:50:30 DEBUG ==> Parameters: N(String), N(String), 194765(String)
+2019-11-20 13:50:30 DEBUG <==    Updates: 1
+2019-11-20 16:38:49 INFO Starting SmonWebApplication on IC0-W-N08968R with PID 11956 (C:\Users\SSG\git\springboot\smonWeb\target\classes started by 194765 in C:\Users\SSG\git\springboot\smonWeb)
+2019-11-20 16:38:49 DEBUG Running with Spring Boot v2.1.8.RELEASE, Spring v5.1.9.RELEASE
+2019-11-20 16:38:49 INFO No active profile set, falling back to default profiles: default
+2019-11-20 16:38:51 INFO Starting SmonWebApplication on IC0-W-N08968R with PID 37860 (C:\Users\SSG\git\springboot\smonWeb\target\classes started by 194765 in C:\Users\SSG\git\springboot\smonWeb)
+2019-11-20 16:38:51 DEBUG Running with Spring Boot v2.1.8.RELEASE, Spring v5.1.9.RELEASE
+2019-11-20 16:38:51 INFO No active profile set, falling back to default profiles: default
+2019-11-20 16:38:53 DEBUG ==>  Preparing: SELECT BEAN_ID , TRIGGER_GROUP , CRON_EXPRESSION , TRIGGER_SBST FROM SCHEDULE_CRON_TRIGGERS WHERE USE_YN = 'Y' 
+2019-11-20 16:38:53 DEBUG ==> Parameters: 
+2019-11-20 16:38:53 DEBUG <==      Total: 0
+2019-11-20 16:38:56 INFO Started SmonWebApplication in 7.98 seconds (JVM running for 11526.16)
+2019-11-20 16:38:59 DEBUG ==>  Preparing: SELECT BEAN_ID , TRIGGER_GROUP , CRON_EXPRESSION , TRIGGER_SBST FROM SCHEDULE_CRON_TRIGGERS WHERE USE_YN = 'Y' 
+2019-11-20 16:38:59 DEBUG ==> Parameters: 
+2019-11-20 16:38:59 DEBUG <==      Total: 0
+2019-11-20 16:39:29 DEBUG [CustomAuthenticationProvider:authenticate:55] authenticate : ===========================================
+2019-11-20 16:39:29 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(?, 10, 'PWD') 
+2019-11-20 16:39:29 DEBUG ==> Parameters: 194765(String), @eunk1004(String)
+2019-11-20 16:39:29 DEBUG [CustomAuthenticationProvider:authenticate:96] 로그인 인증 종료
+2019-11-20 16:39:30 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 16:39:30 DEBUG ==> Parameters: 194765(String)
+2019-11-20 16:39:30 DEBUG <==      Total: 1
+2019-11-20 16:39:30 INFO [LoginFailureHandler:onAuthenticationFailure:45] 로그인 아이디 : 194765
+2019-11-20 16:39:30 INFO [LoginFailureHandler:onAuthenticationFailure:46] 로그인 실패 = User account is locked
+2019-11-20 16:39:30 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 16:39:30 DEBUG ==> Parameters: 194765(String)
+2019-11-20 16:39:30 DEBUG <==      Total: 1
+2019-11-20 16:39:30 DEBUG ==>  Preparing: UPDATE MGR SET LOGIN_FAIL_CNT = CASE WHEN ? = 'Y' THEN 0 ELSE LOGIN_FAIL_CNT + 1 END , MGR_STATE_CD = ? WHERE MGR_ID = ? 
+2019-11-20 16:39:30 DEBUG ==> Parameters: N(String), N(String), 194765(String)
+2019-11-20 16:39:30 DEBUG <==    Updates: 1
+2019-11-20 16:39:37 DEBUG [CustomAuthenticationProvider:authenticate:55] authenticate : ===========================================
+2019-11-20 16:39:37 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? AND A.MGR_PWD = XX1.ENC_VARCHAR2_INS(?, 10, 'PWD') 
+2019-11-20 16:39:37 DEBUG ==> Parameters: 194765(String), @eunk1004(String)
+2019-11-20 16:39:37 DEBUG [CustomAuthenticationProvider:authenticate:96] 로그인 인증 종료
+2019-11-20 16:39:37 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 16:39:37 DEBUG ==> Parameters: 194765(String)
+2019-11-20 16:39:37 DEBUG <==      Total: 1
+2019-11-20 16:39:37 INFO [LoginFailureHandler:onAuthenticationFailure:45] 로그인 아이디 : 194765
+2019-11-20 16:39:37 INFO [LoginFailureHandler:onAuthenticationFailure:46] 로그인 실패 = User account is locked
+2019-11-20 16:39:37 DEBUG ==>  Preparing: SELECT A.MGR_ID , A.MGR_NAME , A.MGR_SYS , A.MGR_GRADE , A.CERT_NUM , A.MGR_PWD , DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d %H:%i:%s') AS MGR_PWD_CHG_DATE , A.MGR_STATE_CD , A.MGR_TASK , A.LOGIN_FAIL_CNT , B.ROLE_GROUP FROM MGR A LEFT OUTER JOIN CM_ROLE_GROUP B ON A.MGR_GRADE = B.AUTH_GROUP_ID WHERE A.MGR_ID = ? 
+2019-11-20 16:39:37 DEBUG ==> Parameters: 194765(String)
+2019-11-20 16:39:37 DEBUG <==      Total: 1
+2019-11-20 16:39:37 DEBUG ==>  Preparing: UPDATE MGR SET LOGIN_FAIL_CNT = CASE WHEN ? = 'Y' THEN 0 ELSE LOGIN_FAIL_CNT + 1 END , MGR_STATE_CD = ? WHERE MGR_ID = ? 
+2019-11-20 16:39:37 DEBUG ==> Parameters: N(String), N(String), 194765(String)
+2019-11-20 16:39:37 DEBUG <==    Updates: 1

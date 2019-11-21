@@ -178,26 +178,22 @@
             USING DUAL
             ON (MENU_ID =   #{id, jdbcType=VARCHAR} AND AUTH_GROUP_ID =   #{authGroupid, jdbcType=VARCHAR})
             WHEN MATCHED THEN
-                      UPDATE SET
-                            AUTH_CD = 	 #{authCd, jdbcType=VARCHAR}	,
-                            MOD_ID = '',
-                            MOD_DATE = ''										
+            UPDATE SET
+                  AUTH_CD = #{authCd, jdbcType=VARCHAR}	,
+                  MOD_ID = '',
+                  MOD_DATE = SYSDATE()										
             WHEN NOT MATCHED THEN
-                      INSERT(
+            INSERT(
 					MENU_ID,
 					AUTH_GROUP_ID,
 					AUTH_CD,
-					REG_ID,
-					REG_DATE
-				)values ( 
+					REG_ID
+				  ) VALUES ( 
 				    #{id, jdbcType=VARCHAR},
 				    #{authGroupid , jdbcType=VARCHAR},
 			 	    #{authCd, jdbcType=VARCHAR},
-			        '',
 			        ''
-		        )
- 
-    
+		          )    
 		     ]]> 
 	</insert>
  

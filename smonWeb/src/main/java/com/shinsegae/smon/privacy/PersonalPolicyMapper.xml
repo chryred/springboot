@@ -20,12 +20,12 @@
 	       B.SQL,              
 	       B.INFO,             
 	       COUNT(*) OVER() AS TOTCNT
-		  FROM (SELECT DISTINCT
+		FROM (SELECT DISTINCT
 		               DB_SID AS DB_SID,
 		               OWNER,
 		               TABLE_NAME 
-		          FROM TCKCOL_ADD A
-		         WHERE PERSONALINFO_YN = 'Y'
+		       FROM TCKCOL_ADD A
+		      WHERE PERSONALINFO_YN = 'Y'
 		         <if test="dbName != '' and dbName != null">
 			   		AND DB_SID = #{dbName}
 			   	 </if>
@@ -35,7 +35,7 @@
 				 <if test="objectName != '' and objectName != null">
 					AND TABLE_NAME LIKE '%' || #{objectName} || '%'
 				 </if>
-		           AND NOT EXISTS (SELECT ''
+		            AND NOT EXISTS (SELECT ''
 		                             FROM TCKCMP_EXCEPTION B
 		                            WHERE A.DB_SID = B.DB_NAME
 		                              AND A.OWNER = B.OWNER
@@ -44,7 +44,7 @@
 		 WHERE A.DB_SID = B.DB_NAME (+)
 		   AND A.OWNER = B.OWNER (+)
 		   AND A.TABLE_NAME = B.TABLE_NAME (+)
-		   AND B.IF_YMD (+) = TO_CHAR(SYSDATE, 'YYYYMMDD')
+		   AND B.IF_YMD (+) = DATE_FORMAT(SYSDATE(), '%Y%m%d')
     </select>
        
     <select id="selectComboDBName" resultType="HashMap">

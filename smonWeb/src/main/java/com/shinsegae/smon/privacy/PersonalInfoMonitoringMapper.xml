@@ -101,7 +101,7 @@
 				AND A.OWNER = B.OWNER
 				AND A.TABLE_NAME = B.TABLE_NAME
 				AND A.COLUMN_NAME = B.COLUMN_NAME
-				AND A.CHECK_YMD >= TO_CHAR(B.ENT_DATE, 'YYYYMMDD')
+				AND A.CHECK_YMD >= DATE_FORMAT(B.ENT_DATE, '%Y%m%d')
 			)
 		  		AND CHECK_YMD BETWEEN #{checkStartDate} AND #{checkEndDate}
 		  	GROUP BY A.CHECK_YMD, A.CHECK_GUBN, A.DB_NAME
@@ -121,11 +121,11 @@
 			FROM
 				TCKPER
 			WHERE
-				SUBSTR(CHECK_YMD, 0, 6) BETWEEN  TO_CHAR(ADD_MONTHS(TO_DATE(#{checkEndDate}, 'YYYYMM'), -12), 'YYYYMM') AND #{checkEndDate}
+				SUBSTR(CHECK_YMD, 0, 6) BETWEEN  DATE_FORMAT(ADD_MONTHS(TO_DATE(#{checkEndDate}, 'YYYYMM'), -12), '%Y%m') AND #{checkEndDate}
 				AND (
-					(CHECK_YMD >= TO_CHAR(LAST_DAY(TO_DATE(SUBSTR(CHECK_YMD, 0, 6), 'YYYYMM')), 'YYYYMMDD'))
+					(CHECK_YMD >= DATE_FORMAT(LAST_DAY(TO_DATE(SUBSTR(CHECK_YMD, 0, 6), 'YYYYMM')), '%Y%m%d'))
 					OR
-					(CHECK_YMD >= TO_CHAR(SYSDATE-1, 'YYYYMMDD')
+					(CHECK_YMD >= DATE_FORMAT(SYSDATE()-1, '%Y%m%d')
 				)
 			)
 		)
@@ -146,14 +146,14 @@
 				AND A.OWNER = B.OWNER
 				AND A.TABLE_NAME = B.TABLE_NAME
 				AND A.COLUMN_NAME = B.COLUMN_NAME
-				AND A.CHECK_YMD >= TO_CHAR(B.ENT_DATE, 'YYYYMMDD')
+				AND A.CHECK_YMD >= DATE_FORMAT(B.ENT_DATE, '%Y%m%d')
 			)
 		<choose>
 			<when test="periodType = 'day'">
 				AND A.CHECK_YMD BETWEEN #{startCheckDate} AND #{endCheckDate}
 			</when>
 			<when test="periodType = 'month'">
-				AND TO_CHAR(TO_DATE(A.CHECK_YMD, 'YYYYMMDD'), 'YYYYMM') BETWEEN #{startCheckDate} AND #{endCheckDate}
+				AND DATE_FORMAT(CONVERT(CHAR(8), A.CHECK_YMD, 112), '%Y%m') BETWEEN #{startCheckDate} AND #{endCheckDate}
 			</when>
 		</choose>
 		<if test="dbName != '' and dbName != null">

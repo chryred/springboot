@@ -70,7 +70,7 @@
 		FROM
 			TCKCMP
 		WHERE
-			IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
+			IF_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
 			<![CDATA[	
 			AND CNT > 0
 			]]> 
@@ -86,7 +86,7 @@
 			<if test="dbName != '' and dbName != null">
 			AND DB_NAME = #{dbName}
 			</if>
-			AND IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
+			AND IF_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
 			<![CDATA[	
 			AND CNT > 0
 			]]>
@@ -101,7 +101,7 @@
 			<if test="owner != '' and owner != null">
 			AND OWNER = #{owner}
 			</if>
-			AND IF_YMD = TO_CHAR(SYSDATE,'YYYYMMDD')
+			AND IF_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
 			<![CDATA[	
 			AND CNT > 0
 			]]>

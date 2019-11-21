@@ -82,8 +82,7 @@
                     </if>
                 </if>
                 ) A,
-             TCKSYS B
-      WHERE A.DB_SID (+) = B.DB_SID
+      LEFT OUTER JOIN TCKSYS B ON A.DB_SID = B.DB_SID
       ORDER BY B.SYSTEM_CODE
     </select>
     
@@ -110,7 +109,7 @@
                VEHICLENUMBER_SUM,
                ETC_SUM
           FROM TCKTDO
-         WHERE TOTAL_YMD = DATE_FORMAT(NOW(), '%Y%m%d')
+         WHERE TOTAL_YMD = DATE_FORMAT(SYSDATE(), '%Y%m%d')
         ORDER BY PROGRESS_PERCENTAGE, TOT_OBJ_CNT
     </select>
     
@@ -136,7 +135,7 @@
     		#{columnName},
     		#{tableComment},
     		#{columnComment},
-    		NOW()
+    		SYSDATE()
     	)
     </insert>
     
@@ -180,7 +179,7 @@
 				AND (
 					(CHECK_YMD = DATE_FORMAT(LAST_DAY(TO_DATE(SUBSTR(CHECK_YMD, 0, 6), 'YYYYMM')), '%Y%m%d'))
 					OR
-					(CHECK_YMD = DATE_FORMAT(NOW()-1, '%Y%m')
+					(CHECK_YMD = DATE_FORMAT(SYSDATE()-1, '%Y%m')
 				)
 			)
 		)
