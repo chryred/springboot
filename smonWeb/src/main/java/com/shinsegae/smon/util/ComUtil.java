@@ -6,12 +6,11 @@ import java.io.Reader;
 
 public class ComUtil {
 
+   
     /**
-     * �ۼ��� : 2014.02.21
-     * �ۼ��� : �۽���
-     * ����   : �ѱ� ���ڵ�
-     * @param s
-     * @return
+     * 캐릭터셋 변환 (ISO8859 -> KSC5601)
+     * @param 이전 문자열
+     * @return 변경된 문자열
      */
     public static String toKSC5601(String s){ 
         
@@ -26,6 +25,11 @@ public class ComUtil {
         } 
     } 
     
+    /**
+     * 캐릭터셋 변환 (ISO8859 -> UTF-8)
+     * @param 이전 문자열
+     * @return 변경된 문자열
+     */
     public static String toUTF8(String s){ 
         
         if(s==null){ 
@@ -40,11 +44,9 @@ public class ComUtil {
     } 
     
     /**
-     * �ۼ��� : 2014.02.21
-     * �ۼ��� : �۽���
-     * ����   : ���ڵ�
-     * @param s
-     * @return
+     * 캐릭터셋 변환 (KSC5601 -> 8859_1)
+     * @param 이전 문자열
+     * @return 변경된 문자열
      */
     public static String to8859_1(String s){ 
         
@@ -60,12 +62,9 @@ public class ComUtil {
     } 
     
     /**
-     * �ۼ��� : 2014.02.20
-     * �ۼ��� : �۽���
-     * ����   : CLOB �����͸� String���� ��ȯ
-     * @param input
-     * @return
-     * @throws IOException
+     * clob 문자열로 전환
+     * @param 이전 문자열
+     * @return 변경된 문자열
      */
     public static String clobToString(Reader input) throws IOException{
         
@@ -83,14 +82,14 @@ public class ComUtil {
     }
     
     
+     
      /**
-     * String�̶�� ����Ǿ��ִ� ���� null( ""�� �ƴ�)�� ��� ���� ��쿡
-     * ��ü�� ���ִ� �Լ�.
-     * @param   value   null���� Ȯ���� �ؾ� �ϴ� ���
-     * @param   replacer    value�� null�� ��쿡 ��ü�� ��
-     * @return  value value�� null�� �ƴҰ�쿡�� value, null�ϰ�쿡�� replacer�� ��ȯ��.
-     **/
-     public static String nvl(String value, String replacer){
+      * NVL처리 
+      * @param value
+      * @param replacer
+      * @return
+     */
+    public static String nvl(String value, String replacer){
         if (value == null){
            return replacer;
         }else{
@@ -233,3 +232,5 @@ public class ComUtil {
 	}
 
 }
+>>>>>>> 90d3c481a83243eed9acbc0210cf14cc939ba2cb
+
