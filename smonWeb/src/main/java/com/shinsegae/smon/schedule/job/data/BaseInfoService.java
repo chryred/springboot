@@ -8,8 +8,8 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
+import com.shinsegae.smon.util.GenerateDynamicQuery;
 import com.shinsegae.smon.util.NLogger;
 
 @Service
@@ -34,7 +34,7 @@ public class BaseInfoService {
 			String strTableName = (String)mBaseInfo.get("TABLE_NAME");
 			String strCols = (String)mBaseInfo.get("COLS");
 			String strPrCols = (String)mBaseInfo.get("PR_COLS");
-			String strSelQry = selectQry(strTableName, strCols);
+			String strSelQry = GenerateDynamicQuery.selectQry(strTableName, strCols);
 			
 			// 데이터 조회 쿼리 생성
 			mBaseInfo.put("QRY", strSelQry);
@@ -47,7 +47,7 @@ public class BaseInfoService {
 			int nCnt = 0;
 			for(Map<String, Object> mTableData : lTableData) {
 				
-				String strMergeQry = mergeQry(strTableName, strCols, strPrCols, mTableData);
+				String strMergeQry = GenerateDynamicQuery.mergeQry(strTableName, strCols, strPrCols, mTableData);
 				// 데이터 머지 쿼리 생성
 				mTableData.put("QRY", strMergeQry);
 				
@@ -64,65 +64,4 @@ public class BaseInfoService {
 
 		NLogger.debug("============ syncBaseInfo End =============");
 	}
-	
-	public String selectQry(String strTableName, String strCols) {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("SELECT ")
-		  .append(strCols)
-		  .append(" FROM ")
-		  .append(strTableName);
-		
-		return sb.toString();
-	}
-	
-	public String mergeQry(String strTableName, String strCols, String strPrCols, Map<String, Object> mTableData) {
-		StringBuilder sb = new StringBuilder();
-		String[] aryCols = strCols.split(",");
-		// primary key 존재시 
-		String[] aryPrCols = StringUtils.isEmpty(strPrCols) ? strCols.split(",") : strPrCols.split(",");
-		// 예약어 컬럼 `로 감싸기
-		String strAuroraCols = strCols.replaceAll("\\b(RANGE|OWNER|TABLE_NAME|SQL)\\b", "`$1`");
-		
-		sb.append("INSERT INTO ").append(strTableName).append("(").append(strAuroraCols).append(") ")
-		  .append("SELECT ")
-		;
-		
-		int nCnt = aryCols.length;
-		for(int nIdx = 0; nIdx < nCnt; nIdx++) {
-			sb.append("#{").append(aryCols[nIdx]).append("}").append(" AS ").append("\"").append(aryCols[nIdx]).append("\"");
-			
-			// 컬럼 마지막의 경운 ,제외 처리
-			if(nIdx != (nCnt - 1)) {
-				sb.append(", ");
-			}
-		}
-		
-		sb.append(" FROM MYSQL_DUAL ").append("WHERE NOT EXISTS (")
-		  .append("SELECT 1 ").append("FROM ").append(strTableName).append(" WHERE ");
-		 
-		nCnt = aryPrCols.length;
-		for(int nIdx = 0; nIdx < nCnt; nIdx++) {
-			sb.append(aryPrCols[nIdx]);
-			
-			// 해당 데이터가 빈값일 경우엔 NULL 처리
-			if(StringUtils.isEmpty(mTableData.get(aryPrCols[nIdx]))) {
-				sb.append(" IS NULL");
-			} else {
-				sb.append("=").append("#{").append(aryPrCols[nIdx]).append("}");
-			}
-			
-			// 컬럼 마지막의 경운 ,제외 처리
-			if(nIdx != (nCnt - 1)) {
-				sb.append(" AND ");
-			}
-		}
-		
-		sb.append(")");
-		
-		NLogger.debug("merge Qry : ", sb.toString());
-		return sb.toString();
-	}
-	
-	
 }
