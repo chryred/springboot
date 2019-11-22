@@ -6,6 +6,12 @@ import org.springframework.util.StringUtils;
 
 public class GenerateDynamicQuery {
 	
+	/**
+	 * select절 조회 (where절 없이)
+	 * @param strTableName
+	 * @param strCols
+	 * @return
+	 */
 	public static String selectQry(String strTableName, String strCols) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -17,6 +23,14 @@ public class GenerateDynamicQuery {
 		return sb.toString();
 	}
 	
+	/**
+	 * insert문 처리(단, 중복 조건절의 경우는 제외 처리)
+	 * @param strTableName
+	 * @param strCols
+	 * @param strPrCols
+	 * @param mTableData
+	 * @return
+	 */
 	public static String mergeQry(String strTableName, String strCols, String strPrCols, Map<String, Object> mTableData) {
 		StringBuilder sb = new StringBuilder();
 		String[] aryCols = strCols.split(",");
