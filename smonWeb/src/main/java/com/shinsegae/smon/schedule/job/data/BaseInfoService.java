@@ -81,8 +81,8 @@ public class BaseInfoService {
 		String[] aryCols = strCols.split(",");
 		// primary key 존재시 
 		String[] aryPrCols = StringUtils.isEmpty(strPrCols) ? strCols.split(",") : strPrCols.split(",");
-		// 예약어 컬럼 `로 감싸기 : RANGE
-		String strAuroraCols = strCols.replaceAll("\\b(RANGE)\\b", "`$1`");
+		// 예약어 컬럼 `로 감싸기
+		String strAuroraCols = strCols.replaceAll("\\b(RANGE|OWNER|TABLE_NAME|SQL)\\b", "`$1`");
 		
 		sb.append("INSERT INTO ").append(strTableName).append("(").append(strAuroraCols).append(") ")
 		  .append("SELECT ")
