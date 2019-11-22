@@ -4,7 +4,7 @@ import com.shinsegae.smon.util.NLogger;
 
 public abstract class ScheduleJob {
 
-	public abstract void execute();
+	public abstract void execute() throws Exception;
 	
 	public void beforeJob() {
 		NLogger.debug("schedule before Trtm : ", getClass().getName());

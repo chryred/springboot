@@ -18,7 +18,7 @@ public class BatchController {
 	
 	@RequestMapping("/baseInfo.do")
 	@ResponseBody
-	public Map<String, Object> baseInfoBatchJob() {
+	public Map<String, Object> baseInfoBatchJob() throws Exception {
 		Map<String, Object> retMap = new HashMap<String, Object>();
 		baseInfoBatchJob.execute();
 		retMap.put("msg", "success");
