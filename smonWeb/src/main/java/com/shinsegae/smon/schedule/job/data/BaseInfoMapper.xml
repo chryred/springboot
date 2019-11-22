@@ -16,6 +16,7 @@
 		                                      FROM TCKETC
 		                                    WHERE ETC_GUBN = '011'
 		                                      AND ETC_INFO = '02')
+		            AND A.TABLE_NAME = 'T_INCIDENT_HIS'
 		          GROUP BY A.TABLE_NAME
 		       ) A
 		  LEFT OUTER JOIN USER_CONSTRAINTS B

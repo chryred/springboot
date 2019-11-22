@@ -81,14 +81,16 @@ public class BaseInfoService {
 		String[] aryCols = strCols.split(",");
 		// primary key 존재시 
 		String[] aryPrCols = StringUtils.isEmpty(strPrCols) ? strCols.split(",") : strPrCols.split(",");
+		// 예약어 컬럼 `로 감싸기 : RANGE
+		String strAuroraCols = strCols.replaceAll("\\b(RANGE)\\b", "`$1`");
 		
-		sb.append("INSERT INTO ").append(strTableName).append("(").append(strCols).append(") ")
+		sb.append("INSERT INTO ").append(strTableName).append("(").append(strAuroraCols).append(") ")
 		  .append("SELECT ")
 		;
 		
 		int nCnt = aryCols.length;
 		for(int nIdx = 0; nIdx < nCnt; nIdx++) {
-			sb.append("#{").append(aryCols[nIdx]).append("}").append(" AS ").append(aryCols[nIdx]);
+			sb.append("#{").append(aryCols[nIdx]).append("}").append(" AS ").append("\"").append(aryCols[nIdx]).append("\"");
 			
 			// 컬럼 마지막의 경운 ,제외 처리
 			if(nIdx != (nCnt - 1)) {
@@ -118,7 +120,7 @@ public class BaseInfoService {
 		
 		sb.append(")");
 		
-//		NLogger.debug("merge Qry : ", sb.toString());
+		NLogger.debug("merge Qry : ", sb.toString());
 		return sb.toString();
 	}
 	
