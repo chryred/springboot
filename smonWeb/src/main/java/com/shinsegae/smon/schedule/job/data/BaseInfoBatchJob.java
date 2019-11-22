@@ -12,7 +12,7 @@ public class BaseInfoBatchJob extends ScheduleJob {
 	BaseInfoService baseInfoService;
 
 	@Override
-	public void execute() {
+	public void execute() throws Exception {
 		baseInfoService.syncBaseInfo();
 	}
 }

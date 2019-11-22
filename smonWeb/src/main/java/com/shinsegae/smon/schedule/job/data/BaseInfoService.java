@@ -23,7 +23,7 @@ public class BaseInfoService {
 	@Qualifier("sqlSessionTemplateAuroraBatch")
 	SqlSessionTemplate sqlSessionTemplateAuroraBatch;
 	
-	public void syncBaseInfo() {
+	public void syncBaseInfo() throws Exception {
 		NLogger.debug("============ syncBaseInfo Start =============");
 		NLogger.debug(Thread.currentThread().getName());
 		
