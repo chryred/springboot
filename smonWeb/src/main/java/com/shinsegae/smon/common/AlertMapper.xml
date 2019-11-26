@@ -41,7 +41,7 @@
     
     <select id="selectAlertLog" resultMap="alertMap">
     <![CDATA[
-        SELECT CASE WHEN ((SYSDATE - TO_DATE(B.CHECK_YMD || B.CHECK_TIME, 'YYYYMMDDHH24MISS')) * 24 * 60) < 60 THEN ROUND(((SYSDATE - TO_DATE(B.CHECK_YMD || B.CHECK_TIME, 'YYYYMMDDHH24MISS')) * 24 * 60),0) || ' minutes ago'
+        SELECT CASE WHEN ( datediff(sysdate(), str_to_date(concat(B.CHECK_YMD, B.CHECK_TIME), '%Y%m%d%H%i%s')) ) < 60 THEN concat(datediff(sysdate(), str_to_date(concat(B.CHECK_YMD, B.CHECK_TIME), '%Y%m%d%H%i%s')),  ' minutes ago')
                     ELSE SUBSTR(B.CHECK_TIME, 1, 2) || ':' || SUBSTR(B.CHECK_TIME, 3, 2) 
                END AS TIME,
                B.DB_NAME || '(' || 
@@ -55,7 +55,7 @@
                    AND C.ETC_CODE = B.CHECK_SUB_ITEM) || ' ' ||     
                 B.CHECK_INFO|| ')' AS CHECK_INFO,
                'SYSTEM' AS GUBN,
-               CASE WHEN ((SYSDATE - TO_DATE(B.CHECK_YMD || B.CHECK_TIME, 'YYYYMMDDHH24MISS')) * 24 * 60 * 60) < 80 THEN 1
+               CASE WHEN ( datediff(sysdate(), str_to_date(concat(B.CHECK_YMD, B.CHECK_TIME), '%Y%m%d%H%i%s')) ) < 80 THEN 1
                     ELSE 2
                END AS ALERT_GUBN
           FROM (SELECT CHECK_YMD,
@@ -64,7 +64,7 @@
                        CHECK_SUB_ITEM,
                        MAX(CHECK_TIME) AS CHECK_TIME
                   FROM TCKLOG
-                 WHERE CHECK_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+                 WHERE CHECK_YMD = date_format(sysdate(), '%Y%m%d')
                    AND DB_NAME = 'DAPP'
                    GROUP BY CHECK_YMD, DB_NAME, CHECK_ITEM, CHECK_SUB_ITEM) A,
                 TCKLOG B
@@ -101,7 +101,7 @@
 	           END AS URL
 	      FROM (SELECT CHECK_YMD, DB_NAME, GUBN, MAX(CHECK_TIME) AS CHECK_TIME
 	              FROM TCKHIT
-	             WHERE CHECK_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD')
+	             WHERE CHECK_YMD = date_format(sysdate(), '%Y%m%d')
 	               AND DB_NAME = #{system}
 	            GROUP BY CHECK_YMD, DB_NAME, GUBN) A,
 	           TCKHIT B
