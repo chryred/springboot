@@ -171,7 +171,7 @@
 
     <select id="selectLongQuery" resultMap="longQueryMap" parameterType="hashmap">
     <![CDATA[
-	SELECT NVL(ELAPSED_TIME, 0) AS ELAPSED_TIME,
+	SELECT IFNULL(NULLIF(ELAPSED_TIME, ''), 0) AS ELAPSED_TIME,
 	       SQL_ID,
 	       LAST_LOAD_YMD,
 	       LAST_LOAD_TIME,
@@ -185,7 +185,7 @@
 	               SQL_FULLTEXT
 	          FROM TCKLOQ
 	         WHERE DB_NAME = #{system}
-	           AND LAST_LOAD_YMD = TO_CHAR(SYSDATE, 'YYYYMMDD'))
+	           AND LAST_LOAD_YMD = date_format(sysdate(), '%Y%m%d')) TCKLOQ
 	ORDER BY LAST_LOAD_TIME
     ]]>
     </select>
