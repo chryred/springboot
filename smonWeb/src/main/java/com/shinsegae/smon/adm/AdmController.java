@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -586,7 +588,6 @@ public class AdmController {
 		mav.setViewName("/mtr/common/navigationMenu"); 
 		
 		try {
-		
 		    mav.addObject("menuList", admservice.selectNavigation(paramCondition));
 		
 		} catch (Exception e) {
