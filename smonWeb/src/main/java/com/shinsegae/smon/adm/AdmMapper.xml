@@ -277,13 +277,25 @@
 	
 	
 	<select id="selectNavigation" resultType="HashMap" parameterType="com.shinsegae.smon.model.adm.DsBatchVO">
-		SELECT A.MENU_ID as menu_id ,A.UP_MENU_ID as up_menu_id,MENU_NAME as menu_name,MENU_LINK as menu_link,MENU_ORDER as menu_order,NVL(MENU_IMG,'glyphicon glyphicon-expand') as MENU_IMG
-		  FROM CM_MENU A LEFT JOIN CM_MENU_AUTH_MAP B ON (B.MENU_ID = A.MENU_ID)
-		 WHERE A.USE_YN = 'Y' AND B.AUTH_CD != 'XX' AND B.AUTH_GROUP_ID = #{authGroupid, jdbcType=VARCHAR}
-		   AND A.UP_MENU_ID NOT IN (SELECT DISTINCT MENU_ID FROM CM_MENU_AUTH_MAP WHERE AUTH_CD ='XX')
-	    START WITH A.MENU_ID IN (SELECT DISTINCT MENU_ID FROM CM_MENU WHERE UP_MENU_ID ='0')
-		CONNECT BY PRIOR A.MENU_ID = A.UP_MENU_ID
-		ORDER SIBLINGS BY MENU_ORDER ,A.MENU_ID, A.UP_MENU_ID
+		SELECT -- dc.menu_id, CONCAT(REPEAT('       ', dc2.lev-1), menu_name) AS name, up_menu_id, CAST(dc2.lev AS CHAR) AS lev
+		         DC.MENU_ID as MENU_ID
+			   , DC.UP_MENU_ID as UP_MENU_ID
+		       , DC.MENU_NAME as MENU_NAME
+		       , DC.MENU_LINK as MENU_LINK
+		       , DC.MENU_ORDER as MENU_ORDER
+		       , IFNULL(NULLIF(DC.MENU_IMG, ''),'glyphicon glyphicon-expand') as MENU_IMG
+		 FROM ( SELECT  GET_MENU_TREE(menu_id) AS MENU_ID, @level as LEV
+		           FROM (SELECT  @start_with := '0', @code := @start_with, @level := 0, @menu_order := 0) VARS
+		                  , CM_MENU
+		          WHERE @code IS NOT NULL) DC2
+		  JOIN CM_MENU DC
+		    ON DC.MENU_ID = DC2.MENU_ID
+		   AND DC.USE_YN = 'Y'
+		  LEFT JOIN CM_MENU_AUTH_MAP MAP
+		    ON DC.MENU_ID = MAP.MENU_ID
+		 WHERE MAP.AUTH_CD != 'XX' 
+		   AND MAP.AUTH_GROUP_ID = #{authGroupid, jdbcType=VARCHAR}
+		ORDER BY DC.MENU_ORDER, DC.MENU_ID, DC.UP_MENU_ID
 	</select>
 	
 	<select id="selectGroupId" resultMap="rm_selectauthGroup" parameterType="com.shinsegae.smon.model.adm.DsBatchVO">     
