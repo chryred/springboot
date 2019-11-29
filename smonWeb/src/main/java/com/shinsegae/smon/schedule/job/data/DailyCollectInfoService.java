@@ -118,6 +118,11 @@ public class DailyCollectInfoService {
 			int nMaxCnt = sqlSessionTemplateOnprem.getMapper(DailyCollectInfoMapper.class).searchDynamicCountInfo(mDailyCollectInfo);
 			NLogger.info("nMaxCnt : ", nMaxCnt);
 			
+			if(nMaxCnt == 0) {
+				NLogger.info("변경된 값 미존재 : ", strTableName);
+				continue;
+			}
+			
 			// 데이터 조회 쿼리 생성
 			mDailyCollectInfo.put("QRY", GenerateDynamicQuery.selectMaxValuePaginQry(strTableName, strCols, strColNm));
 			int nStrtNum = 0, nEndNum = 0;

@@ -7,6 +7,8 @@ import org.springframework.util.StringUtils;
 
 public class GenerateDynamicQuery {
 	
+	
+	public final static String STR_RESERVED_WORDS = "\\\\b(RANGE|OWNER|TABLE_NAME|SQL|USAGE)\\\\b";
 	/**
 	 * select절 조회 (where절 없이)
 	 * @param strTableName
@@ -129,7 +131,7 @@ public class GenerateDynamicQuery {
 		// primary key 존재시 
 		String[] aryPrCols = StringUtils.isEmpty(strPrCols) ? strCols.split(",") : strPrCols.split(",");
 		// 예약어 컬럼 `로 감싸기
-		String strAuroraCols = strCols.replaceAll("\\b(RANGE|OWNER|TABLE_NAME|SQL)\\b", "`$1`");
+		String strAuroraCols = strCols.replaceAll(STR_RESERVED_WORDS, "`$1`");
 		
 		sb.append("INSERT INTO ").append(strTableName).append("(").append(strAuroraCols).append(") ")
 		  .append("SELECT ")
@@ -187,7 +189,7 @@ public class GenerateDynamicQuery {
 		// primary key 존재시 
 		String[] aryPrCols = StringUtils.isEmpty(strPrCols) ? strCols.split(",") : strPrCols.split(",");
 		// 예약어 컬럼 `로 감싸기
-		String strAuroraCols = strCols.replaceAll("\\b(RANGE|OWNER|TABLE_NAME|SQL)\\b", "`$1`");
+		String strAuroraCols = strCols.replaceAll(STR_RESERVED_WORDS, "`$1`");
 		
 		sb.append("INSERT IGNORE ").append(strTableName).append("(").append(strAuroraCols).append(") ")
 		  .append("VALUES( ")
@@ -224,7 +226,7 @@ public class GenerateDynamicQuery {
 		// primary key 존재시 
 		String[] aryPrCols = StringUtils.isEmpty(strPrCols) ? strCols.split(",") : strPrCols.split(",");
 		// 예약어 컬럼 `로 감싸기
-		String strAuroraCols = strCols.replaceAll("\\b(RANGE|OWNER|TABLE_NAME|SQL)\\b", "`$1`");
+		String strAuroraCols = strCols.replaceAll(STR_RESERVED_WORDS, "`$1`");
 		
 		sb.append("REPLACE INTO ").append(strTableName).append("(").append(strAuroraCols).append(") ")
 		  .append("VALUES")
@@ -275,7 +277,7 @@ public class GenerateDynamicQuery {
 		// primary key 존재시 
 		String[] aryPrCols = StringUtils.isEmpty(strPrCols) ? strCols.split(",") : strPrCols.split(",");
 		// 예약어 컬럼 `로 감싸기
-		String strAuroraCols = strCols.replaceAll("\\b(RANGE|OWNER|TABLE_NAME|SQL)\\b", "`$1`");
+		String strAuroraCols = strCols.replaceAll(STR_RESERVED_WORDS, "`$1`");
 		
 		sb.append("INSERT IGNORE ").append(strTableName).append("(").append(strAuroraCols).append(") ")
 		  .append("VALUES")
