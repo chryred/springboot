@@ -8,7 +8,7 @@ import org.springframework.util.StringUtils;
 public class GenerateDynamicQuery {
 	
 	
-	public final static String STR_RESERVED_WORDS = "\\\\b(RANGE|OWNER|TABLE_NAME|SQL|USAGE)\\\\b";
+	public final static String STR_RESERVED_WORDS = "\\b(RANGE|OWNER|TABLE_NAME|SQL|USAGE)\\b";
 	/**
 	 * select절 조회 (where절 없이)
 	 * @param strTableName
