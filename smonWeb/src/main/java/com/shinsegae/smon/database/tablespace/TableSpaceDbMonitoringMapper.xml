@@ -14,7 +14,7 @@
               CHECK_TIME AS CHECK_TIME,
               USED_RATE
          FROM TCKUNT
-        WHERE CHECK_YMD = date_format(sysdate(), '%Y%m%d')
+        WHERE CHECK_YMD = date_format(now(), '%Y%m%d')
           AND CONTENTS = 'UNDO'
           AND DB_NAME = #{system}
         ORDER BY TABLESPACE_NAME, CHECK_TIME
@@ -43,19 +43,19 @@
            ((B.USED_SIZE - A.USED_SIZE) / B.CURRENT_SIZE * 100 ) AS CHANGE_RATE
       FROM (SELECT *
               FROM TCKUNT 
-             WHERE CHECK_YMD = date_format(date_add(sysdate(), interval - #{term} day) , '%Y%m%d')
+             WHERE CHECK_YMD = date_format(date_add(now(), interval - #{term} day) , '%Y%m%d')
                AND DB_NAME = #{system}
                AND CHECK_TIME = (SELECT MIN(CHECK_TIME)
                                    FROM TCKUNT
-                                  WHERE CHECK_YMD = date_format(date_add(sysdate(), interval - #{term} day) , '%Y%m%d')
+                                  WHERE CHECK_YMD = date_format(date_add(now(), interval - #{term} day) , '%Y%m%d')
                                     AND DB_NAME = #{system})) A,
            (SELECT *
               FROM TCKUNT 
-             WHERE CHECK_YMD = date_format(sysdate(), '%Y%m%d')
+             WHERE CHECK_YMD = date_format(now(), '%Y%m%d')
                AND DB_NAME = #{system}
                AND CHECK_TIME = (SELECT MAX(CHECK_TIME)
                                    FROM TCKUNT
-                                  WHERE CHECK_YMD = date_format(sysdate(), '%Y%m%d')
+                                  WHERE CHECK_YMD = date_format(now(), '%Y%m%d')
                                     AND DB_NAME = #{system})) B
       WHERE A.DB_NAME = B.DB_NAME
         AND A.TABLESPACE_NAME = B.TABLESPACE_NAME
@@ -67,11 +67,11 @@
     <![CDATA[
     SELECT COUNT(*) AS TOTAL_CNT
       FROM TCKUNT 
-     WHERE CHECK_YMD = date_format(sysdate(), '%Y%m%d')
+     WHERE CHECK_YMD = date_format(now(), '%Y%m%d')
        AND DB_NAME = #{system}
        AND CHECK_TIME = (SELECT MAX(CHECK_TIME)
                            FROM TCKUNT
-                          WHERE CHECK_YMD = date_format(sysdate(), '%Y%m%d')
+                          WHERE CHECK_YMD = date_format(now(), '%Y%m%d')
                             AND DB_NAME = #{system})
        
     ]]> 
@@ -81,11 +81,11 @@
     SELECT CHECK_YMD,  TABLESPACE_NAME, CHECK_TIME, CURRENT_SIZE, FREE_SIZE, USED_SIZE, FREE_RATE, USED_RATE, MAX_SIZE
       FROM (SELECT CHECK_YMD,  TABLESPACE_NAME, CHECK_TIME, CURRENT_SIZE, FREE_SIZE, USED_SIZE, FREE_RATE, USED_RATE, MAX_SIZE, ROWNUM AS ROW_NO
               FROM TCKUNT 
-             WHERE CHECK_YMD = date_format(sysdate(), '%Y%m%d')
+             WHERE CHECK_YMD = date_format(now(), '%Y%m%d')
                AND DB_NAME = #{system}
                AND CHECK_TIME = (SELECT MAX(CHECK_TIME)
                                    FROM TCKUNT
-                                  WHERE CHECK_YMD = date_format(sysdate(), '%Y%m%d')
+                                  WHERE CHECK_YMD = date_format(now(), '%Y%m%d')
                                     AND DB_NAME =  #{system})
                )
     <if test="page != null">
