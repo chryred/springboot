@@ -32,7 +32,7 @@
             <AppenderRef ref="File" />
         </Root>
 	 -->
-        <Logger name="com.shinsegae" level="debug">
+        <Logger name="com.shinsegae" level="info">
 	      <AppenderRef ref="File"/>
 	    </Logger>
 

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.shinsegae.smon.schedule.job.data.DailyCollectInfoMapper">
+	
+	<select id="searchDailyCollectInfoByThread" resultType="hashmap"  parameterType="hashmap">
+	<![CDATA[
+		SELECT *
+		  FROM (SELECT ROWNUM AS RNUM, A.*
+		          FROM (SELECT  A.TABLE_NAME
+                          , B.ETC_INFO_B AS TRTM_CNT
+		                      , TO_NUMBER(dbms_xmlgen.getxmltype('SELECT COUNT(*) c FROM ' || table_name).Extract('//text()')) AS NUM_ROWS
+					                , LISTAGG(A.COLUMN_NAME, ',') WITHIN GROUP(ORDER BY A.COLUMN_ID) AS COLS
+				                FROM USER_TAB_COLUMNS A
+                           , TCKETC B
+			                WHERE A.TABLE_NAME = B.ETC_CODE
+                       AND B.ETC_GUBN = '011'
+                       AND B.ETC_INFO = '03'
+			              GROUP BY A.TABLE_NAME, B.ETC_INFO_B
+		                ORDER BY NUM_ROWS DESC) A ) AA
+		 WHERE AA.RNUM = #{N_NUM}
+	]]>
+	</select>
+
+	<select id="searchDailyCollectInfo" resultType="hashmap"  parameterType="hashmap">
+	<![CDATA[
+		SELECT A.TABLE_NAME
+		     , A.COLS
+		     , A.PR_COLS
+		     , B.COLUMN_NAME AS COL_NM
+             , C.ETC_INFO_B AS TRTM_CNT
+		  FROM (
+		        SELECT A.TABLE_NAME
+				            , A.COLS
+				            , LISTAGG(C.COLUMN_NAME, ',') WITHIN GROUP(ORDER BY C.POSITION) AS PR_COLS    
+				          FROM (SELECT A.TABLE_NAME
+				                      , LISTAGG(A.COLUMN_NAME, ',') WITHIN GROUP(ORDER BY A.COLUMN_ID) AS COLS
+				                    FROM USER_TAB_COLUMNS A
+				                  GROUP BY A.TABLE_NAME
+				              ) A
+				          LEFT OUTER JOIN USER_CONSTRAINTS B
+				            ON A.TABLE_NAME = B.TABLE_NAME
+				          AND B.CONSTRAINT_TYPE = 'P' 
+				          LEFT OUTER JOIN USER_CONS_COLUMNS C
+				            ON B.TABLE_NAME = C.TABLE_NAME
+				          AND B.CONSTRAINT_NAME = C.CONSTRAINT_NAME
+				        GROUP BY A.TABLE_NAME, A.COLS) A
+		      , (SELECT TABLE_NAME
+		              , COLUMN_NAME
+		            FROM USER_TAB_COLUMNS
+		          WHERE COLUMN_NAME IN ('ENT_DATE', 'REG_DATE'
+		                              , 'CHECK_YMD', 'CREATED', 'EVENT_YMD'
+		                              , 'IF_YMD', 'LAST_LOAD_YMD', 'CREATE_DT'
+		                              , 'DATA_MOD_DATE', 'USER_MOD_DATE', 'CREATED_YMD', 'TOTAL_YMD'
+		                              , 'MOD_DATE', 'USER_MOD_DATE', 'LAST_MODI_DTM'
+		                              , 'CHANGE_DT', 'ACTION_DATE') ) B
+          , TCKETC C
+		 WHERE 1 =  1
+       AND A.TABLE_NAME = C.ETC_CODE
+       AND A.TABLE_NAME = B.TABLE_NAME
+       AND C.ETC_GUBN = '011'
+	     AND C.ETC_INFO = '03'
+	     AND C.ETC_CODE_B = 'Y'
+		 ORDER BY A.TABLE_NAME, B.COLUMN_NAME
+	]]>
+	</select>
+	
+	<resultMap id="tckloqQueryMap" type="java.util.LinkedHashMap">
+		<result column="LAST_LOAD_YMD"      property="LAST_LOAD_YMD"	javaType="string"  jdbcType="VARCHAR" />
+		<result column="DB_NAME"      		property="DB_NAME"     		javaType="string"  jdbcType="VARCHAR" />
+		<result column="SQL_ID"      		property="SQL_ID"     		javaType="string"  jdbcType="VARCHAR" />
+		<result column="LAST_LOAD_TIME"     property="LAST_LOAD_TIME"   javaType="string"  jdbcType="VARCHAR" />
+		<result column="SQL_FULLTEXT"      	property="SQL_FULLTEXT"     javaType="string"  jdbcType="CLOB" />
+        <result column="EXECUTIONS"      	property="EXECUTIONS"     	javaType="string"  jdbcType="VARCHAR" />
+        <result column="BUFFER_GETS"        property="BUFFER_GETS"      javaType="string"  jdbcType="VARCHAR" />
+        <result column="DISK_READS"     	property="DISK_READS"    	javaType="string"  jdbcType="VARCHAR" />
+        <result column="ROWS_PROCESSED"    	property="ROWS_PROCESSED"   javaType="string"  jdbcType="VARCHAR" />
+        <result column="ELAPSED_TIME"       property="ELAPSED_TIME"     javaType="string"  jdbcType="VARCHAR" />
+        <result column="FIRST_LOAD_TIME"    property="FIRST_LOAD_TIME"  javaType="string"  jdbcType="VARCHAR" />
+        <result column="USERNAME"           property="USERNAME"         javaType="string"  jdbcType="VARCHAR" />
+    </resultMap>
+	
+	<select id="searchTckLoqCollectInfo" resultMap="tckloqQueryMap" parameterType="hashmap">
+	<![CDATA[
+		SELECT *
+		  FROM (SELECT ROWNUM AS RNUM
+		  		     , LAST_LOAD_YMD
+		  		     , DB_NAME
+		  		     , SQL_ID
+		  		     , LAST_LOAD_TIME
+		  		     , SQL_FULLTEXT
+		  		     , EXECUTIONS
+		  		     , BUFFER_GETS
+		  		     , DISK_READS
+		  		     , ROWS_PROCESSED
+		  		     , ELAPSED_TIME
+		  		     , FIRST_LOAD_TIME
+		  		     , USERNAME
+		  		FROM TCKLOQ
+		  	   ORDER BY ROWID) A
+		WHERE RNUM < #{END_NUM} AND RNUM >= #{STRT_NUM}
+	]]>
+	</select>
+	
+	<select id="searchDailyTckLoqCollectInfo" resultMap="tckloqQueryMap" parameterType="hashmap">
+	<![CDATA[
+		SELECT *
+		  FROM (SELECT ROWNUM AS RNUM
+		  		     , LAST_LOAD_YMD
+		  		     , DB_NAME
+		  		     , SQL_ID
+		  		     , LAST_LOAD_TIME
+		  		     , SQL_FULLTEXT
+		  		     , EXECUTIONS
+		  		     , BUFFER_GETS
+		  		     , DISK_READS
+		  		     , ROWS_PROCESSED
+		  		     , ELAPSED_TIME
+		  		     , FIRST_LOAD_TIME
+		  		     , USERNAME
+		  		FROM TCKLOQ
+		  	   WHERE ${COL_NM} >= #{MAX_VALUE}
+		  	   ORDER BY ROWID) A
+		WHERE RNUM < #{END_NUM} AND RNUM >= #{STRT_NUM}
+	]]>
+	</select>	
+ </mapper>
+
+    

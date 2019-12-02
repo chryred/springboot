@@ -22,7 +22,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         <typeHandler javaType="java.lang.String" jdbcType="VARCHAR" handler="com.shinsegae.smon.util.OracleTypeHandler"/>
         <typeHandler javaType="java.lang.String" jdbcType="CLOB" handler="com.shinsegae.smon.util.OracleTypeHandler"/>
         <typeHandler javaType="java.lang.String"  handler="com.shinsegae.smon.util.OracleTypeHandler"/>
-        <!-- <typeHandler handler="com.util.OracleTypeHandler"/>  -->
+        <!-- <typeHandler handler="com.shinsegae.smon.util.OracleTypeHandler"/>  -->
     </typeHandlers>
 
 </configuration>
