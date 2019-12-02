@@ -34,13 +34,13 @@
   
     <select id="selectTablespaceState" resultMap="statMap" parameterType="hashmap">
     <![CDATA[
-    SELECT B.USED_SIZE - A.USED_SIZE AS CHANGE_SIZE,
+    SELECT ROUND(B.USED_SIZE - A.USED_SIZE, 1) AS CHANGE_SIZE,
            A.TABLESPACE_NAME,
            B.FREE_SIZE,
            B.USED_SIZE,
            B.CURRENT_SIZE,
            B.FREE_RATE,
-           ((B.USED_SIZE - A.USED_SIZE) / B.CURRENT_SIZE * 100 ) AS CHANGE_RATE
+           ROUND((B.USED_SIZE - A.USED_SIZE) / B.CURRENT_SIZE * 100, 1) AS CHANGE_RATE
       FROM (SELECT *
               FROM TCKUNT 
              WHERE CHECK_YMD = date_format(date_add(now(), interval - #{term} day) , '%Y%m%d')
