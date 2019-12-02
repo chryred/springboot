@@ -185,7 +185,7 @@
 	               SQL_FULLTEXT
 	          FROM TCKLOQ
 	         WHERE DB_NAME = #{system}
-	           AND LAST_LOAD_YMD = date_format(sysdate(), '%Y%m%d')) TCKLOQ
+	           AND LAST_LOAD_YMD = date_format(now(), '%Y%m%d')) TCKLOQ
 	ORDER BY LAST_LOAD_TIME
     ]]>
     </select>
