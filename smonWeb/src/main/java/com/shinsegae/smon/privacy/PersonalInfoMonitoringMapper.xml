@@ -76,7 +76,7 @@
     	UPDATE TCKPER_MERGE
     	SET PERSONALINFO_YN = #{personinfoFlag}
     	  , MEMO = #{memo, jdbcType = VARCHAR}
-    	  , USER_MOD_DATE = SYSDATE
+    	  , USER_MOD_DATE = SYSDATE()
     	WHERE 1=1
     		AND DB_NAME = #{dbName}
     		AND CHECK_GUBN = #{checkGubn}

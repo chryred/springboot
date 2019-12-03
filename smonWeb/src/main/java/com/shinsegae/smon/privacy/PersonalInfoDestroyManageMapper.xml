@@ -16,19 +16,20 @@
     </resultMap>
     
     <select id="selectDestroyTableList" resultMap="DIC_TABLE_MAP" parameterType="HashMap">
-    	SELECT DB_NAME,
-    		   OWNER,
-    		   TABLE_NAME,
-    		   SQL,
-    		   INFO,
-    		   COUNT(*) OVER() AS TOTCNT,
-    		   DSTRCTN_NMBR ,
-    		   DSTRCTN_CYCL ,
-    		   DSTRCTN_NMBR || ' ' || (SELECT ETC_NAME
+    	SELECT DB_NAME
+    		   , OWNER
+    		   , TABLE_NAME
+    		   , 'SQL'
+    		   , INFO
+    		   , (@ROWNUM := @ROWNUM + 1) AS TOTCNT
+    		   , DSTRCTN_NMBR 
+    		   , DSTRCTN_CYCL 
+    		   , DSTRCTN_NMBR || ' ' || (SELECT ETC_NAME
 						                 FROM TCKETC B
 						                WHERE ETC_GUBN = '008'
 						                  AND B.ETC_CODE = A.DSTRCTN_CYCL) AS DSTRCTN_STNDRD
-    	  FROM PRSNL_INFO_CHCK A
+    	  FROM (SELECT @ROWNUM := 0) AS R
+    	  		, PRSNL_INFO_CHCK A
          WHERE 1=1
 				<if test="dbName != '' and dbName != null">
 			   		AND DB_NAME = #{dbName}
@@ -40,7 +41,6 @@
 					AND TABLE_NAME = #{tableName}   
 				</if>
 				ORDER BY DB_NAME, OWNER, TABLE_NAME
-				
     </select>
     
     <select id="selectComboDBName" resultType="HashMap">

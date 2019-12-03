@@ -15,13 +15,16 @@
     </resultMap>
     
     <select id="selectDictionaryTableList" resultMap="DIC_TABLE_MAP" parameterType="HashMap">
-    	SELECT * FROM (
-		    SELECT AA.*, 
-		        ROWNUM AS RNUM,
-		        COUNT(*) OVER() AS TOTCNT
+    	SELECT 	T.*
+    			 
+    	FROM (
+		    SELECT AA.*
+		    	, (@ROWNUM := @ROWNUM + 1) AS RNUM 
+		    	, (@ROWNUM := @ROWNUM + 1) AS TOTCNT 
 		    FROM (
 				SELECT TA.*
-				FROM (
+				FROM (SELECT @ROWNUM := 0) AS R
+				, (
 				    SELECT
 				        TBL.*,        
 				        CASE
@@ -76,7 +79,7 @@
 				</if>
 			   	ORDER BY 1, 2, 3
 			) AA
-		)
+		) T
 		WHERE 1=1
 			AND RNUM BETWEEN #{start} AND #{end}
     </select>
@@ -94,15 +97,15 @@
         <result column="PERSONALINFO_YN"    property="PERSONALINFO_YN"	javaType="string"  jdbcType="VARCHAR" /> 
     </resultMap>
     <select id="selectDictionaryColList" resultMap="DIC_COL_MAP" parameterType="HashMap">
-    	SELECT TA.*,
-    		TB.PERSONALINFO_YN
-		FROM TCKCOL TA,
-			TCKCOL_ADD TB
+    	SELECT 	TA.*
+    			, TB.PERSONALINFO_YN
+		FROM 	TCKCOL TA
+		LEFT OUTER JOIN TCKCOL_ADD TB
+		ON 	TA.DB_SID = TB.DB_SID
+		AND TA.OWNER = TB.OWNER
+		AND TA.TABLE_NAME = TB.TABLE_NAME
+		AND TA.COLUMN_NAME = TB.COLUMN_NAME
 		WHERE 1=1
-		    AND TA.DB_SID = TB.DB_SID(+)
-		    AND TA.OWNER = TB.OWNER(+)
-		    AND TA.TABLE_NAME = TB.TABLE_NAME(+)
-		    AND TA.COLUMN_NAME = TB.COLUMN_NAME(+)
 		    AND TA.DB_SID = #{dbName}
 		    AND TA.OWNER = #{owner}
 		    AND TA.TABLE_NAME = #{tableName}
@@ -201,7 +204,7 @@
 				AND (
 					(CHECK_YMD = DATE_FORMAT(LAST_DAY(TO_DATE(SUBSTR(CHECK_YMD, 0, 6), 'YYYYMM')), '%Y%m%d'))
 					OR
-					(CHECK_YMD = DATE_FORMAT(SYSDATE()-1, '%Y%m%d')
+					(CHECK_YMD = DATE_FORMAT(NOW()-1, '%Y%m%d')
 				)
 			)
 		)

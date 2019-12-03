@@ -95,7 +95,8 @@
     	           WHEN A.DATA_LENGTH != B.DATA_LENGTH THEN 'L'
     	           ELSE 'N'
     	       END AS CHANGE_GUBN
-    	  FROM TCKCOL A,
+    	  FROM TCKCOL A
+    	  LEFT OUTER JOIN
     	       (SELECT *
     	          FROM TCKCCS A
     	         WHERE DB_NAME = #{dbName}
@@ -106,11 +107,11 @@
     	                             WHERE B.DB_NAME = A.DB_NAME
     	                               AND B.OWNER = A.OWNER
     	                               AND B.OBJECT_NAME = A.OBJECT_NAME)) B
-    	 WHERE A.DB_SID = B.DB_NAME(+)
-    	   AND A.OWNER = B.OWNER(+)
-    	   AND A.TABLE_NAME = B.OBJECT_NAME(+)
-    	   AND A.COLUMN_NAME = B.COLUMN_NAME(+)
-    	   AND A.DB_SID = #{dbName}
+		    ON A.DB_SID = B.DB_NAME
+		   AND A.OWNER = B.OWNER
+		   AND A.TABLE_NAME = B.OBJECT_NAME
+		   AND A.COLUMN_NAME = B.COLUMN_NAME    	                               
+    	 WHERE A.DB_SID = #{dbName}
     	   AND A.OWNER = #{owner}
     	   AND A.TABLE_NAME = #{tableName}
         ORDER BY COLUMN_ID

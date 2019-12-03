@@ -14,26 +14,33 @@
     </resultMap>
  
   <select id="selectDestoryTableList2" resultMap="DES_TABLE_MAP" parameterType="HashMap">
-    	SELECT TA.*, COUNT(*) OVER(PARTITION BY TA.IF_YMD) AS TOTCNT, ROWNUM AS RNUM
-    			FROM 
-    			TCKCMP TA
-				WHERE 1=1
+    	SELECT	T.*
+    	FROM	(
+			    	SELECT	TA.*
+							, TB.TOTCNT AS TOTCNT
+					        , (@ROWNUM := @ROWNUM + 1) AS ROWNUM
+					FROM	(SELECT @ROWNUM := 0) AS R
+							, TCKCMP TA
+					        JOIN (SELECT IF_YMD, COUNT(*) AS TOTCNT FROM TCKCMP T GROUP BY T.IF_YMD) TB 
+					        ON TA.IF_YMD = TB.IF_YMD
+				) T
+    	WHERE 1=1
 				<if test="ifYmd == null">
-			   		AND TA.IF_YMD = DATE_FORMAT(SYSDATE,'YYYYMMDD')
+			   		AND T.IF_YMD = DATE_FORMAT(NOW(), '%Y%m%d')
 			   	</if>
 			   	<![CDATA[	
 			   		AND CNT > 0
 			   	]]> 
 				<if test="dbName != '' and dbName != null">
-			   		AND TA.DB_NAME = #{dbName}
+			   		AND T.DB_NAME = #{dbName}
 			   	</if>
 				<if test="owner != '' and owner != null">
-					AND TA.OWNER = #{owner}
+					AND T.OWNER = #{owner}
 				</if>
 				<if test="tablename != '' and tablename != null">
-					AND TA.TABLE_NAME = #{tableName}
+					AND T.TABLE_NAME = #{tableName}
 				</if>
-				AND ROWNUM BETWEEN #{start} AND #{end}
+				AND T.ROWNUM BETWEEN #{start} AND #{end}
 			 	ORDER BY 1, 2, 3
     </select>
     <select id="selectDestoryTableList3" resultMap="DES_TABLE_MAP" parameterType="HashMap">

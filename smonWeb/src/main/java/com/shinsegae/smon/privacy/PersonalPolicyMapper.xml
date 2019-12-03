@@ -14,13 +14,14 @@
     </resultMap>
     
     <select id="selectPolicyTableList" resultMap="POL_TABLE_MAP" parameterType="HashMap">
-        SELECT A.DB_SID,         
-	       A.OWNER,            
-	       A.TABLE_NAME,       
-	       B.SQL,              
-	       B.INFO,             
-	       COUNT(*) OVER() AS TOTCNT
-		FROM (SELECT DISTINCT
+        SELECT A.DB_SID         
+	       , A.OWNER        
+	       , A.TABLE_NAME       
+	       , B.SQL           
+	       , B.INFO             
+	       , @ROWNUM := @ROWNUM + 1 AS TOTCNT
+		FROM (SELECT @ROWNUM := 0) AS R
+		   , (SELECT DISTINCT
 		               DB_SID AS DB_SID,
 		               OWNER,
 		               TABLE_NAME 
@@ -36,15 +37,16 @@
 					AND TABLE_NAME LIKE '%' || #{objectName} || '%'
 				 </if>
 		            AND NOT EXISTS (SELECT ''
-		                             FROM TCKCMP_EXCEPTION B
-		                            WHERE A.DB_SID = B.DB_NAME
-		                              AND A.OWNER = B.OWNER
-		                              AND A.TABLE_NAME =B.TABLE_NAME)) A,
-		       TCKCMP B
-		 WHERE A.DB_SID = B.DB_NAME (+)
-		   AND A.OWNER = B.OWNER (+)
-		   AND A.TABLE_NAME = B.TABLE_NAME (+)
-		   AND B.IF_YMD (+) = DATE_FORMAT(SYSDATE(), '%Y%m%d')
+		                              FROM TCKCMP_EXCEPTION B
+		                             WHERE A.DB_SID = B.DB_NAME
+		                               AND A.OWNER = B.OWNER
+		                               AND A.TABLE_NAME = B.TABLE_NAME)) A
+		 LEFT OUTER JOIN TCKCMP B
+		  ON A.DB_SID = B.DB_NAME
+		 AND A.OWNER = B.OWNER
+		 AND A.TABLE_NAME = B.TABLE_NAME
+		 AND B.IF_YMD = DATE_FORMAT(NOW(), '%Y%m%d') 
+		   
     </select>
        
     <select id="selectComboDBName" resultType="HashMap">
@@ -65,5 +67,4 @@
 			AND DB_SID = #{dbName}
 			</if>
     </select>
-
 </mapper> 

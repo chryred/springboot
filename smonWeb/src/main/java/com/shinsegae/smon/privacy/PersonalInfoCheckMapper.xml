@@ -109,7 +109,7 @@
                VEHICLENUMBER_SUM,
                ETC_SUM
           FROM TCKTDO
-         WHERE TOTAL_YMD = DATE_FORMAT(SYSDATE(), '%Y%m%d')
+         WHERE TOTAL_YMD = DATE_FORMAT(NOW(), '%Y%m%d')
         ORDER BY PROGRESS_PERCENTAGE, TOT_OBJ_CNT
     </select>
     

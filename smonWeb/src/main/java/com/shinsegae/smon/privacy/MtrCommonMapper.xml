@@ -11,7 +11,7 @@
     
      
     <select id="selectTeamComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT GROUP_CODE AS KEY
+    	SELECT GROUP_CODE AS 'KEY'
     		 , GROUP_NAME AS NAME
     	  FROM TCKGRP
     	 WHERE 1=1
@@ -19,7 +19,7 @@
     </select>
     
     <select id="selectSystemComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT DB_SID AS KEY
+    	SELECT DB_SID AS 'KEY'
     		 , SYSTEM_NAME AS NAME
     	  FROM TCKSYS
     	 WHERE 1=1
@@ -27,7 +27,7 @@
     </select>
     
     <select id="selectOwnerComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT USERNAME AS KEY
+    	SELECT USERNAME AS 'KEY'
 			 , USERNAME AS NAME
 		FROM
 			TCKDBU
@@ -37,23 +37,23 @@
     </select>
     
     <select id="selectSaveTypeComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT ETC_NAME AS KEY
+    	SELECT ETC_NAME AS 'KEY'
     		 , ETC_NAME AS NAME
     	  FROM TCKETC
     	 WHERE 1=1
-    	   AND ETC_GUBN = '002'
+    	   AND ETC_GUBN = 002
     </select>
     
     <select id="selectObjectTypeComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT ETC_NAME AS KEY
+    	SELECT ETC_NAME AS 'KEY'
     		 , ETC_NAME AS NAME
     	  FROM TCKETC
     	 WHERE 1=1
-    	   AND ETC_GUBN = '004'
+    	   AND ETC_GUBN = 004
     </select>
     
     <select id="selectPersonalInfoTypeComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT ETC_NAME AS KEY
+    	SELECT ETC_NAME AS 'KEY'
     		 , ETC_NAME AS NAME
     	  FROM TCKETC
     	 WHERE 1=1
@@ -61,23 +61,23 @@
     </select>
     
     <select id="selectDataTypeComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT ETC_NAME AS KEY
+    	SELECT ETC_NAME AS 'KEY'
     		 , ETC_NAME AS NAME
     	  FROM TCKETC
     	 WHERE 1=1
-    	   AND ETC_GUBN = '005'
+    	   AND ETC_GUBN = 005
     </select>
     
     <select id="selectActionTypeComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT ETC_NAME AS KEY
+    	SELECT ETC_NAME AS 'KEY'
     		 , ETC_NAME AS NAME
     	  FROM TCKETC
     	 WHERE 1=1
-    	   AND ETC_GUBN = '003'
+    	   AND ETC_GUBN = 003
     </select>
     
     <select id="selectWorkComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT WORK_CODE AS KEY
+    	SELECT WORK_CODE AS 'KEY'
     		 , WORK_NAME AS NAME
     	  FROM TCKWRK
     	 WHERE 1=1
@@ -85,7 +85,7 @@
     </select>
     
     <select id="selectEffectComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT		COM_CODE AS KEY
+    	SELECT		COM_CODE AS 'KEY'
     		  	,	COM_NAME AS NAME
     	FROM		STUDY.T_INCIDENT_COM
     	WHERE 		1=1
@@ -94,7 +94,7 @@
     </select>
     
     <select id="selectEffectRangeComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT 		COM_CODE AS KEY
+    	SELECT 		COM_CODE AS 'KEY'
     		 	, 	COM_NAME AS NAME
     	FROM 		STUDY.T_INCIDENT_COM
     	WHERE 		1=1
@@ -103,7 +103,7 @@
     </select>
     
     <select id="selectTargetSystemComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT		COM_CODE AS KEY
+    	SELECT		COM_CODE AS 'KEY'
     		 	, 	COM_NAME AS NAME
     	FROM 		STUDY.T_INCIDENT_COM
         WHERE		1=1
@@ -112,7 +112,7 @@
     </select>
     
     <select id="selectStatusComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT 		COM_CODE AS KEY
+    	SELECT 		COM_CODE AS 'KEY'
     		 	, 	COM_NAME AS NAME
     	FROM 		STUDY.T_INCIDENT_COM
     	WHERE 		1=1
@@ -121,7 +121,7 @@
     </select>
     
     <select id="selectDefectGradeComboList" resultMap="commonComboMap" parameterType="HashMap">
-    	SELECT 		COM_CODE AS KEY
+    	SELECT 		COM_CODE AS 'KEY'
     		 	, 	COM_NAME AS NAME
     	FROM 		STUDY.T_INCIDENT_COM
     	WHERE 		1=1
