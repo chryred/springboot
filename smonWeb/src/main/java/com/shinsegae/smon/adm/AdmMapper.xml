@@ -17,16 +17,16 @@
 			 SELECT MGR_ID,MGR_NAME,MGR_SYS,MGR_GRADE,MGR_STATE_CD FROM MGR
 			 where 1=1
 			 <if test="mgrName != '' and mgrName != null">
-		  		  AND mgr_Name like '%' || #{mgrName} || '%'
+		  		  AND mgr_Name like CONCAT('%', #{mgrName}, '%')
 		     </if>
 		     <if test="mgrId != '' and mgrId != null">
-		  		 AND mgr_Id like '%' || #{mgrId} || '%'
+		  		 AND mgr_Id like CONCAT('%', #{mgrId}, '%')
 		   </if>
 		   <if test="mgrGrade != '' and mgrGrade != null">
-		  		 AND mgr_Grade like '%' || #{mgrGrade} || '%'
+		  		 AND mgr_Grade like CONCAT('%', #{mgrGrade}, '%')
 		   </if>
 		   <if test="mgrStatecd != '' and mgrStatecd != null">
-		  		 AND MGR_STATE_CD like '%' || #{mgrStatecd} || '%'
+		  		 AND MGR_STATE_CD like CONCAT('%', #{mgrStatecd}, '%')
 		   </if>
 			  
 			 ) A
@@ -48,10 +48,10 @@
 		 SELECT COUNT(*) AS COUNT	 FROM MGR
 		 where 1=1
 			 <if test="mgrName != '' and mgrName != null">
-		  		  AND mgr_Name like '%' || #{mgrName} || '%'
+		  		  AND mgr_Name like CONCAT('%', #{mgrName}, '%')
 		     </if>
 		     <if test="mgrId != '' and mgrId != null">
-		  		 AND mgr_Id like '%' || #{mgrId} || '%'
+		  		 AND mgr_Id like CONCAT('%', #{mgrId}, '%')
 		   </if>
 		   <if test="mgrGrade != '' and mgrGrade != null">
 		  		 AND mgr_Grade = #{mgrGrade}
@@ -63,10 +63,10 @@
 		 SELECT COUNT(*) AS COUNT	 FROM  CM_ROLE_GROUP  
 	 	 where 1=1
 			 <if test="authGroupnm != '' and authGroupnm != null">
-		  		  AND AUTH_GROUP_NM like '%' || #{authGroupnm} || '%'
+		  		  AND AUTH_GROUP_NM like CONCAT('%', #{authGroupnm}, '%')
 		     </if>
 		     <if test="useyn != '' and useyn != null">
-		  		 AND USE_YN like '%' || #{useyn} || '%'
+		  		 AND USE_YN like CONCAT('%', #{useyn}, '%')
 		   </if>
 		   <if test="roleGroup != '' and roleGroup != null">
 		  		 AND ROLE_GROUP = #{roleGroup}
@@ -212,10 +212,10 @@
 	 	FROM CM_ROLE_GROUP  
 	 	 where 1=1
 			 <if test="authGroupnm != '' and authGroupnm != null">
-		  		  AND AUTH_GROUP_NM like '%' || #{authGroupnm} || '%'
+		  		  AND AUTH_GROUP_NM like CONCAT('%', #{authGroupnm}, '%')
 		     </if>
 		     <if test="useyn != '' and useyn != null">
-		  		 AND USE_YN like '%' || #{useyn} || '%'
+		  		 AND USE_YN like CONCAT('%', #{useyn}, '%')
 		   </if>
 		   <if test="roleGroup != '' and roleGroup != null">
 		  		 AND ROLE_GROUP = #{roleGroup}

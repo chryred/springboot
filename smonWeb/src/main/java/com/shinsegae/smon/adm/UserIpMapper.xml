@@ -21,8 +21,8 @@
     	    , RECENT_USER
     		, USE_YN
     		, FORWHAT
-    		, TO_CHAR(ENT_DATE, 'YYYY/MM/DD') AS ENT_DATE
-    		, TO_CHAR(MOD_DATE, 'YYYY/MM/DD') AS MOD_DATE
+    		, DATE_FORMAT(ENT_DATE, '%Y/%m/%d') AS ENT_DATE
+    		, DATE_FORMAT(MGR_PWD_CHG_DATE, '%Y/%m/%d') AS MOD_DATE
     	FROM STUDY.DEPT_IP_MASTER
        WHERE 1=1
          AND USE_YN = 'Y'
@@ -35,7 +35,7 @@
     <select id="selectAvailableIp" parameterType="com.shinsegae.smon.util.RequestMap" resultMap="rs_selectUserIp">
        WITH IP_ADDRESS AS
        (
-           SELECT '10.174.179.' || R_TBL.NUM AS IP
+           SELECT CONCAT('10.174.179.', R_TBL.NUM AS IP) 
              FROM (
              	    SELECT ROWNUM AS NUM
              	      FROM DUAL
@@ -44,10 +44,11 @@
            WHERE R_TBL.NUM BETWEEN 2 AND 254
        )
        SELECT IP_ADDRESS.IP
-         FROM STUDY.DEPT_IP_MASTER A, IP_ADDRESS
-        WHERE IP_ADDRESS.IP = A.IP(+)
-          AND (A.USE_YN = 'N' OR A.USE_YN IS NULL)
-       ORDER BY REGEXP_REPLACE(REPLACE('.'||IP_ADDRESS.IP, '.', '.00'), '([^.]{3}(\.|$))|.', '\1')
+         FROM IP_ADDRESS
+         LEFT OUTER JOIN STUDY.DEPT_IP_MASTER A
+         ON IP_ADDRESS.IP = A.IP
+          WHERE (A.USE_YN = 'N' OR A.USE_YN IS NULL)
+       ORDER BY REGEXP_REPLACE(REPLACE(CONCAT('.',IP_ADDRESS.IP), '.', '.00'), '([^.]{3}(\.|$))|.', '\1')
     </select>
     
     <update id="insertNewIp" parameterType="com.shinsegae.smon.util.RequestMap">
@@ -62,7 +63,7 @@
     	      ,FORWHAT     = #{reason, jdbcType=VARCHAR}
     	      ,PASSWORD    = #{passwd, jdbcType=VARCHAR}
     	      ,USE_YN      = 'Y'
-    	      ,ENT_DATE    = SYSDATE
+    	      ,ENT_DATE    = NOW()
     	WHEN NOT MATCHED THEN
     	INSERT
     	     (
@@ -80,7 +81,7 @@
     	   ,'Y'
     	   ,#{reason, jdbcType=VARCHAR}
     	   ,#{passwd, jdbcType=VARCHAR}
-    	   ,SYSDATE
+    	   ,NOW()
     	)
     </update>
     
@@ -95,7 +96,7 @@
     	       RECENT_USER = #{userName, jdbcType=VARCHAR}
     	      ,FORWHAT     = #{reason, jdbcType=VARCHAR}
     	      ,USE_YN      = 'Y'
-    	      ,MOD_DATE    = SYSDATE
+    	      ,MOD_DATE    = NOW()
     	WHEN NOT MATCHED THEN
     	INSERT
     	     (
@@ -111,7 +112,7 @@
     	   ,#{userName, jdbcType=VARCHAR}
     	   ,'Y'
     	   ,#{reason, jdbcType=VARCHAR}
-    	   ,SYSDATE
+    	   ,NOW()
     	)
     </update>
     
@@ -121,7 +122,7 @@
     	      ,FORWHAT     = ''
     	      ,PASSWORD    = '' 
     	      ,USE_YN      = 'N'
-    	      ,MOD_DATE    = SYSDATE
+    	      ,MOD_DATE    = NOW()
     	 WHERE IP = #{userIp}    	
     </update>
     
@@ -148,12 +149,12 @@
         VALUES
               (
                 #{userIp}
-               ,(SELECT NVL(MAX(SEQ),0)+1 FROM STUDY.DEPT_IP_HIST WHERE IP = #{userIp})
+               ,(SELECT IFNULL(MAX(SEQ),0)+1 FROM STUDY.DEPT_IP_HIST WHERE IP = #{userIp})
                ,#{userName, jdbcType=VARCHAR}
                ,#{acionCode}
                ,STUDY.FN_GET_COMN_NM('L0001', #{acionCode})
                ,#{userId}
-               ,SYSDATE
+               ,NOW()
               )
     </insert>
 
