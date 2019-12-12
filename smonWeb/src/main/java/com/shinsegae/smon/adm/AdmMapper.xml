@@ -208,7 +208,7 @@
     </resultMap>
     
     <select id="getlistAuthGruop" resultMap="rm_getlistAuthGruop" parameterType="com.shinsegae.smon.model.adm.DsBatchVO">		
-	 	SELECT AUTH_GROUP_ID,AUTH_GROUP_NM,AUTH_GROUP_REMARK,USE_YN,NVL(REG_ID,'') as REG_ID,NVL(AUTH_LEVEL,'') as AUTH_LEVEL,NVL(ROLE_GROUP,'')  as ROLE_GROUP
+	 	SELECT AUTH_GROUP_ID,AUTH_GROUP_NM,AUTH_GROUP_REMARK,USE_YN,IFNULL(REG_ID,'') as REG_ID,IFNULL(AUTH_LEVEL,'') as AUTH_LEVEL,IFNULL(ROLE_GROUP,'')  as ROLE_GROUP
 	 	FROM CM_ROLE_GROUP  
 	 	 where 1=1
 			 <if test="authGroupnm != '' and authGroupnm != null">
@@ -241,7 +241,7 @@
     </resultMap>
     
     <select id="selectauthGroup" resultMap="rm_selectauthGroup" parameterType="HashMap">		
-	 	SELECT AUTH_GROUP_ID,AUTH_GROUP_NM,AUTH_GROUP_REMARK,USE_YN,NVL(REG_ID,'') as REG_ID,NVL(AUTH_LEVEL,'') as AUTH_LEVEL,NVL(ROLE_GROUP,'')  as ROLE_GROUP
+	 	SELECT AUTH_GROUP_ID,AUTH_GROUP_NM,AUTH_GROUP_REMARK,USE_YN,IFNULL(REG_ID,'') as REG_ID,IFNULL(AUTH_LEVEL,'') as AUTH_LEVEL,IFNULL(ROLE_GROUP,'')  as ROLE_GROUP
 	 	FROM CM_ROLE_GROUP 
 	 	where  AUTH_GROUP_ID  = #{authGroupid}
 	</select>
