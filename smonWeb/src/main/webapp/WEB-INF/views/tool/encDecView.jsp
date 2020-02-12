@@ -89,6 +89,7 @@ div.panel-body {
 					<input type="radio" name="chk_gubn" value="2"><b><span onclick="fn_chkGubnLabelClicked('chk_gubn', '2');" style="font-size:12pt;">&nbsp;URL&nbsp;&nbsp;</span></b>
 					<input type="radio" name="chk_gubn" value="3"><b><span onclick="fn_chkGubnLabelClicked('chk_gubn', '3');" style="font-size:12pt;">&nbsp;Jasypt&nbsp;&nbsp;</span></b>
 					<input type="radio" name="chk_gubn" value="4"><b><span onclick="fn_chkGubnLabelClicked('chk_gubn', '4');" style="font-size:12pt;">&nbsp;SHA-256&nbsp;&nbsp;</span></b>
+					<input type="radio" name="chk_gubn" value="5"><b><span onclick="fn_chkGubnLabelClicked('chk_gubn', '5');" style="font-size:12pt;">&nbsp;Property(백화점팀)&nbsp;&nbsp;</span></b>
                 </div>
                 <!-- /.panel-body -->
             </div>
@@ -194,6 +195,27 @@ div.panel-body {
 						</div>
 						<div style="margin-top:10px;">
 				    		<textarea id="txt_after_4" rows="11" style="width:100%;" placeholder="결과 문자열을 보여줍니다."></textarea>
+						</div>
+				    </div>
+				    <div id="div_5" class="div_move" style="background-clip:content-box;background-color:yellow;background-color:rgba(255,0,0,0.0);height:560px;padding:10px;">
+				    	<div>
+				    		<h2><b><small>백화점팀 Property 암/복호화</small></b></h2>
+				    	</div>
+						<div style="margin-top:10px;">
+				    		<input type="radio" name="chk_gubn2_5" value="1" checked><b><span onclick="fn_chkGubnLabelClicked('chk_gubn2_5', '1');" style="font-size:12pt;">&nbsp;암호화&nbsp;&nbsp;</span></b>
+							<input type="radio" name="chk_gubn2_5" value="2"><b><span onclick="fn_chkGubnLabelClicked('chk_gubn2_5', '2');" style="font-size:12pt;">&nbsp;복호화&nbsp;&nbsp;</span></b>
+						</div>
+						<div style="margin-top:10px;">
+				    		<input type="text" id="txt_prop_key" style="width:100%; height:25px;" placeholder="KEY 정보를 입력하세요."/>
+						</div>
+						<div style="margin-top:10px;">
+				    		<textarea id="txt_before_5" rows="11" style="width:100%;" placeholder="암/복호화 할 값을 입력하세요."></textarea>
+						</div>
+						<div style="margin-top:10px;">
+				    		<button type="button" class="btn_save btn btn-info btn-lg btn-block"><b>실행하기</b></button>
+						</div>
+						<div style="margin-top:10px;">
+				    		<textarea id="txt_after_5" rows="11" style="width:100%;" placeholder="결과 문자열을 보여줍니다."></textarea>
 						</div>
 				    </div>
                 </div>

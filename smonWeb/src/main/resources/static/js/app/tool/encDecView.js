@@ -121,6 +121,7 @@ function fn_save() {
 	var password = "";
 	var algorithm = "";
 	var salt = "";
+	var propKey = "";	
 	
 	// URL
 	if (chkGubn == "2") {
@@ -131,6 +132,8 @@ function fn_save() {
 	} else if (chkGubn == "4") {
 		salt = $("#txt_salt").val();
 		algorithm = $("#sel_msgDigestAlg").val();
+	} else if (chkGubn == "5"){
+		propKey = $("#txt_prop_key").val();
 	}
 	
 	var postData = {
@@ -141,6 +144,7 @@ function fn_save() {
 		, password : password
 		, algorithm : algorithm
 		, salt : salt
+		, propKey : propKey		
 	};
 	
 	var formURL = contextPath + "getEncDecData.do";

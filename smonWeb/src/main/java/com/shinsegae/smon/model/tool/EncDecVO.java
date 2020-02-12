@@ -16,4 +16,5 @@ public class EncDecVO {
 	String password;
 	String algorithm;
 	String salt;
+	String propKey;
 }

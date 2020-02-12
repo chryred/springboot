@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.Aes256Util;
 import com.shinsegae.smon.adm.ToolMapper;
 import com.shinsegae.smon.model.tool.EncDecVO;
 import com.shinsegae.smon.model.tool.SystemCodeVO;
@@ -51,6 +52,7 @@ public class ToolService {
 		String algorithm = paramCondition.getAlgorithm();
 		String salt = paramCondition.getSalt();
 		String beforeData = paramCondition.getBeforeData();
+		String propKey = paramCondition.getPropKey();
 		String afterData = "";
 		
 		// Base64
@@ -76,6 +78,13 @@ public class ToolService {
 			}
 		} else if (chkGubn.equals("4")) {
 			afterData = getMessageDigestHash(beforeData, salt, algorithm);
+		// Propety ENC/DEC
+		} else if (chkGubn.equals("5")) {
+			if (chkGubn2.equals("1")) {
+				afterData = getEncryptProperty(beforeData, propKey);
+			} else if (chkGubn2.equals("2")) {
+				afterData = getDecryptProperty(beforeData, propKey);
+			}
 		}
 		
 		return afterData;
@@ -208,5 +217,37 @@ public class ToolService {
 		}
 
 		return sb.toString();
+	}
+	
+	/*******************************
+	 * Property �븫�샇�솕
+	 * @param String
+	 * @return String
+	 * @throws Exception
+	 *******************************/
+	private String getEncryptProperty(String beforeData, String propKey) throws Exception {
+		String returnStr;
+		
+		Aes256Util aes = new Aes256Util(propKey);
+		
+		returnStr = aes.aesEncode(beforeData);
+		
+		return returnStr;
+	}	
+	
+	/*******************************
+	 * Property 蹂듯샇�솕
+	 * @param String
+	 * @return String
+	 * @throws Exception
+	 *******************************/
+	private String getDecryptProperty(String beforeData, String propKey) throws Exception {
+		String returnStr;
+		
+		Aes256Util aes = new Aes256Util(propKey);
+		
+		returnStr = aes.aesDecode(beforeData);
+		
+		return returnStr;
 	}
 }
